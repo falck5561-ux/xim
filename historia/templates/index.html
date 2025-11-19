@@ -299,6 +299,49 @@
         #finalBookModal .modal-dialog { max-width: 95%; } 
         
         #bookModal .modal-dialog { max-width: 700px; }
+
+        /* --- AJUSTES RESPONSIVOS PARA CELULAR (MEDIA QUERIES) --- */
+    @media (max-width: 768px) {
+        /* 1. Títulos más pequeños para que no se corten */
+        .display-1 { font-size: 3rem !important; }
+        .display-3 { font-size: 2.2rem !important; }
+        .display-5 { font-size: 2rem !important; }
+
+        /* 2. Ajustar los videos e imágenes de los recuerdos */
+        .modal-media-content { 
+            width: 100% !important; 
+            height: auto !important; 
+            max-height: 50vh; /* Que no ocupe toda la altura para ver el texto */
+            object-fit: contain;
+        }
+
+        /* 3. Arreglar el Libro (Texto y tamaño) */
+        #bookModal .modal-dialog { margin: 10px; max-width: 95%; }
+        .book-modal-content { min-height: 400px; }
+        .book-text { 
+            font-size: 1.2rem; /* Letra más chica para que quepa la frase */
+            padding: 20px; 
+            line-height: 1.4;
+        }
+        .page-number { bottom: 10px; }
+
+        /* 4. Ajustar el Disco de Vinilo (Más chico en cel) */
+        .vinyl-record-css { width: 160px; height: 160px; margin: 15px auto; }
+        .vinyl-label { width: 60px; height: 60px; font-size: 1rem; }
+
+        /* 5. Botones del inicio (Uno debajo del otro para fácil click) */
+        .d-flex.gap-3 button {
+            width: 100%; /* Botón ancho completo */
+            margin-bottom: 8px;
+        }
+        
+        /* 6. Ajustar video sorpresa final */
+        .video-container-fix { max-width: 100%; }
+        
+        /* 7. Mejorar márgenes en los modales */
+        .modal-body { padding: 20px !important; }
+        .story-paper { padding: 1.5rem; }
+    }
     </style>
 </head>
 <body>
