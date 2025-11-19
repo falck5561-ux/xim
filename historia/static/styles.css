@@ -76,7 +76,7 @@ h1, h2, .romantic-font { font-family: 'Dancing Script', cursive; }
 /* --- 6. SCROLL TOP BUTTON --- */
 .btn-scroll-top {
     position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); 
-    margin-left: 0px; /* CORREGIDO */
+    margin-left: 0px; 
     width: 45px; height: 45px; background: white; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1); color: #ff4757; font-size: 1.2rem;
@@ -137,7 +137,7 @@ h1, h2, .romantic-font { font-family: 'Dancing Script', cursive; }
 .heart-trail { position: absolute; pointer-events: none; animation: floatUp 1.5s linear forwards; opacity: 0; font-size: 18px; color: #ff4757; z-index: 9999; text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
 @keyframes floatUp { 0% { transform: translateY(0) scale(0.8); opacity: 0.7; } 100% { transform: translateY(-40px) scale(1.2); opacity: 0; } }
 
-/* --- NUEVOS ESTILOS MEJORADOS PARA EL TEXTO DEL MOMENTO --- */
+/* --- ESTILOS MEJORADOS PARA EL TEXTO DEL MOMENTO --- */
 .story-paper { 
     background-color: #fffdf9; 
     padding: 2rem 2.5rem; 
@@ -155,7 +155,6 @@ h1, h2, .romantic-font { font-family: 'Dancing Script', cursive; }
     font-style: italic; 
     position: relative; 
     z-index: 2;
-    /* MEJORA VISUAL: Fondo y borde lindo */
     background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(10px);
     padding: 20px;
@@ -213,8 +212,7 @@ audio::-webkit-media-controls { position: relative; z-index: 1055; }
 #modalAudio { position: relative; z-index: 1055; cursor: pointer; }
 .final-surprise-img { max-width: 100%; border-radius: 15px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); border: 8px solid white; transform: rotate(-3deg); }
 
-/* --- NUEVO: ESTILO ELEGANTE PARA EL VIDEO EN EL MODAL --- */
-/* Asegúrate de envolver tu <video> en un div con la clase: class="video-modal-wrapper" */
+/* --- ESTILO ELEGANTE PARA EL VIDEO EN EL MODAL (VISTA PREVIA) --- */
 .video-modal-wrapper { 
     max-width: 800px; 
     margin: 0 auto 20px auto; /* Centrado */
@@ -262,11 +260,10 @@ audio::-webkit-media-controls { position: relative; z-index: 1055; }
     text-shadow: none !important;
 }
 
-/* --- NUEVO DISCO DE VINILO 100% CSS (CORREGIDO SIN AGUJERO BLANCO) --- */
+/* --- DISCO DE VINILO 100% CSS --- */
 .vinyl-record-css {
     width: 220px; height: 220px;
     border-radius: 50%;
-    /* Crea el efecto de surcos del disco */
     background: repeating-radial-gradient(
       #111 0, 
       #111 2px, 
@@ -282,7 +279,6 @@ audio::-webkit-media-controls { position: relative; z-index: 1055; }
     border: 2px solid #000;
 }
 
-/* Brillo realista sobre el disco */
 .vinyl-record-css::before {
     content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
     border-radius: 50%;
@@ -292,7 +288,6 @@ audio::-webkit-media-controls { position: relative; z-index: 1055; }
 
 .vinyl-record-css:hover { transform: scale(1.05); }
 
-/* Etiqueta central del disco */
 .vinyl-label {
     width: 85px; height: 85px;
     background: radial-gradient(circle, #ff6b81 0%, #ff4757 100%);
@@ -305,9 +300,6 @@ audio::-webkit-media-controls { position: relative; z-index: 1055; }
     box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
 }
 
-/* ELIMINÉ EL CÍRCULO BLANCO DE AQUÍ COMO PEDISTE ANTES */
-
-/* Animación de giro */
 .vinyl-record-css.playing { animation: spin 3s linear infinite; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
@@ -315,112 +307,164 @@ audio::-webkit-media-controls { position: relative; z-index: 1055; }
 #momentModal .modal-dialog, 
 #finalSurpriseModal .modal-dialog, 
 #birthdayModal .modal-dialog { max-width: 90%; }
-
 #finalBookModal .modal-dialog { max-width: 95%; } 
-
 #bookModal .modal-dialog { max-width: 700px; }
+
+
+/* ⬇⬇⬇ AQUÍ ESTÁN LAS MEJORAS SOLICITADAS (CINE MODE + TEXT FRAME) ⬇⬇⬇ */
+
+/* --- NUEVO ESTILO DE VIDEO (Cine Mode) --- */
+/* --- ESTILO CINE (VIDEO E IMÁGENES) --- */
+.video-cine-box {
+    width: 100%;
+    max-width: 700px; /* Un poco más ancho para recuerdos */
+    height: 55vh;     /* Altura fija elegante (mitad de pantalla aprox) */
+    background: #000; /* Fondo negro cine */
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    margin: 0 auto 25px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Corta lo que sobre */
+}
+
+/* ESTO ES LO IMPORTANTE: APLICA A VIDEO E IMG */
+.video-cine-box video, 
+.video-cine-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* La magia: ajusta la imagen sin recortarla ni deformarla */
+}
+
+/* --- NUEVO MARCO PARA EL TEXTO (Carta Oscura) --- */
+.text-frame-neon {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 107, 129, 0.4); /* Borde rojizo sutil */
+    border-radius: 15px;
+    padding: 30px;
+    position: relative;
+    margin: 0 auto;
+    max-width: 800px;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+    transition: all 0.3s ease;
+}
+.text-frame-neon:hover {
+    border-color: rgba(255, 107, 129, 0.8);
+    box-shadow: 0 0 20px rgba(255, 107, 129, 0.2), inset 0 0 30px rgba(0,0,0,0.5);
+}
+.text-frame-neon::before {
+    content: '❤';
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #212529; /* Fondo igual al del modal oscuro */
+    padding: 0 15px;
+    color: #ff4757;
+    font-size: 1.5rem;
+}
+
+/* ⬆⬆⬆ FIN DE LAS MEJORAS ⬆⬆⬆ */
+
 
 /* --- AJUSTES RESPONSIVOS PARA CELULAR (MEDIA QUERIES) --- */
 @media (max-width: 768px) {
-    /* 0. Eliminar scroll horizontal general */
     body {
-        overflow-x: hidden; /* Aseguramos que no haya scroll horizontal en el cuerpo */
-        padding-bottom: 70px; /* Espacio para los botones flotantes */
+        overflow-x: hidden; 
+        padding-bottom: 70px; 
     }
 
-    /* 1. Títulos más pequeños para que no se corten */
-    h1.display-1 { font-size: 2.5rem !important; margin-bottom: 0.5rem !important; } /* Título principal */
-    h2.display-5 { font-size: 1.8rem !important; } /* "Ábrela cuando..." y "Nuestra Historia" */
-    .display-3 { font-size: 1.8rem !important; } /* Títulos dentro de modales grandes */
-    .rainbow-text { font-size: 2.5rem !important; } /* Título de feliz cumpleaños */
+    h1.display-1 { font-size: 2.5rem !important; margin-bottom: 0.5rem !important; } 
+    h2.display-5 { font-size: 1.8rem !important; } 
+    .display-3 { font-size: 1.8rem !important; } 
+    .rainbow-text { font-size: 2.5rem !important; } 
 
-    /* 2. Ajustar el contenedor del temporizador para que no se salga */
     .love-timer-container {
-        padding: 15px 10px; /* Reducir padding */
+        padding: 15px 10px; 
         border-radius: 15px;
-        overflow-x: auto; /* Permitir scroll si es muy estrecho, aunque no debería ser necesario */
-        white-space: nowrap; /* Mantener los elementos en una línea si el scroll es horizontal */
-        display: block; /* Para que ocupe todo el ancho disponible */
-        width: fit-content; /* Ocupa el ancho necesario */
-        margin-left: auto; /* Centrar */
-        margin-right: auto; /* Centrar */
-        max-width: 95%; /* Asegurar que no se salga de la pantalla */
+        overflow-x: auto; 
+        white-space: nowrap; 
+        display: block; 
+        width: fit-content; 
+        margin-left: auto; 
+        margin-right: auto; 
+        max-width: 95%; 
     }
-    .timer-box {
-        padding: 0 10px; /* Espacio entre los números */
-        border-right: 1px solid rgba(0,0,0,0.05); /* Separador más tenue */
-    }
+    .timer-box { padding: 0 10px; border-right: 1px solid rgba(0,0,0,0.05); }
     .timer-box:last-child { border-right: none; }
     .timer-number { font-size: 1.8rem; }
     .timer-label { font-size: 0.6rem; }
 
-    /* 3. Botones de inicio: uno debajo del otro y mejor margen */
     .d-flex.gap-3 {
-        flex-direction: column; /* Apilar botones */
-        gap: 10px !important; /* Espacio entre ellos */
-        padding: 0 15px; /* Margen a los lados */
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px !important;
+        padding: 0 5px;
     }
     .d-flex.gap-3 button {
-        width: 100% !important; /* Que ocupen todo el ancho */
-        max-width: 300px; /* Limitar un poco para que no sean ridículamente anchos */
-        margin-left: auto !important; /* Centrar */
-        margin-right: auto !important; /* Centrar */
+        width: 100% !important;
+        margin: 0 !important;
+        font-size: 0.9rem !important;
+        padding: 15px 5px !important;
+        border-radius: 15px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+    #installBtn {
+        grid-column: span 2; 
+        background: linear-gradient(45deg, #2ecc71, #27ae60) !important;
+        font-weight: bold;
+        box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
     }
 
-    /* 4. Timeline (slider) */
     .timeline-card { padding: 20px; border-radius: 15px; margin: 0 15px; }
     .timeline-range { height: 12px; }
     .timeline-range::-webkit-slider-thumb { width: 30px; height: 30px; border: 3px solid white; }
     .goal-text { font-size: 1rem; min-height: 60px; padding: 0 5px; }
 
-    /* 5. Cartas "Ábrela cuando..." */
-    .col-md-3.col-6 { padding: 5px; } /* Menos padding para que quepan */
+    .col-md-3.col-6 { padding: 5px; } 
     .letter-card { padding: 15px; border-radius: 12px; }
     .letter-icon { font-size: 2rem; }
     .letter-card h5 { font-size: 1rem; }
     .letter-card small { font-size: 0.7rem; }
 
-    /* 6. Tarjetas de momentos */
     .glass-card { border-radius: 15px; margin: 0 5px; }
     .media-thumbnail-container { border-radius: 15px 15px 0 0; }
     .card-footer-custom { padding: 1rem; }
     .card-actions { top: 5px; right: 5px; gap: 5px; }
     .action-btn { width: 30px; height: 30px; font-size: 0.9rem; }
 
-    /* 7. Modal de detalle del momento (para que el video e imagen se ajusten) */
-    #momentModal .modal-dialog { max-width: 95vw !important; margin: auto; } /* Más ancho */
+    #momentModal .modal-dialog { max-width: 95vw !important; margin: auto; } 
     #momentModal .modal-body { padding: 15px; }
     
-    /* Ajuste RESPONSIVO DEL VIDEO WRAPPER EN CELULAR */
     .video-modal-wrapper { 
         width: 100% !important; 
         max-width: 100% !important; 
         margin: 10px auto;
-        border-width: 2px; /* Borde más delgado en cel */
+        border-width: 2px; 
     }
-    
     .modal-media-content { 
         width: 100% !important; 
         height: auto !important; 
-        max-height: 40vh; /* Que no ocupe demasiado la pantalla */
-        object-fit: contain; /* Para que la imagen/video se vea completa sin cortarse */
+        max-height: 40vh; 
+        object-fit: contain; 
         border-radius: 10px;
     }
     .story-paper { padding: 1.2rem; border-width: 2px; border-radius: 8px; }
-    
-    /* Ajuste del texto en celular */
     .story-text { font-size: 1rem; line-height: 1.6; padding: 15px; }
     
     .quote-icon { font-size: 3rem; }
     .quote-start { top: 5px; left: 10px; }
     .quote-end { bottom: -15px; right: 10px; }
 
-
-    /* 8. Arreglar el Libro (Texto y tamaño) */
     #bookModal .modal-dialog { margin: 10px; max-width: 95%; }
     .book-modal-content { min-height: 400px; border-left-width: 8px; border-radius: 5px 10px 10px 5px; }
     .book-text { 
-        font-size: 1.1rem; /* Letra más chica para que quepa la frase */
+        font-size: 1.1rem; 
         padding: 20px; 
         line-height: 1.5;
     }
@@ -428,97 +472,53 @@ audio::-webkit-media-controls { position: relative; z-index: 1055; }
     .bookmark { width: 25px; height: 50px; right: 40px; }
     .book-nav-btn { padding: 8px 15px; font-size: 0.9rem; }
 
-
-    /* 9. Ajustar el Disco de Vinilo (Más chico en cel) */
-    .vinyl-record-css { width: 150px; height: 150px; margin: 15px auto; }
+    .vinyl-record-css { width: 130px !important; height: 130px !important; }
     .vinyl-label { width: 60px; height: 60px; font-size: 1.2rem; }
 
-    /* 10. Ajustar video sorpresa final (el de los gatitos, y el de "xim.mp4") */
     #finalSurpriseModal .modal-dialog, 
     #finalBookModal .modal-dialog { 
         max-width: 95vw !important; 
         margin: auto;
-        align-items: center; /* Centrar verticalmente */
+        align-items: center; 
         padding-top: 20px;
         padding-bottom: 20px;
     }
     #finalSurpriseModal .modal-content, 
     #finalBookModal .modal-content { 
         padding: 20px !important; 
-        height: auto; /* Ajustar a su contenido */
-        max-height: 90vh; /* Que no se pase de la altura de la pantalla */
-        overflow-y: auto; /* Permitir scroll si el contenido es muy largo */
+        height: auto; 
+        max-height: 90vh; 
+        overflow-y: auto; 
     }
     .video-container-fix { max-width: 90% !important; margin-left: auto; margin-right: auto; }
-    .final-surprise-img { max-width: 90%; transform: rotate(0deg); border-width: 4px; } /* Ajustar imagen de gatitos */
+    .final-surprise-img { max-width: 90%; transform: rotate(0deg); border-width: 4px; } 
     
-    /* 11. Modal de trivia */
     .trivia-option { padding: 12px; font-size: 0.95rem; }
     .win-card { padding: 20px; border-radius: 15px; }
     .win-text { font-size: 2rem; }
     .gift-img { width: 70px; height: 70px; border-width: 1px; }
 
-    /* 12. Botones flotantes (música, scroll, añadir) */
     .music-player { bottom: 15px; left: 15px; width: 50px; height: 50px; }
-    .btn-scroll-top { bottom: 15px; width: 40px; height: 40px; font-size: 1rem; margin-left: 30px; }
     .btn-add { bottom: 15px; right: 15px; width: 50px; height: 50px; font-size: 25px; }
 
-    /* 13. Modal de cumpleaños */
-    .birthday-card { padding: 25px; border-radius: 20px; border-width: 3px; }
-    
-    /* 14. Ajustes generales de padding y márgenes */
+    .birthday-card { 
+        background: linear-gradient(135deg, #fff5f5 0%, #ffe0e6 100%);
+        padding: 20px !important;
+        border: 3px solid #ff6b81;
+    }
+
     .container { padding-left: 10px; padding-right: 10px; }
     .py-5 { padding-top: 30px !important; padding-bottom: 30px !important; }
     .mb-5 { margin-bottom: 25px !important; }
     .mb-4 { margin-bottom: 20px !important; }
     .mb-3 { margin-bottom: 15px !important; }
-}
 
-/* --- AJUSTES PARA CELULAR (Diseño Estético) --- */
-@media (max-width: 768px) {
-
-    /* 1. CONTENEDOR PRINCIPAL */
-    .container { padding-left: 20px; padding-right: 20px; }
-    h1.display-1 { font-size: 3rem !important; margin-bottom: 5px !important; }
-    p.ls-2 { font-size: 0.75rem !important; letter-spacing: 2px !important; margin-bottom: 25px !important; }
-
-    /* 2. MENÚ DE BOTONES (MODO GRID 2x2) */
-    /* Esto hace que se vean 2 botones por fila en lugar de una lista larga */
-    .d-flex.gap-3 {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
-        gap: 12px !important;
-        padding: 0 5px;
-    }
-
-    .d-flex.gap-3 button {
-        width: 100% !important;
-        margin: 0 !important;
-        font-size: 0.9rem !important;
-        padding: 15px 5px !important; /* Botones más altitos y tocables */
-        border-radius: 15px !important; /* Más redondeados */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-    }
-
-    /* El botón de INSTALAR APP ocupará todo el ancho abajo */
-    #installBtn {
-        grid-column: span 2; /* Ocupa las 2 columnas */
-        background: linear-gradient(45deg, #2ecc71, #27ae60) !important;
-        font-weight: bold;
-        box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
-    }
-
-    /* 3. FLECHA DE SUBIR (CENTRADA Y CRISTAL) */
     .btn-scroll-top {
         left: 50% !important;
-        transform: translateX(-50%) !important; /* Esto asegura el centro perfecto */
-        bottom: 90px !important; /* Arriba de los botones de música/agregar */
-        margin-left: 0 !important; /* QUITA EL ERROR QUE LA DESVIABA */
+        transform: translateX(-50%) !important; 
+        bottom: 90px !important; 
+        margin-left: 0 !important; 
         
-        /* Estilo Glassmorphism */
         background: rgba(255, 255, 255, 0.8) !important;
         backdrop-filter: blur(4px);
         border: 1px solid white !important;
@@ -529,28 +529,12 @@ audio::-webkit-media-controls { position: relative; z-index: 1055; }
         font-size: 1.2rem !important;
     }
 
-    /* 4. AJUSTES EXTRAS DE ESTÉTICA MÓVIL */
-    
-    /* Reloj más compacto */
-    .love-timer-container {
-        padding: 10px !important;
-        margin-top: 25px !important;
-        border-radius: 15px;
-        background: rgba(255,255,255,0.3);
+    /* AJUSTES MÓVILES PARA LAS NUEVAS MEJORAS */
+    .video-cine-box {
+        height: 40vh; /* Un poco más pequeño en móvil */
+        max-width: 100%;
     }
-    .timer-number { font-size: 1.5rem !important; }
-    .timer-label { font-size: 0.6rem !important; }
-
-    /* Tarjeta de Cumpleaños Bonita (La que hicimos antes) */
-    #birthdayModal .modal-dialog {
-        max-width: 90vw !important;
-        margin: 1.75rem auto;
+    .text-frame-neon {
+        padding: 20px; /* Menos padding en móvil */
     }
-    .birthday-card {
-        background: linear-gradient(135deg, #fff5f5 0%, #ffe0e6 100%);
-        padding: 20px !important;
-        border: 3px solid #ff6b81;
-    }
-    .rainbow-text { font-size: 2rem !important; }
-    .vinyl-record-css { width: 130px !important; height: 130px !important; }
 }
