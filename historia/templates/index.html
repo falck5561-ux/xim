@@ -339,7 +339,7 @@
                     </div>
                     <div class="text-frame-neon">
                         <div style="text-align: justify; color: #ddd; line-height: 1.8; font-size: 1.1rem;">
-                            <p>Se que no siempre te lo digo pero de verdad admiro mucho como enfrentas todo aunque las cosas sean dificiles nunca pierdes la sonrisa y eso me inspira más de lo que crees tienes una manera única de ver la vida incluso cuando parece que todo se desmorona tu sigues ahí firme intentando sacar lo mejor de cada momento a veces te veo cansada pero aún así das lo mejor de ti sin quejarte sin rendirte y eso dice mucho de las persona que eres siempre estas ahí para los demás escuchando ayudando ofreciendo una palabra un abrazo o simplemente tu presencia que a veces vale más que cualquier consejo es raro encontrar a alguien con un corazón tan GRANDE tan lleno de bondad y paciencia y tu lo tienes gracias por estar en mi vida por quedarte cuando otros se fueron por preocuparte incluso cuando nadie te lo pide no se si te lo eh dicho antes pero lo valoro más de lo que puedo expresar con palabras y ojalá pudieras ver lo importante que eres para mi y si alguna vez te preguntas si haces una diferencia en la vida de las personas la respuesta es si claro que la haces tu forma de ser deja huellas pequeñas o grandes pero todas llenas de cariño a veces el mundo no te lo reconoce pero créeme hay personas que piensan en ti con gratitud todos lo dias in causó en silencio en mi vida tu haces la diferencia enorme me enseñas me inspira y me das paz...</p>
+                            <p>Sé que no siempre lo digo, pero admiro cómo enfrentas la vida con una sonrisa incluso en los momentos difíciles. Tu fuerza, tu bondad y tu manera única de ver el mundo me inspiran cada día. Gracias por estar, por quedarte, por dar lo mejor de ti sin rendirte. Eres alguien especial, con un corazón enorme que deja huellas llenas de cariño. En mi vida haces una diferencia inmensa: me enseñas, me inspiras y me das paz.</p>
                             <p class="text-center mb-0 mt-3 text-white"><strong>TE QUIERO Y QUIERO QUE NUNCA LO OLVIDES... 🌹</strong></p>
                         </div>
                     </div>
@@ -360,7 +360,7 @@
                     </div>
                     <div class="text-frame-neon">
                         <div style="text-align: justify; color: #ddd; line-height: 1.8; font-size: 1.1rem;">
-                            <p>No puedo bajarte la luna, pero puedo acompañarte cada vez que quieras de disfrutar de su belleza, no puedo evitar tus malos momentos o tristezas, pero puedo estar contigo siempre para ayudarte a afrontarlas, tal vez no pueda darte lo mejor del mundo, pero si puedo darte lo mejor de mi...</p>
+                            <p>No te puedo bajar la luna, pero puedo acompañarte cada vez que quieras disfrutar de su belleza. No puedo evitar tus malos momentos o tristezas, pero puedo estar contigo siempre para ayudarte a afrontarlas. Tal vez no pueda darte lo mejor del mundo, pero sí lo mejor de mí.</p>
                             <p class="text-center mb-0 mt-3 text-white" style="text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);">
                                 <strong>QUIERO QUE SEPAS QUE ERES MI VIDA Y MI MAYOR ALEGRÍA. TE AMO. ❤️</strong>
                             </p>
@@ -666,7 +666,9 @@
 
                 div.innerHTML = `
                     <div class="d-flex align-items-center text-truncate" style="max-width: 70%;">
-                        <i class="bi bi-music-note-beamed me-3 ${bgMusic.src.includes(song.archivo) ? 'text-danger' : 'text-secondary'}"></i>
+                        <div class="song-item-cover">
+                            ${isActive ? '<i class="bi bi-play-fill text-white fs-4"></i>' : '<i class="bi bi-music-note-beamed"></i>'}
+                        </div>
                         <strong class="text-truncate">${song.titulo}</strong>
                     </div>
                     ${actionsHtml}
@@ -717,7 +719,6 @@
             });
         }
 
-        // 3. EVENT LISTENERS Y OTROS
         if(shuffleCheckbox) shuffleCheckbox.addEventListener('change', (e) => { isShuffle = e.target.checked; });
         
         bgMusic.addEventListener('ended', () => {
@@ -745,7 +746,6 @@
         window.onscroll = function() { if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) { scrollBtn.classList.add('visible'); } else { scrollBtn.classList.remove('visible'); } };
         function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
-        // --- RELOJ ---
         const startDate = new Date(2020, 11, 31, 21, 0, 0); 
         setInterval(() => {
             const now = new Date(); const diff = now - startDate;
@@ -756,6 +756,7 @@
             document.getElementById('seconds').innerText = Math.floor((diff % (1000 * 60)) / 1000);
         }, 1000);
 
+        // --- LÓGICA CORREGIDA PARA VIDEO TIMELINE ---
         function updateTimeline() {
             const val = document.getElementById('timelineRange').value;
             const display = document.getElementById('goalDisplay');
@@ -764,8 +765,42 @@
             else if(val < 70) display.innerText = "La universidad nos reta, pero también nos regala la oportunidad de construir sueños lado a lado. Cada desvelo, cada logro, cada paso nos acerca más a la vida que imaginamos 🚀📚❤️";
             else if(val < 99) display.innerText = "Nuestro futuro no es solo una boda, es la promesa de despertar juntos cada día, de llenar nuestra casa de risas, de amor y de recuerdos que aún nos esperan 💍🏠💫";
             else {
+                // FINAL (100%) - CORRECCIÓN
                 display.innerText = "Más allá de todo lo que hemos vivido y lo que vendrá, lo único que sé con certeza es que contigo quiero escribir cada capítulo de mi vida ❤️📖✨";
-                Swal.fire({ title: '<span class="romantic-font text-danger">¡Eternidad!</span>', html: `<p class="lead text-muted" style="font-family:'Playfair Display'; font-style:italic;">Más allá de todo lo que hemos vivido y lo que vendrá, lo único que sé con certeza es que contigo quiero escribir cada capítulo de mi vida ❤️📖✨</p><div class="ratio ratio-16x9 mt-2 mb-3 shadow rounded overflow-hidden"><video autoplay loop muted playsinline style="object-fit: cover; width: 100%; height: 100%;"><source src="/media/beso.mp4" type="video/mp4"></video></div><button class="btn btn-danger rounded-pill px-4 mt-2" onclick="Swal.close()">Te Amo</button>`, showConfirmButton: false, background: '#fffcf5', backdrop: `rgba(255,215,0,0.2)`, padding: '2em' });
+                
+                // Pausar música de fondo
+                if(!bgMusic.paused){
+                    bgMusic.pause();
+                    musicPlayerBtn.classList.remove('playing');
+                }
+
+                Swal.fire({ 
+                    title: '<span class="romantic-font text-danger">¡Eternidad!</span>', 
+                    html: `
+                        <p class="lead text-muted" style="font-family:'Playfair Display'; font-style:italic;">
+                            Más allá de todo lo que hemos vivido y lo que vendrá, lo único que sé con certeza es que contigo quiero escribir cada capítulo de mi vida ❤️📖✨
+                        </p>
+                        
+                        <div class="video-cine-box mb-3" style="height: auto; max-height: 60vh;">
+                            <video id="timelineVideo" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain;">
+                                <source src="/media/beso.mp4" type="video/mp4">
+                                Tu navegador no soporta videos.
+                            </video>
+                        </div>
+
+                        <button class="btn btn-danger rounded-pill px-4 mt-2" onclick="Swal.close()">Te Amo</button>
+                    `, 
+                    showConfirmButton: false, 
+                    background: '#fffcf5', 
+                    backdrop: `rgba(255,215,0,0.2)`, 
+                    padding: '2em',
+                    width: '800px',
+                    willClose: () => {
+                        const v = document.getElementById('timelineVideo');
+                        if(v) v.pause();
+                    }
+                });
+                
                 lanzarConfetiSuave();
             }
         }
