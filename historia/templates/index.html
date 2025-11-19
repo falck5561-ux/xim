@@ -78,7 +78,13 @@
                     data-foto="{% if momento.foto %}{{ momento.foto.url }}{% endif %}">
                     <div class="card-actions">
                         <button class="action-btn" onclick="prepararEdicion(this)" title="Editar"><i class="bi bi-pencil-fill"></i></button>
-                        <a href="#" class="action-btn btn-delete" onclick="confirmarBorrado(event, '{% url 'eliminar' momento.id %}')" title="Borrar"><i class="bi bi-trash-fill text-danger"></i></a>
+                        <a href="{% url 'eliminar' momento.id %}" 
+                        class="action-btn btn-delete" 
+                        onclick="confirmarBorrado(event, this.href)" 
+                        title="Borrar">
+                        <i class="bi bi-trash-fill text-danger"></i>
+                        </a>
+
                     </div>
                     <div onclick="prepararDetalle(this)">
                         <div class="media-thumbnail-container">
