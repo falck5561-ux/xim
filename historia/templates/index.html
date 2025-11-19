@@ -89,7 +89,7 @@
                     <div onclick="prepararDetalle(this)">
                         <div class="media-thumbnail-container">
                             {% if momento.video %}
-                                <video muted preload="metadata"><source src="{{ momento.video.url }}" type="video/mp4"></video>
+                                <video muted loop preload="metadata"><source src="{{ momento.video.url }}" type="video/mp4"></video>
                                 <div class="position-absolute top-0 end-0 m-2"><span class="badge bg-dark bg-opacity-75">Video</span></div>
                             {% elif momento.foto %}
                                 <img src="{{ momento.foto.url }}">
@@ -245,7 +245,7 @@
                     <h1 class="romantic-font text-info display-3 mb-2">Nunca podría dejarte mi niña hermosa</h1>
                     <p class="text-muted fst-italic mb-4">La razón #201 es imposible, pero mira esto:</p>
                     <div class="video-container-fix mb-4">
-                        <video id="bookFinalVideo" controls><source src="/media/xim.mp4" type="video/mp4"></video>
+                        <video id="bookFinalVideo" controls loop playsinline><source src="/media/xim.mp4" type="video/mp4"></video>
                     </div>
                     <div class="mx-auto" style="max-width: 90%; text-align: justify; color: #ddd; line-height: 1.6;">
                         <p>Sé que no siempre lo digo, pero admiro cómo enfrentas la vida con una sonrisa incluso en los momentos difíciles. Tu fuerza, tu bondad y tu manera única de ver el mundo me inspiran cada día. Gracias por estar, por quedarte, por dar lo mejor de ti sin rendirte. Eres alguien especial, con un corazón enorme que deja huellas llenas de cariño. En mi vida haces una diferencia inmensa: me enseñas, me inspiras y me das paz. <strong>TE QUIERO Y QUIERO QUE NUNCA LO OLVIDES...</strong></p>
@@ -263,7 +263,7 @@
                     <h1 class="romantic-font text-danger display-3 mb-2">Simplemente Contigo Mi Niña</h1>
                     <p class="text-muted fst-italic mb-4">Un recordatorio de lo mucho que te amo:</p>
                     <div class="video-container-fix mb-4">
-                        <video id="finalVideo" controls><source src="/media/lindo.mp4" type="video/mp4"></video>
+                        <video id="finalVideo" controls loop playsinline><source src="/media/lindo.mp4" type="video/mp4"></video>
                     </div>
                     <div class="mx-auto" style="max-width: 90%; text-align: justify; color: #ddd; line-height: 1.6;">
                         <p>No te puedo bajar la luna, pero puedo acompañarte cada vez que quieras disfrutar de su belleza. No puedo evitar tus malos momentos o tristezas, pero puedo estar contigo siempre para ayudarte a afrontarlas. Tal vez no pueda darte lo mejor del mundo, pero sí lo mejor de mí.</p>
@@ -479,6 +479,7 @@
         });
 
         // 2. Para el Modal de Momentos (Dinámico)
+        // --- AQUÍ ESTÁ LA MAGIA DE TU MEJORA ---
         function abrirDetalle(titulo, fecha, descripcion, videoUrl, fotoUrl) {
             document.getElementById('detTitle').innerText = titulo; 
             document.getElementById('detDate').innerText = fecha; 
@@ -487,12 +488,22 @@
             media.innerHTML = '';
             
             if(videoUrl) { 
+                // 1. CREAR EL CONTENEDOR (WRAPPER) PARA EL MARCO
+                const wrapper = document.createElement('div');
+                wrapper.classList.add('video-modal-wrapper'); // Clase nueva del CSS
+
+                // 2. CREAR EL VIDEO
                 const v = document.createElement('video'); 
                 v.src = videoUrl; 
                 v.controls = true; 
                 v.autoplay = true; 
-                v.classList.add('modal-media-content', 'rounded', 'shadow'); 
-                media.appendChild(v); 
+                v.loop = true; // <-- BUCLE ACTIVADO
+                v.playsInline = true; // <-- IMPORTANTE PARA IPHONE
+                
+                // 3. METER EL VIDEO EN EL WRAPPER
+                wrapper.appendChild(v);
+                media.appendChild(wrapper); 
+
                 v.oncanplay = () => v.play(); 
 
                 // PAUSAR MÚSICA SI HAY VIDEO
