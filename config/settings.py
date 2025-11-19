@@ -102,7 +102,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'es-mx'
 
-# CORRECCIÓN 3: Borré el duplicado. Dejamos la hora de México.
+# CORRECCIÓN 3: Hora de México.
 TIME_ZONE = 'America/Mexico_City' 
 
 USE_I18N = True
@@ -125,5 +125,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# --- CONFIGURACIÓN DE ARCHIVOS MULTIMEDIA (FOTOS, VIDEOS Y MÚSICA) ---
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
