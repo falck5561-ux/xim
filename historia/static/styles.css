@@ -422,3 +422,98 @@
         .mb-4 { margin-bottom: 20px !important; }
         .mb-3 { margin-bottom: 15px !important; }
     }
+
+
+    @media (max-width: 768px) {
+
+    /* 1. AJUSTE DEL FONDO Y TEXTOS GENERALES */
+    .container { padding-left: 15px; padding-right: 15px; }
+    h1.display-1 { font-size: 2.8rem !important; margin-bottom: 10px !important; }
+    p.ls-2 { font-size: 0.8rem !important; letter-spacing: 1px !important; }
+
+    /* 2. BOTONES DEL MENÚ (Más estéticos y ordenados) */
+    .d-flex.gap-3 {
+        flex-direction: column;
+        gap: 12px !important;
+        padding: 0 10px;
+    }
+    .d-flex.gap-3 button {
+        width: 100%;
+        font-size: 1.1rem;
+        padding: 12px !important;
+        border-width: 2px;
+    }
+
+    /* 3. TARJETA DE CUMPLEAÑOS (DISEÑO PREMIUM MÓVIL) */
+    #birthdayModal .modal-dialog {
+        max-width: 90vw !important;
+        margin: 1.75rem auto;
+        display: flex;
+        align-items: center;
+        min-height: calc(100% - 3.5rem);
+    }
+
+    #birthdayModal .modal-content {
+        background: transparent !important; /* Quitamos el fondo blanco feo del modal */
+        box-shadow: none !important;
+        border: none !important;
+    }
+
+    .birthday-card {
+        background: linear-gradient(135deg, #fff5f5 0%, #ffe0e6 100%); /* Fondo rosita suave */
+        padding: 20px !important;
+        border-radius: 25px;
+        border: 4px solid #ff6b81;
+        box-shadow: 0 15px 40px rgba(255, 71, 87, 0.3) !important;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Texto de "Feliz Cumpleaños" legible */
+    .rainbow-text {
+        font-size: 2.2rem !important;
+        line-height: 1.1;
+        margin-bottom: 15px !important;
+        /* Usamos un degradado más fuerte para que se lea sobre blanco/rosa */
+        background: linear-gradient(90deg, #ff4757, #ff6b81, #d63031);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+    }
+
+    /* Emojis de arriba */
+    .birthday-card .display-1 {
+        font-size: 3rem !important;
+        margin-bottom: 10px !important;
+    }
+
+    /* Texto descriptivo */
+    .birthday-card .lead {
+        font-size: 0.95rem !important;
+        color: #555 !important; /* Gris oscuro para que se lea bien */
+        font-weight: 500;
+    }
+
+    /* Disco de vinilo */
+    .vinyl-record-css {
+        width: 130px !important;
+        height: 130px !important;
+        margin: 20px auto !important;
+        border-width: 2px;
+        background-color: #111; /* Asegurar que se vea negro */
+    }
+    
+    .vinyl-label {
+        width: 45px !important;
+        height: 45px !important;
+        font-size: 1.2rem !important;
+    }
+    
+    /* Instrucciones de abajo */
+    .birthday-card small {
+        color: #888 !important;
+        font-size: 0.75rem !important;
+        margin-top: 15px;
+    }
+}

@@ -5,23 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Josue & Ximena ❤️</title>
+    
     <link rel="stylesheet" href="{% static 'styles.css' %}">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
 
     <link rel="manifest" href="/static/manifest.json">
     <meta name="theme-color" content="#ff6b81">
     <link rel="apple-touch-icon" href="/static/icon.png">
+    <meta name="mobile-web-app-capable" content="yes">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <audio id="bgMusic" loop><source src="/media/cancion.mp3" type="audio/mpeg"></audio>
     <audio id="birthdayAudio"><source src="/media/cumpleaños.mp3" type="audio/mpeg"></audio>
 
     <div class="music-player" onclick="toggleMusic()" title="Música de Fondo"><i class="bi bi-music-note-beamed text-white fs-4"></i></div>
-
     <button id="scrollTopBtn" class="btn-scroll-top" onclick="scrollToTop()"><i class="bi bi-arrow-up-short"></i></button>
 
     <div class="container text-center py-5">
@@ -76,7 +78,7 @@
                     data-foto="{% if momento.foto %}{{ momento.foto.url }}{% endif %}">
                     <div class="card-actions">
                         <button class="action-btn" onclick="prepararEdicion(this)" title="Editar"><i class="bi bi-pencil-fill"></i></button>
-                        <a href="{% url 'eliminar' momento.id %}" class="action-btn btn-delete" onclick="return confirm('¿Seguro que quieres borrar este recuerdo?')" title="Borrar"><i class="bi bi-trash-fill text-danger"></i></a>
+                        <a href="#" class="action-btn btn-delete" onclick="confirmarBorrado(event, '{% url 'eliminar' momento.id %}')" title="Borrar"><i class="bi bi-trash-fill text-danger"></i></a>
                     </div>
                     <div onclick="prepararDetalle(this)">
                         <div class="media-thumbnail-container">
@@ -109,6 +111,27 @@
     </div>
 
     <button class="btn-add" data-bs-toggle="modal" data-bs-target="#addModal" title="Agregar Recuerdo"><i class="bi bi-plus-lg"></i></button>
+
+    <div class="modal fade" id="birthdayModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background-color: transparent; border: none; box-shadow: none;"> 
+                <div class="modal-body text-center p-0">
+                    <div class="birthday-card">
+                        <div class="display-1 mb-3">🥳🎉🎁</div>
+                        <h2 class="rainbow-text mb-4">¡Feliz Cumpleaños Ximena!</h2>
+                        <p class="lead book-font">Que este día esté lleno de alegría, amor y todo lo que deseas. Eres la persona más maravillosa y mereces lo mejor.</p>
+                        <div class="mt-4">
+                            <div id="birthdayDiscPlayer" class="vinyl-record-css" onclick="toggleBirthdayAudio()">
+                                <div class="vinyl-label"><i class="bi bi-music-note-beamed"></i></div>
+                            </div>
+                        </div>
+                        <p class="mt-4 mb-2 book-font" style="color: #666;">¡Esta canción es para ti! Toca el disco para escucharla.</p>
+                        <small>Toca fuera de la tarjeta para cerrar.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade" id="momentModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down">
@@ -215,13 +238,9 @@
                 <div class="modal-body position-relative" style="z-index: 2;">
                     <h1 class="romantic-font text-info display-3 mb-2">Nunca podría dejarte mi niña hermosa</h1>
                     <p class="text-muted fst-italic mb-4">La razón #201 es imposible, pero mira esto:</p>
-                    
                     <div class="video-container-fix mb-4">
-                        <video id="bookFinalVideo" controls>
-                            <source src="/media/xim.mp4" type="video/mp4">
-                        </video>
+                        <video id="bookFinalVideo" controls><source src="/media/xim.mp4" type="video/mp4"></video>
                     </div>
-
                     <div class="mx-auto" style="max-width: 90%; text-align: justify; color: #ddd; line-height: 1.6;">
                         <p>Sé que no siempre lo digo, pero admiro cómo enfrentas la vida con una sonrisa incluso en los momentos difíciles. Tu fuerza, tu bondad y tu manera única de ver el mundo me inspiran cada día. Gracias por estar, por quedarte, por dar lo mejor de ti sin rendirte. Eres alguien especial, con un corazón enorme que deja huellas llenas de cariño. En mi vida haces una diferencia inmensa: me enseñas, me inspiras y me das paz. <strong>TE QUIERO Y QUIERO QUE NUNCA LO OLVIDES...</strong></p>
                     </div>
@@ -237,13 +256,9 @@
                 <div class="modal-body position-relative" style="z-index: 2;">
                     <h1 class="romantic-font text-danger display-3 mb-2">Simplemente Contigo Mi Niña</h1>
                     <p class="text-muted fst-italic mb-4">Un recordatorio de lo mucho que te amo:</p>
-                    
                     <div class="video-container-fix mb-4">
-                        <video id="finalVideo" controls>
-                            <source src="/media/lindo.mp4" type="video/mp4">
-                        </video>
+                        <video id="finalVideo" controls><source src="/media/lindo.mp4" type="video/mp4"></video>
                     </div>
-
                     <div class="mx-auto" style="max-width: 90%; text-align: justify; color: #ddd; line-height: 1.6;">
                         <p>No te puedo bajar la luna, pero puedo acompañarte cada vez que quieras disfrutar de su belleza. No puedo evitar tus malos momentos o tristezas, pero puedo estar contigo siempre para ayudarte a afrontarlas. Tal vez no pueda darte lo mejor del mundo, pero sí lo mejor de mí.</p>
                         <p><strong>QUIERO QUE SEPAS QUE ERES MI VIDA, MI RAZÓN DE SER Y MI MAYOR ALEGRÍA. TE AMO INCONDICIONALMENTE.</strong></p>
@@ -267,34 +282,6 @@
         </div>
     </div>
 
-    <div class="modal fade" id="birthdayModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down">
-            <div class="modal-content p-5 border-0 shadow-lg" style="border-radius: 25px;">
-                <div class="modal-header border-0 pb-0 position-relative">
-                    </div>
-                <div class="modal-body text-center pt-2">
-                    <div class="birthday-card">
-                        <div class="display-1 mb-3">🥳🎉🎁</div>
-                        <h2 class="rainbow-text mb-4">¡Feliz Cumpleaños Ximena!</h2>
-                        <p class="lead book-font text-muted">Que este día esté lleno de alegría, amor y todo lo que deseas. Eres la persona más maravillosa y mereces lo mejor.</p>
-                        
-                        <div class="mt-4">
-                            <div id="birthdayDiscPlayer" class="vinyl-record-css" onclick="toggleBirthdayAudio()">
-                                <div class="vinyl-label">
-                                    <i class="bi bi-music-note-beamed"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <p class="mt-4 mb-2 text-muted book-font">¡Esta canción te recuerda lo especial que eres hoy! Toca el disco para escucharla o pausarla.</p>
-                        <small class="d-block text-muted">Toca el fondo o presiona ESC para cerrar.</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -312,7 +299,7 @@
         function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
         // RELOJ
-        const start = new Date(2020, 11, 31, 21, 0, 0); // Mes 11 es Diciembre
+        const start = new Date(2020, 11, 31, 21, 0, 0); 
         setInterval(() => {
             const now = new Date(); const diff = now - start;
             document.getElementById('years').innerText = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
@@ -322,7 +309,7 @@
             document.getElementById('seconds').innerText = Math.floor((diff % (1000 * 60)) / 1000);
         }, 1000);
 
-        // TIMELINE Y CONFETI
+        // TIMELINE
         function lanzarConfetiSuave() { var end = Date.now() + 3000; (function frame() { confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, shapes: ['heart'], colors: ['#ff4757', '#ff6b81', '#ffffff'], gravity: 0.3, drift: 0, ticks: 200, scalar: 2 }); confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, shapes: ['heart'], colors: ['#ff4757', '#ff6b81', '#ffffff'], gravity: 0.3, drift: 0, ticks: 200, scalar: 2 }); if (Date.now() < end) requestAnimationFrame(frame); }()); }
 
         function updateTimeline() {
@@ -339,7 +326,7 @@
             }
         }
 
-        // CARTAS
+        // CARTAS Y LIBRO
         function leerCarta(tipo) {
             let t="", b="", i="";
             if(tipo==='hoy'){ t="¡Felices 20 Años Amor!"; b="Estos 5 años viéndote crecer han sido el mejor regalo. Cumplir 20 es solo el inicio de tu mejor época, y mi mayor orgullo es estar ahí, en primera fila, amándote en cada paso."; i="🎂"; }
@@ -349,8 +336,7 @@
             Swal.fire({ title: `<span class="romantic-font" style="font-size:2.5rem; color:#ff6b81">${t}</span>`, html: `<div style="font-family:'Playfair Display'; font-style:italic; font-size:1.1rem; line-height:1.6">${b}</div><div style="font-size:3rem; margin-top:15px;">${i}</div>`, confirmButtonText: 'Te amo', confirmButtonColor: '#ff6b81', background: '#fffdf9', width: 600, padding: '2.5em', backdrop: `rgba(255, 107, 129, 0.1)` });
         }
 
-        // LIBRO
-        const baseReasons = ["porque te quiero", "porque te amo", "porque te adoro", "porque te amo", "porque con saludarme me haces el dia", "porque eres mi cielo en la tierra", "porque te preocupas por mi", "porque entiendes como estoy sin decirte nada", "porque contigo soy yo mismo", "porque me conoces mas que nadie y aun asi sigues aqui",
+        const baseReasons = ["porque te quiero", "porque te amo", "porque te adoro", "porque amo tus cachetitos", "porque con saludarme me haces el dia", "porque eres mi cielo en la tierra", "porque te preocupas por mi", "porque entiendes como estoy sin decirte nada", "porque contigo soy yo mismo", "porque me conoces mas que nadie y aun asi sigues aqui",
 "porque no me imagino mi vida sin ti", "porque solo quiero un futuro a tu lado", "porque gracias a ti creo en un para siempre", "porque quiero compartir todo contigo", "porque quiero estar siempre contigo", "por ti haria hasta lo imposible", "por ti soy el mas feliz del mundo", "porque tu sonrisa me encanta", "porque tu mirada me hipnotiza", "porque tu alegria es lo que siempre deseo",
 "porque tu bienestar es lo mas importante para mi", "porque tu felicidad es mi mision", "porque me encantan tus besos", "porque iluminas mis dias aun mas que el sol", "porque eres la mayor bendicion", "porque te gusta verme feliz", "porque contigo siempre quiero intentar todo", "porque sonries con mis tonterias que hago o digo", "porque por ti soy valiente", "por ti tengo fuerza para enfrentar todo",
 "porque quiero darte todo", "porque me haces ser mejor de lo que soy", "porque cuando hablo de ti mi creen loco de amor", "porque contigo sueño a diario", "me haces sentir especial", "porque eres la razon de mi existir", "porque te veo siempre aunque no estes basta con cerrar los ojos y ahi estas", "por ti me aferro a la vida", "aunque por ti daria mi vida", "porque eres mi debilidad",
@@ -372,8 +358,6 @@
 "porque nunca nos quedamos sin tema de conversacion", "porque te voy a comer a besos cuando te vea", "porque me gusta apapacharte", "porque me encanta que te acurruques en mi", "porque me gusta cuando duermes a mi lado y te hago piojito", "porque cada dia te amo mas", "porque contigo ya no tengo vergüenza de nada", "por todos esos minutos hablando por telefono", "por todo lo que nos queda", "porque cada momento a tu lado es especial e inolvidable"
 ];
         let allPages = []; for(let i=0; i<baseReasons.length; i++) { allPages.push(`<strong>Razón #${i+1}:</strong><br>${baseReasons[i]}`); }
-        
-        // CAMBIO AQUI: Texto "Una razón para dejarte" y Botón Estético "btn-reveal"
         allPages.push("<strong>Razón #201:</strong><br>Una razón para dejarte...<br><button class='btn-reveal' onclick='verRazonFinalLibro()'>Ver Razón</button>");
         
         let currentPage = 0; 
@@ -390,23 +374,8 @@
             document.getElementById('bookContent').style.opacity = 0; 
             setTimeout(() => document.getElementById('bookContent').style.opacity = 1, 200); 
         }
-        
-        // FUNCIÓN RAZÓN #201 (usa xim.mp4)
-        function verRazonFinalLibro() { 
-            bookModal.hide(); 
-            finalBookModal.show(); 
-            const v = document.querySelector('#finalBookModal video');
-            if(v) { v.currentTime = 0; v.play(); }
-            lanzarConfetiSuave(); 
-        }
-
-        // FUNCIÓN SORPRESA FINAL (usa lindo.mp4)
-        function verSorpresaFinal() { 
-            surpriseModal.show(); 
-            const v = document.querySelector('#finalSurpriseModal video');
-            if(v) { v.currentTime = 0; v.play(); }
-            lanzarConfetiSuave(); 
-        }
+        function verRazonFinalLibro() { bookModal.hide(); finalBookModal.show(); const v = document.querySelector('#finalBookModal video'); if(v) { v.currentTime = 0; v.play(); } lanzarConfetiSuave(); }
+        function verSorpresaFinal() { surpriseModal.show(); const v = document.querySelector('#finalSurpriseModal video'); if(v) { v.currentTime = 0; v.play(); } lanzarConfetiSuave(); }
 
         // TRIVIA
         const questions = [{ q: "¿Dónde fue nuestro primer beso? 💋", opts: ["Escuela", "Parque", "Cine"], ans: 0 }, { q: "¿Cuánto me amas? 📈", opts: ["10", "100", "Infinito"], ans: 2 }, { q: "¿Qué me regalaste primero? 🎁", opts: ["Carta", "Lechuga 🥬", "Chocolate"], ans: 1 }];
@@ -415,24 +384,31 @@
         function showQ() { const q = questions[qIdx]; document.getElementById('triviaQuestion').innerText = q.q; const div = document.getElementById('triviaOptions'); div.innerHTML = ''; q.opts.forEach((o, i) => { const b = document.createElement('button'); b.className = 'trivia-option'; b.innerText = o; b.onclick = () => { if(i === q.ans) { b.style.background='#d4edda'; b.style.borderColor='#198754'; setTimeout(()=>{ qIdx++; if(qIdx < questions.length) showQ(); else showWin(); }, 500); } else { b.classList.add('shake'); setTimeout(()=>b.classList.remove('shake'), 500); } }; div.appendChild(b); }); }
         function showWin() { document.getElementById('question-container').style.display = 'none'; document.getElementById('win-container').style.display = 'block'; lanzarConfetiSuave(); }
 
-        // MÚSICA
+        // MÚSICA (Arreglado: Autoplay)
         const music = document.getElementById('bgMusic');
         const modalMusic = document.getElementById('modalAudio');
         const birthdayAudio = document.getElementById('birthdayAudio');
         const birthdayDiscPlayer = document.getElementById('birthdayDiscPlayer');
-
-        function toggleMusic() { if(music.paused) { music.play(); document.querySelector('.music-player').classList.add('playing'); } else { music.pause(); document.querySelector('.music-player').classList.remove('playing'); } }
-        function abrirModalMusica() { music.pause(); document.querySelector('.music-player').classList.remove('playing'); new bootstrap.Modal(document.getElementById('musicModal')).show(); }
-        document.getElementById('musicModal').addEventListener('hide.bs.modal', () => { modalMusic.pause(); modalMusic.currentTime = 0; });
-        
-        // CUMPLEAÑOS
         const birthdayModal = new bootstrap.Modal(document.getElementById('birthdayModal'));
 
+        function toggleMusic() { if(music.paused) { music.play(); document.querySelector('.music-player').classList.add('playing'); } else { music.pause(); document.querySelector('.music-player').classList.remove('playing'); } }
+        
+        function abrirModalMusica() { 
+            // 1. Pausar música de fondo
+            music.pause(); 
+            document.querySelector('.music-player').classList.remove('playing');
+            // 2. Mostrar modal
+            new bootstrap.Modal(document.getElementById('musicModal')).show();
+            // 3. Play a la canción nueva
+            modalMusic.currentTime = 0;
+            modalMusic.play();
+        }
+        
+        document.getElementById('musicModal').addEventListener('hide.bs.modal', () => { modalMusic.pause(); modalMusic.currentTime = 0; });
+        
         function toggleBirthdayAudio() {
             if (birthdayAudio.paused) {
-                birthdayAudio.play().catch(error => {
-                    console.error("Error al reproducir audio:", error);
-                });
+                birthdayAudio.play().catch(e => console.error(e));
                 birthdayDiscPlayer.classList.add('playing');
             } else {
                 birthdayAudio.pause();
@@ -441,120 +417,181 @@
         }
 
         function abrirCumpleanos() { 
-            // 1. Pausar música de fondo 
-            music.pause(); 
-            document.querySelector('.music-player').classList.remove('playing');
-            
-            // 2. Mostrar modal
+            music.pause(); document.querySelector('.music-player').classList.remove('playing');
             birthdayModal.show(); 
-            
-            // 3. Efectos de confeti
             lanzarConfetiCumple();
         }
 
-        // Función que se llama al cerrar el modal de cumpleaños
-        function detenerAudioCumple() {
-             // 1. Pausar y reiniciar el audio de cumpleaños
-             birthdayAudio.pause(); 
-             birthdayAudio.currentTime = 0;
-             // 2. Detener animación del disco
-             birthdayDiscPlayer.classList.remove('playing');
-        }
-
-        // EVENTO QUE SE DISPARA CUANDO EL MODAL DE CUMPLEAÑOS SE HA ABIERTO COMPLETAMENTE
+        // Cerrar audio al cerrar modal
+        document.getElementById('birthdayModal').addEventListener('hide.bs.modal', () => {
+             birthdayAudio.pause(); birthdayAudio.currentTime = 0; birthdayDiscPlayer.classList.remove('playing');
+        });
+        // Autoplay al abrir
         document.getElementById('birthdayModal').addEventListener('shown.bs.modal', () => {
-             // Detenemos el audio si por alguna razón ya estaba sonando
-             birthdayAudio.pause();
-             birthdayAudio.currentTime = 0;
-             // Intentamos reproducir el audio de cumpleaños (Inicio Automático)
-             birthdayAudio.play().then(() => {
-                 birthdayDiscPlayer.classList.add('playing');
-             }).catch(error => {
-                 console.log("Error al intentar reproducir audio automáticamente. El usuario debe presionar play.", error);
-                 birthdayDiscPlayer.classList.remove('playing');
-             });
+             birthdayAudio.pause(); birthdayAudio.currentTime = 0;
+             birthdayAudio.play().then(() => birthdayDiscPlayer.classList.add('playing')).catch(e => console.log("Audio req user interaction", e));
         });
 
-        // Evento que se dispara al cerrar el modal
-        document.getElementById('birthdayModal').addEventListener('hide.bs.modal', detenerAudioCumple);
-
         function lanzarConfetiCumple() {
-             var duration = 5 * 1000;
-             var animationEnd = Date.now() + duration;
-             var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
-
-             function randomInRange(min, max) { return Math.random() * (max - min) + min; }
-
+             var duration = 3000; var animationEnd = Date.now() + duration; var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
              var interval = setInterval(function() {
                  var timeLeft = animationEnd - Date.now();
-
-                 if (timeLeft <= 0) {
-                   return clearInterval(interval);
-                 }
-
+                 if (timeLeft <= 0) return clearInterval(interval);
                  var particleCount = 50 * (timeLeft / duration);
-                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#ff4757', '#ffb3d1', '#fff'] }));
-                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#ff4757', '#ffb3d1', '#fff'] }));
+                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random()*0.2 + 0.1, y: Math.random() - 0.2 }, colors: ['#ff4757', '#ffb3d1', '#fff'] }));
+                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random()*0.2 + 0.7, y: Math.random() - 0.2 }, colors: ['#ff4757', '#ffb3d1', '#fff'] }));
              }, 250);
         }
 
-        // DETALLE / EDITAR
+        // --- CONTROL INTELIGENTE DE AUDIO Y VIDEO ---
+        let isMusicPausedByVideo = false;
+
+        // 1. Para los Modales con Video Fijo (Sorpresa y Libro Final)
+        const videoModals = ['finalSurpriseModal', 'finalBookModal'];
+        videoModals.forEach(id => {
+            const el = document.getElementById(id);
+            el.addEventListener('show.bs.modal', () => {
+                // Si la música está sonando, la pausamos
+                if(!music.paused){
+                    music.pause();
+                    document.querySelector('.music-player').classList.remove('playing');
+                    isMusicPausedByVideo = true;
+                }
+            });
+            el.addEventListener('hide.bs.modal', () => {
+                // Detener el video del modal
+                const vid = el.querySelector('video');
+                if(vid) { vid.pause(); vid.currentTime = 0; }
+
+                // Si nosotros pausamos la música, la reanudamos
+                if(isMusicPausedByVideo){
+                    music.play();
+                    document.querySelector('.music-player').classList.add('playing');
+                    isMusicPausedByVideo = false;
+                }
+            });
+        });
+
+        // 2. Para el Modal de Momentos (Dinámico)
         function abrirDetalle(titulo, fecha, descripcion, videoUrl, fotoUrl) {
-            document.getElementById('detTitle').innerText = titulo; document.getElementById('detDate').innerText = fecha; document.getElementById('detDesc').innerText = descripcion;
-            const media = document.getElementById('detMedia'); media.innerHTML = '';
-            if(videoUrl) { const v = document.createElement('video'); v.src=videoUrl; v.controls=true; v.autoplay=true; v.classList.add('modal-media-content', 'rounded', 'shadow'); media.appendChild(v); v.oncanplay = () => v.play(); } 
-            else if(fotoUrl) { const i = document.createElement('img'); i.src=fotoUrl; i.classList.add('modal-media-content', 'rounded', 'shadow'); media.appendChild(i); }
+            document.getElementById('detTitle').innerText = titulo; 
+            document.getElementById('detDate').innerText = fecha; 
+            document.getElementById('detDesc').innerText = descripcion;
+            const media = document.getElementById('detMedia'); 
+            media.innerHTML = '';
+            
+            if(videoUrl) { 
+                const v = document.createElement('video'); 
+                v.src = videoUrl; 
+                v.controls = true; 
+                v.autoplay = true; 
+                v.classList.add('modal-media-content', 'rounded', 'shadow'); 
+                media.appendChild(v); 
+                v.oncanplay = () => v.play(); 
+
+                // PAUSAR MÚSICA SI HAY VIDEO
+                if(!music.paused){
+                    music.pause();
+                    document.querySelector('.music-player').classList.remove('playing');
+                    isMusicPausedByVideo = true;
+                }
+            } 
+            else if(fotoUrl) { 
+                const i = document.createElement('img'); 
+                i.src = fotoUrl; 
+                i.classList.add('modal-media-content', 'rounded', 'shadow'); 
+                media.appendChild(i); 
+            }
             new bootstrap.Modal(document.getElementById('momentModal')).show();
         }
-        document.getElementById('momentModal').addEventListener('hide.bs.modal', () => { const v = document.querySelector('#momentModal video'); if(v) { v.pause(); v.currentTime = 0; v.src = ""; v.load(); } });
 
-        // FIX: Detener video sorpresa al cerrar
-        document.getElementById('finalSurpriseModal').addEventListener('hide.bs.modal', () => { const v = document.querySelector('#finalSurpriseModal video'); if(v) { v.pause(); v.currentTime = 0; } });
-        document.getElementById('finalBookModal').addEventListener('hide.bs.modal', () => { const v = document.querySelector('#finalBookModal video'); if(v) { v.pause(); v.currentTime = 0; } });
+        // Restaurar música al cerrar modal de momentos
+        document.getElementById('momentModal').addEventListener('hide.bs.modal', () => { 
+            const v = document.querySelector('#momentModal video'); 
+            if(v) { v.pause(); v.currentTime = 0; v.src = ""; v.load(); } 
+            
+            if(isMusicPausedByVideo){
+                music.play();
+                document.querySelector('.music-player').classList.add('playing');
+                isMusicPausedByVideo = false;
+            }
+        });
 
-        function prepararEdicion(btn) {
-            const card = btn.closest('.glass-card');
-            document.getElementById('editForm').action = '/editar/' + card.dataset.id + '/'; 
-            document.getElementById('editTitle').value = card.dataset.titulo;
-            document.getElementById('editDate').value = card.dataset.fecha;
-            document.getElementById('editDesc').value = card.dataset.desc;
-            new bootstrap.Modal(document.getElementById('editModal')).show();
+        function prepararEdicion(btn) { const c = btn.closest('.glass-card'); document.getElementById('editForm').action = '/editar/' + c.dataset.id + '/'; document.getElementById('editTitle').value = c.dataset.titulo; document.getElementById('editDate').value = c.dataset.fecha; document.getElementById('editDesc').value = c.dataset.desc; new bootstrap.Modal(document.getElementById('editModal')).show(); }
+        function prepararDetalle(e) { const c = e.closest('.glass-card'); abrirDetalle(c.dataset.titulo, c.dataset.fecha, c.dataset.desc, c.dataset.video, c.dataset.foto); }
+
+        // --- FUNCIÓN PARA CONFIRMAR BORRADO ESTÉTICO ---
+        function confirmarBorrado(e, url) {
+            e.preventDefault();
+            Swal.fire({
+                title: '<span class="romantic-font" style="color:#ff4757; font-size: 2.5rem;">¿Borrar Recuerdo?</span>',
+                text: "No podrás recuperarlo, ¿estás seguro?",
+                icon: 'warning',
+                iconColor: '#ff9a9e',
+                showCancelButton: true,
+                confirmButtonColor: '#ff4757',
+                cancelButtonColor: '#fab1a0',
+                confirmButtonText: 'Sí, borrar',
+                cancelButtonText: 'Cancelar',
+                background: '#fff0f3',
+                backdrop: `rgba(0,0,0,0.4)`,
+                customClass: { popup: 'rounded-4 shadow-lg' }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
         }
-        function prepararDetalle(element) {
-             const card = element.closest('.glass-card');
-             abrirDetalle(card.dataset.titulo, card.dataset.fecha, card.dataset.desc, card.dataset.video, card.dataset.foto);
-        }
 
-        // --- LÓGICA PARA INSTALAR APP (PWA) ---
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/static/sw.js')
-            .then(() => console.log("Service Worker Registrado"));
-        }
-
+        // --- LÓGICA MEJORADA PARA INSTALAR APP ---
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/static/sw.js'); }
+        
         let deferredPrompt;
         const installBtn = document.getElementById('installBtn');
 
         window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevenir que Chrome muestre el aviso automático enseguida
             e.preventDefault();
-            // Guardar el evento para dispararlo cuando queramos
             deferredPrompt = e;
-            // Mostrar el botón (solo si es instalable)
-            installBtn.style.display = 'block';
+            installBtn.style.display = 'inline-block'; 
+            installBtn.classList.add('animate__animated', 'animate__pulse', 'animate__infinite');
+            
+            const Toast = Swal.mixin({
+                toast: true, position: 'top-end', showConfirmButton: false, timer: 5000, timerProgressBar: true,
+                didOpen: (toast) => { toast.addEventListener('mouseenter', Swal.stopTimer); toast.addEventListener('mouseleave', Swal.resumeTimer); }
+            });
+            Toast.fire({ icon: 'success', title: '¡App lista para instalar! 📲', text: 'Toca el botón verde', background: '#fff', color: '#ff4757' });
         });
 
-        installBtn.addEventListener('click', (e) => {
-            // Ocultar botón
-            installBtn.style.display = 'none';
-            // Mostrar el prompt de instalación real
-            deferredPrompt.prompt();
-            // Esperar a ver qué responde el usuario
-            deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-                console.log('Usuario aceptó instalar');
-            }
-            deferredPrompt = null;
+        installBtn.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            
+            const result = await Swal.fire({
+                title: '✨ Instalar App ✨',
+                text: '¿Quieres agregar nuestra historia a tu pantalla de inicio?',
+                icon: 'question',
+                iconColor: '#ff4757',
+                showCancelButton: true,
+                confirmButtonColor: '#ff4757',
+                cancelButtonColor: '#888',
+                confirmButtonText: 'Sí, Instalar ❤️',
+                cancelButtonText: 'Ahora no',
+                background: '#fff5f5',
+                backdrop: `rgba(255, 107, 129, 0.2)`
             });
+
+            if (result.isConfirmed) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                if(outcome === 'accepted'){
+                    installBtn.style.display = 'none';
+                    Swal.fire({ title: '¡Instalada!', text: 'Búscanos en tu inicio 📱', icon: 'success', confirmButtonColor: '#ff4757' });
+                }
+            }
+        });
+        
+        window.addEventListener('appinstalled', () => {
+            installBtn.style.display = 'none';
         });
     </script>
 </body>
