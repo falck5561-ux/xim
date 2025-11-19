@@ -7,6 +7,10 @@
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
 
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#ff6b81">
+    <link rel="apple-touch-icon" href="/static/icon.png">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -231,14 +235,14 @@
             font-size: 4rem; 
             background: linear-gradient(90deg, #ff9a9e, #fad0c4, #ffecd2, #fcb69f, #a18cd1, #fbc2eb);
             background-size: 200% auto;
-            -webkit-background-clip: text;
+            -webkit-background-clip: text; 
             background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: rainbow-text 4s linear infinite;
             text-shadow: none !important;
         }
 
-        /* --- NUEVO DISCO DE VINILO 100% CSS (SIN IMAGENES ROTAS) --- */
+        /* --- NUEVO DISCO DE VINILO 100% CSS (CORREGIDO SIN AGUJERO BLANCO) --- */
         .vinyl-record-css {
             width: 220px; height: 220px;
             border-radius: 50%;
@@ -281,12 +285,12 @@
             box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
         }
 
+        /* ELIMINÉ EL CÍRCULO BLANCO DE AQUÍ COMO PEDISTE ANTES */
+
         /* Animación de giro */
         .vinyl-record-css.playing { animation: spin 3s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* --- ELIMINADO: Botón de Play superpuesto --- */
-        
         /* AJUSTES PARA PANTALLA COMPLETA/GRANDE */
         #momentModal .modal-dialog, 
         #finalSurpriseModal .modal-dialog, 
@@ -315,6 +319,7 @@
             <button class="btn btn-outline-dark rounded-pill px-4 py-2 shadow-sm" onclick="iniciarJuego()">🎮 Trivia de Amor</button>
             <button class="btn btn-outline-info rounded-pill px-4 py-2 shadow-sm" onclick="abrirModalMusica()">🎶 Nuestra Canción</button>
             <button class="btn btn-warning rounded-pill px-4 py-2 shadow-sm" onclick="abrirCumpleanos()">🎂 ¡Feliz Cumpleaños!</button>
+            <button id="installBtn" class="btn btn-success rounded-pill px-4 py-2 shadow-sm" style="display: none;">📲 Instalar App</button>
         </div>
 
         <div class="love-timer-container mb-5" data-aos="zoom-in">
@@ -631,7 +636,7 @@
         }
 
         // LIBRO
-        const baseReasons = ["porque te quiero", "porque te amo", "porque te adoro", "porque me encantan tus piecitos", "porque con saludarme me haces el dia", "porque eres mi cielo en la tierra", "porque te preocupas por mi", "porque entiendes como estoy sin decirte nada", "porque contigo soy yo mismo", "porque me conoces mas que nadie y aun asi sigues aqui",
+        const baseReasons = ["porque te quiero", "porque te amo", "porque te adoro", "porque te amo", "porque con saludarme me haces el dia", "porque eres mi cielo en la tierra", "porque te preocupas por mi", "porque entiendes como estoy sin decirte nada", "porque contigo soy yo mismo", "porque me conoces mas que nadie y aun asi sigues aqui",
 "porque no me imagino mi vida sin ti", "porque solo quiero un futuro a tu lado", "porque gracias a ti creo en un para siempre", "porque quiero compartir todo contigo", "porque quiero estar siempre contigo", "por ti haria hasta lo imposible", "por ti soy el mas feliz del mundo", "porque tu sonrisa me encanta", "porque tu mirada me hipnotiza", "porque tu alegria es lo que siempre deseo",
 "porque tu bienestar es lo mas importante para mi", "porque tu felicidad es mi mision", "porque me encantan tus besos", "porque iluminas mis dias aun mas que el sol", "porque eres la mayor bendicion", "porque te gusta verme feliz", "porque contigo siempre quiero intentar todo", "porque sonries con mis tonterias que hago o digo", "porque por ti soy valiente", "por ti tengo fuerza para enfrentar todo",
 "porque quiero darte todo", "porque me haces ser mejor de lo que soy", "porque cuando hablo de ti mi creen loco de amor", "porque contigo sueño a diario", "me haces sentir especial", "porque eres la razon de mi existir", "porque te veo siempre aunque no estes basta con cerrar los ojos y ahi estas", "por ti me aferro a la vida", "aunque por ti daria mi vida", "porque eres mi debilidad",
@@ -805,6 +810,38 @@
              const card = element.closest('.glass-card');
              abrirDetalle(card.dataset.titulo, card.dataset.fecha, card.dataset.desc, card.dataset.video, card.dataset.foto);
         }
+
+        // --- LÓGICA PARA INSTALAR APP (PWA) ---
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/sw.js')
+            .then(() => console.log("Service Worker Registrado"));
+        }
+
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevenir que Chrome muestre el aviso automático enseguida
+            e.preventDefault();
+            // Guardar el evento para dispararlo cuando queramos
+            deferredPrompt = e;
+            // Mostrar el botón (solo si es instalable)
+            installBtn.style.display = 'block';
+        });
+
+        installBtn.addEventListener('click', (e) => {
+            // Ocultar botón
+            installBtn.style.display = 'none';
+            // Mostrar el prompt de instalación real
+            deferredPrompt.prompt();
+            // Esperar a ver qué responde el usuario
+            deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('Usuario aceptó instalar');
+            }
+            deferredPrompt = null;
+            });
+        });
     </script>
 </body>
 </html>

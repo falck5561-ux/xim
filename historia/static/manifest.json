@@ -1,0 +1,20 @@
+{
+  "name": "Josue & Ximena",
+  "short_name": "J&X ❤️",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ff9a9e",
+  "theme_color": "#ff6b81",
+  "icons": [
+    {
+      "src": "/static/icon.png", 
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
