@@ -34,7 +34,7 @@
             15% { transform: scale(1.05); } 20% { transform: scale(1); } 100% { transform: scale(1); }
         }
 
-        /* --- 3. GLASSMORPHISM PRO (MEJORADO) */
+        /* --- 3. GLASSMORPHISM PRO --- */
         .glass-card {
             background: rgba(255, 255, 255, 0.25); 
             backdrop-filter: blur(12px); 
@@ -59,7 +59,9 @@
         .timer-number {
             font-size: 2.2rem; font-weight: 700; display: block;
             background: -webkit-linear-gradient(#ff6b81, #ff4757);
-            -webkit-background-clip: text; background-clip: text;
+            background: linear-gradient(#ff6b81, #ff4757);
+            -webkit-background-clip: text; 
+            background-clip: text;
             -webkit-text-fill-color: transparent; margin-bottom: 0;
             transition: all 0.3s;
         }
@@ -76,7 +78,6 @@
             display: flex; align-items: center; justify-content: center; cursor: pointer; 
             z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: all 0.3s;
         }
-        /* Animación cuando está sonando */
         .music-player.playing {
             animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
             background: #ff4757; border-color: #ff4757;
@@ -161,16 +162,29 @@
         .book-text { font-size: 1.6rem; color: #2c3e50; line-height: 1.6; min-height: 200px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 40px; font-style: italic; }
         .bookmark { position: absolute; top: 0; right: 60px; width: 30px; height: 60px; background: #ff6b81; border-radius: 0 0 5px 5px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); }
         
-        /* BOTONES DE NAVEGACIÓN DEL LIBRO (Anterior/Siguiente) */
+        /* BOTONES DE NAVEGACIÓN DEL LIBRO */
         .book-nav-btn {
             background-color: #ff6b81; color: white; border: none; padding: 10px 20px; 
             border-radius: 50px; font-weight: 600; cursor: pointer; transition: all 0.3s;
         }
         .book-nav-btn:hover {
             background-color: #ff4757;
-            transform: translateY(-2px); /* Efecto flotante */
+            transform: translateY(-2px); 
             box-shadow: 0 4px 8px rgba(255, 71, 87, 0.4);
         }
+
+        /* BOTÓN ESTÉTICO PARA LA RAZÓN #201 */
+        .btn-reveal {
+            background: linear-gradient(45deg, #ff6b81, #ff4757);
+            color: white; border: none; padding: 12px 35px;
+            border-radius: 50px; font-family: 'Montserrat', sans-serif;
+            font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+            transition: all 0.3s; margin-top: 20px;
+            animation: pulse-btn 2s infinite;
+        }
+        .btn-reveal:hover { transform: scale(1.1); box-shadow: 0 10px 25px rgba(255, 71, 87, 0.6); }
+        @keyframes pulse-btn { 0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(255, 71, 87, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); } }
         
         .trivia-option { display: block; width: 100%; padding: 15px; margin-bottom: 10px; border: 2px solid #eee; border-radius: 50px; background: white; color: #555; font-weight: 600; transition: all 0.2s; cursor: pointer; text-align: center; }
         .trivia-option:hover { background: #fff0f3; border-color: #ff9a9e; color: #ff4757; transform: scale(1.02); }
@@ -189,7 +203,7 @@
         #modalAudio { position: relative; z-index: 1055; cursor: pointer; }
         .final-surprise-img { max-width: 100%; border-radius: 15px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); border: 8px solid white; transform: rotate(-3deg); }
         
-        /* Video Container FIX (Tamaño ajustado para estética) */
+        /* Video Container FIX */
         .video-container-fix { max-width: 400px; margin: 0 auto; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); background: black; }
         .video-container-fix video { width: 100%; height: auto; display: block; }
         .modal-media-content { max-width: 100%; max-height: 80vh; object-fit: contain; }
@@ -208,7 +222,6 @@
             to { border-color: #ff4757; box-shadow: 0 20px 50px rgba(255, 71, 87, 0.6); }
         }
         
-        /* TÍTULO ARCOÍRIS */
         @keyframes rainbow-text {
             0% { background-position: 0% 50%; }
             100% { background-position: 100% 50%; }
@@ -219,32 +232,60 @@
             background: linear-gradient(90deg, #ff9a9e, #fad0c4, #ffecd2, #fcb69f, #a18cd1, #fbc2eb);
             background-size: 200% auto;
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: rainbow-text 4s linear infinite;
             text-shadow: none !important;
         }
-        /* ESTILOS PARA EL DISCO DE CUMPLEAÑOS */
-        .birthday-disc {
-            font-size: 6rem; /* AUMENTADO: Tamaño del disco */
-            color: #ff6b81; /* Color base */
-            cursor: pointer;
-            transition: all 0.3s;
+
+        /* --- NUEVO DISCO DE VINILO 100% CSS (SIN IMAGENES ROTAS) --- */
+        .vinyl-record-css {
+            width: 220px; height: 220px;
+            border-radius: 50%;
+            /* Crea el efecto de surcos del disco */
+            background: repeating-radial-gradient(
+              #111 0, 
+              #111 2px, 
+              #222 3px, 
+              #222 4px
+            );
             position: relative;
-            display: inline-block;
+            margin: 20px auto;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.3s;
+            cursor: pointer;
+            border: 2px solid #000;
         }
-        .birthday-disc:hover {
-            color: #ff4757;
-            transform: scale(1.05);
+        
+        /* Brillo realista sobre el disco */
+        .vinyl-record-css::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.1) 50%, transparent 60%);
+            pointer-events: none;
         }
-        /* El disco gira si tiene la clase 'playing' */
-        .birthday-disc.playing i {
-            animation: spin 3s linear infinite;
+        
+        .vinyl-record-css:hover { transform: scale(1.05); }
+
+        /* Etiqueta central del disco */
+        .vinyl-label {
+            width: 85px; height: 85px;
+            background: radial-gradient(circle, #ff6b81 0%, #ff4757 100%);
+            border-radius: 50%;
+            border: 3px solid white;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.5rem;
+            position: relative;
+            z-index: 5;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        /* FIN ESTILOS DISCO */
+
+        /* Animación de giro */
+        .vinyl-record-css.playing { animation: spin 3s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- ELIMINADO: Botón de Play superpuesto --- */
         
         /* AJUSTES PARA PANTALLA COMPLETA/GRANDE */
         #momentModal .modal-dialog, 
@@ -253,10 +294,7 @@
         
         #finalBookModal .modal-dialog { max-width: 95%; } 
         
-        /* Modal Libro (200 Razones) - TAMAÑO AJUSTADO A LG */
-        #bookModal .modal-dialog { 
-            max-width: 700px; 
-        }
+        #bookModal .modal-dialog { max-width: 700px; }
     </style>
 </head>
 <body>
@@ -456,7 +494,7 @@
             <div class="modal-content bg-dark text-white border-0 text-center p-5 position-relative overflow-hidden">
                 <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
                 <div class="modal-body position-relative" style="z-index: 2;">
-                    <h1 class="romantic-font text-info display-3 mb-2">Buscando una razón para no quererte</h1>
+                    <h1 class="romantic-font text-info display-3 mb-2">Nunca podría dejarte mi niña hermosa</h1>
                     <p class="text-muted fst-italic mb-4">La razón #201 es imposible, pero mira esto:</p>
                     
                     <div class="video-container-fix mb-4">
@@ -520,12 +558,16 @@
                         <div class="display-1 mb-3">🥳🎉🎁</div>
                         <h2 class="rainbow-text mb-4">¡Feliz Cumpleaños Ximena!</h2>
                         <p class="lead book-font text-muted">Que este día esté lleno de alegría, amor y todo lo que deseas. Eres la persona más maravillosa y mereces lo mejor.</p>
+                        
                         <div class="mt-4">
-                            <div id="birthdayDiscPlayer" class="birthday-disc" onclick="toggleBirthdayAudio()">
-                                <i class="bi bi-disc-fill"></i>
+                            <div id="birthdayDiscPlayer" class="vinyl-record-css" onclick="toggleBirthdayAudio()">
+                                <div class="vinyl-label">
+                                    <i class="bi bi-music-note-beamed"></i>
+                                </div>
                             </div>
                         </div>
-                        <p class="mt-4 mb-2 text-muted book-font">¡Esta canción te recuerda lo especial que eres hoy! Dale clic para escucharla o pausarla.</p>
+
+                        <p class="mt-4 mb-2 text-muted book-font">¡Esta canción te recuerda lo especial que eres hoy! Toca el disco para escucharla o pausarla.</p>
                         <small class="d-block text-muted">Toca el fondo o presiona ESC para cerrar.</small>
                     </div>
                 </div>
@@ -589,7 +631,7 @@
         }
 
         // LIBRO
-        const baseReasons = ["porque te quiero", "porque te amo", "porque te adoro", "porque te amo", "porque con saludarme me haces el dia", "porque eres mi cielo en la tierra", "porque te preocupas por mi", "porque entiendes como estoy sin decirte nada", "porque contigo soy yo mismo", "porque me conoces mas que nadie y aun asi sigues aqui",
+        const baseReasons = ["porque te quiero", "porque te amo", "porque te adoro", "porque me encantan tus piecitos", "porque con saludarme me haces el dia", "porque eres mi cielo en la tierra", "porque te preocupas por mi", "porque entiendes como estoy sin decirte nada", "porque contigo soy yo mismo", "porque me conoces mas que nadie y aun asi sigues aqui",
 "porque no me imagino mi vida sin ti", "porque solo quiero un futuro a tu lado", "porque gracias a ti creo en un para siempre", "porque quiero compartir todo contigo", "porque quiero estar siempre contigo", "por ti haria hasta lo imposible", "por ti soy el mas feliz del mundo", "porque tu sonrisa me encanta", "porque tu mirada me hipnotiza", "porque tu alegria es lo que siempre deseo",
 "porque tu bienestar es lo mas importante para mi", "porque tu felicidad es mi mision", "porque me encantan tus besos", "porque iluminas mis dias aun mas que el sol", "porque eres la mayor bendicion", "porque te gusta verme feliz", "porque contigo siempre quiero intentar todo", "porque sonries con mis tonterias que hago o digo", "porque por ti soy valiente", "por ti tengo fuerza para enfrentar todo",
 "porque quiero darte todo", "porque me haces ser mejor de lo que soy", "porque cuando hablo de ti mi creen loco de amor", "porque contigo sueño a diario", "me haces sentir especial", "porque eres la razon de mi existir", "porque te veo siempre aunque no estes basta con cerrar los ojos y ahi estas", "por ti me aferro a la vida", "aunque por ti daria mi vida", "porque eres mi debilidad",
@@ -611,13 +653,14 @@
 "porque nunca nos quedamos sin tema de conversacion", "porque te voy a comer a besos cuando te vea", "porque me gusta apapacharte", "porque me encanta que te acurruques en mi", "porque me gusta cuando duermes a mi lado y te hago piojito", "porque cada dia te amo mas", "porque contigo ya no tengo vergüenza de nada", "por todos esos minutos hablando por telefono", "por todo lo que nos queda", "porque cada momento a tu lado es especial e inolvidable"
 ];
         let allPages = []; for(let i=0; i<baseReasons.length; i++) { allPages.push(`<strong>Razón #${i+1}:</strong><br>${baseReasons[i]}`); }
-        // Razón #201: Debe abrir el modal específico con xim.mp4 y el mensaje largo original.
-        allPages.push("<strong>Razón #201:</strong><br>Buscando una razón para no quererte<br><br><button class='btn btn-info btn-lg shadow pulse-button book-nav-btn' onclick='verRazonFinalLibro()'>Ver...</button>");
+        
+        // CAMBIO AQUI: Texto "Una razón para dejarte" y Botón Estético "btn-reveal"
+        allPages.push("<strong>Razón #201:</strong><br>Una razón para dejarte...<br><button class='btn-reveal' onclick='verRazonFinalLibro()'>Ver Razón</button>");
         
         let currentPage = 0; 
         const bookModal = new bootstrap.Modal(document.getElementById('bookModal')); 
-        const finalBookModal = new bootstrap.Modal(document.getElementById('finalBookModal')); // Nuevo modal para razón #201
-        const surpriseModal = new bootstrap.Modal(document.getElementById('finalSurpriseModal')); // Modal del Footer
+        const finalBookModal = new bootstrap.Modal(document.getElementById('finalBookModal')); 
+        const surpriseModal = new bootstrap.Modal(document.getElementById('finalSurpriseModal')); 
         
         function abrirLibro() { currentPage = 0; updateBook(); bookModal.show(); }
         function nextPage() { if(currentPage < allPages.length - 1) { currentPage++; updateBook(); } }
@@ -656,14 +699,15 @@
         // MÚSICA
         const music = document.getElementById('bgMusic');
         const modalMusic = document.getElementById('modalAudio');
+        const birthdayAudio = document.getElementById('birthdayAudio');
+        const birthdayDiscPlayer = document.getElementById('birthdayDiscPlayer');
+
         function toggleMusic() { if(music.paused) { music.play(); document.querySelector('.music-player').classList.add('playing'); } else { music.pause(); document.querySelector('.music-player').classList.remove('playing'); } }
         function abrirModalMusica() { music.pause(); document.querySelector('.music-player').classList.remove('playing'); new bootstrap.Modal(document.getElementById('musicModal')).show(); }
         document.getElementById('musicModal').addEventListener('hide.bs.modal', () => { modalMusic.pause(); modalMusic.currentTime = 0; });
         
         // CUMPLEAÑOS
         const birthdayModal = new bootstrap.Modal(document.getElementById('birthdayModal'));
-        const birthdayAudio = document.getElementById('birthdayAudio');
-        const birthdayDiscPlayer = document.getElementById('birthdayDiscPlayer');
 
         function toggleBirthdayAudio() {
             if (birthdayAudio.paused) {
