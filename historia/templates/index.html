@@ -30,6 +30,12 @@
         }
         .song-item:hover { background: rgba(255,255,255,0.1); transform: translateX(5px); }
         .song-item.active-song { background: rgba(255, 71, 87, 0.2); border: 1px solid #ff4757; }
+        .song-item-cover {
+            width: 40px; height: 40px; border-radius: 50%; margin-right: 15px;
+            background: #ff6b81; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; overflow: hidden; position: relative; box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        .song-item-cover img { width: 100%; height: 100%; object-fit: cover; }
         
         .music-upload-zone { 
             border: 2px dashed #555; border-radius: 15px; padding: 30px; 
@@ -44,7 +50,7 @@
         .music-hint-bubble {
             position: fixed; bottom: 95px; left: 30px;
             background: rgba(255, 255, 255, 0.95); padding: 10px 15px;
-            border-radius: 15px; /* Redondeado simple */
+            border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             border: 2px solid #ff9a9e; color: #ff4757; font-size: 0.8rem; font-weight: 600;
             z-index: 998; pointer-events: none; 
@@ -57,14 +63,24 @@
         
         .hint-icon { vertical-align: middle; margin: 0 3px; font-size: 1.1em; }
         
-        /* 3. Ajuste para videos en recuerdos (Modo Cine) */
+        /* 3. Ajuste para videos (Modo Cine Mejorado) */
         .video-cine-box {
-            width: 100%; max-width: 700px; height: 55vh; background: #000;
+            width: 100%; max-width: 800px; /* Más ancho */
+            /* Altura automática basada en el contenido, con un máximo para no salirse */
+            height: auto; 
+            max-height: 70vh; 
+            background: #000;
             border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin: 0 auto 25px auto;
             display: flex; align-items: center; justify-content: center; overflow: hidden;
         }
-        .video-cine-box video, .video-cine-box img { width: 100%; height: 100%; object-fit: contain; }
+        /* El video ocupa todo el ancho disponible manteniendo su proporción */
+        .video-cine-box video, .video-cine-box img { 
+            width: 100%; 
+            height: auto; 
+            display: block; 
+            max-height: 70vh; /* Limite de altura */
+        }
         
         /* 4. Marco de texto neón */
         .text-frame-neon {
@@ -182,7 +198,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content bg-dark text-white border-0 shadow-lg" style="border-radius: 20px;">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title romantic-font text-danger fs-3">🎧 JX MIX</h5>
+                    <h5 class="modal-title romantic-font text-danger fs-3">🎧 DJ del Amor</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -339,7 +355,7 @@
                     </div>
                     <div class="text-frame-neon">
                         <div style="text-align: justify; color: #ddd; line-height: 1.8; font-size: 1.1rem;">
-                            <p>Sé que no siempre lo digo, pero admiro cómo enfrentas la vida con una sonrisa incluso en los momentos difíciles. Tu fuerza, tu bondad y tu manera única de ver el mundo me inspiran cada día. Gracias por estar, por quedarte, por dar lo mejor de ti sin rendirte. Eres alguien especial, con un corazón enorme que deja huellas llenas de cariño. En mi vida haces una diferencia inmensa: me enseñas, me inspiras y me das paz.</p>
+                            <p>Sé que no siempre lo digo, pero admiro cómo enfrentas la vida con una sonrisa incluso en los momentos difíciles. Tu fuerza, tu bondad y tu manera única de ver el mundo me inspiran cada día. Gracias por estar, por quedarte, por dar lo mejor de ti sin rendirte. Eres alguien especial, con un corazón enorme que deja huellas llenas de cariño.</p>
                             <p class="text-center mb-0 mt-3 text-white"><strong>TE QUIERO Y QUIERO QUE NUNCA LO OLVIDES... 🌹</strong></p>
                         </div>
                     </div>
@@ -391,7 +407,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // 1. VARIABLES GLOBALES (AL PRINCIPIO)
         AOS.init();
         let isMusicPausedByVideo = false;
         let songList = [];
@@ -439,9 +454,6 @@
 
         const triviaQuestions = [{ q: "¿Dónde fue nuestro primer beso? 💋", opts: ["Escuela", "Parque", "Cine"], ans: 0 }, { q: "¿Cuánto me amas? 📈", opts: ["10", "100", "Infinito"], ans: 2 }, { q: "¿Qué me regalaste primero? 🎁", opts: ["Carta", "Lechuga 🥬", "Chocolate"], ans: 1 }];
 
-        // 2. FUNCIONES GLOBALES (DEFINIDAS AQUÍ PARA EVITAR REFERENCE ERROR)
-
-        // --- CARTAS ---
         function leerCarta(tipo) {
             let t="", b="", i="";
             if(tipo==='hoy'){ t="¡Felices 20 Años Amor!"; b="Estos 5 años viéndote crecer han sido el mejor regalo. Cumplir 20 es solo el inicio de tu mejor época, y mi mayor orgullo es estar ahí, en primera fila, amándote en cada paso."; i="🎂"; }
@@ -451,7 +463,6 @@
             Swal.fire({ title: `<span class="romantic-font" style="font-size:2.5rem; color:#ff6b81">${t}</span>`, html: `<div style="font-family:'Playfair Display'; font-style:italic; font-size:1.1rem; line-height:1.6">${b}</div><div style="font-size:3rem; margin-top:15px;">${i}</div>`, confirmButtonText: 'Te amo', confirmButtonColor: '#ff6b81', background: '#fffdf9', width: 600, padding: '2.5em', backdrop: `rgba(255, 107, 129, 0.1)` });
         }
 
-        // --- LIBRO ---
         function abrirLibro() { 
             currentPage = 0; updateBook(); 
             new bootstrap.Modal(document.getElementById('bookModal')).show(); 
@@ -468,7 +479,6 @@
         function prevPage() { if(currentPage > 0) { currentPage--; updateBook(); } }
 
         function verRazonFinalLibro() { 
-            // Cerrar libro primero
             const bookModalEl = document.getElementById('bookModal');
             const modal = bootstrap.Modal.getInstance(bookModalEl);
             if (modal) modal.hide();
@@ -479,7 +489,6 @@
             lanzarConfetiSuave(); 
         }
 
-        // --- TRIVIA ---
         function iniciarJuego() { 
             qIdx = 0; 
             document.getElementById('question-container').style.display = 'block'; 
@@ -512,7 +521,6 @@
             lanzarConfetiSuave(); 
         }
 
-        // --- MÚSICA Y CUMPLEAÑOS ---
         function abrirModalMusica() { 
             bgMusic.pause(); 
             musicPlayerBtn.classList.remove('playing');
@@ -525,13 +533,8 @@
             bgMusic.pause(); 
             musicPlayerBtn.classList.remove('playing');
             new bootstrap.Modal(document.getElementById('birthdayModal')).show(); 
-            
-            // Corrección Autoplay Cumpleaños
             birthdayAudio.currentTime = 0;
-            birthdayAudio.play().then(() => {
-                birthdayDiscPlayer.classList.add('playing');
-            }).catch(e => console.log("Auto-play prevent", e));
-            
+            birthdayAudio.play().then(() => { birthdayDiscPlayer.classList.add('playing'); }).catch(e => console.log("Auto-play prevent", e));
             lanzarConfetiCumple();
         }
 
@@ -572,7 +575,6 @@
             }()); 
         }
 
-        // --- DETALLE MOMENTOS ---
         function abrirDetalle(titulo, fecha, descripcion, videoUrl, fotoUrl) {
             document.getElementById('detTitle').innerText = titulo; 
             document.getElementById('detDate').innerText = fecha; 
@@ -602,7 +604,6 @@
             Swal.fire({ title: '<span class="romantic-font" style="color:#ff4757; font-size: 2.5rem;">¿Borrar?</span>', text: "No podrás recuperarlo", icon: 'warning', showCancelButton: true, confirmButtonColor: '#ff4757', cancelButtonColor: '#fab1a0', confirmButtonText: 'Sí', cancelButtonText: 'No', background: '#fff0f3' }).then((result) => { if (result.isConfirmed) window.location.href = url; });
         }
 
-        // --- GESTOR MÚSICA (LÓGICA FINAL) ---
         function toggleMusic() {
             if(bgMusic.paused) { 
                 bgMusic.play(); 
@@ -650,7 +651,8 @@
             
             songList.forEach((song, index) => {
                 const div = document.createElement('div');
-                div.className = `song-item ${bgMusic.src.includes(song.archivo) ? 'active-song' : ''}`;
+                const isActive = bgMusic.src.includes(song.archivo);
+                div.className = `song-item ${isActive ? 'active-song' : ''}`;
                 
                 let actionsHtml = '';
                 if(!song.es_default) {
@@ -756,7 +758,6 @@
             document.getElementById('seconds').innerText = Math.floor((diff % (1000 * 60)) / 1000);
         }, 1000);
 
-        // --- LÓGICA CORREGIDA PARA VIDEO TIMELINE ---
         function updateTimeline() {
             const val = document.getElementById('timelineRange').value;
             const display = document.getElementById('goalDisplay');
@@ -765,10 +766,9 @@
             else if(val < 70) display.innerText = "La universidad nos reta, pero también nos regala la oportunidad de construir sueños lado a lado. Cada desvelo, cada logro, cada paso nos acerca más a la vida que imaginamos 🚀📚❤️";
             else if(val < 99) display.innerText = "Nuestro futuro no es solo una boda, es la promesa de despertar juntos cada día, de llenar nuestra casa de risas, de amor y de recuerdos que aún nos esperan 💍🏠💫";
             else {
-                // FINAL (100%) - CORRECCIÓN
+                // FINAL (100%)
                 display.innerText = "Más allá de todo lo que hemos vivido y lo que vendrá, lo único que sé con certeza es que contigo quiero escribir cada capítulo de mi vida ❤️📖✨";
                 
-                // Pausar música de fondo
                 if(!bgMusic.paused){
                     bgMusic.pause();
                     musicPlayerBtn.classList.remove('playing');
