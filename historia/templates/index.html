@@ -46,7 +46,7 @@
         
         #musicManagerModal .modal-content { background: linear-gradient(145deg, #1a1a1a, #2d2d2d); }
 
-        /* 2. Burbuja de Instrucciones (Sin flecha) */
+        /* 2. Burbuja de Instrucciones */
         .music-hint-bubble {
             position: fixed; bottom: 95px; left: 30px;
             background: rgba(255, 255, 255, 0.95); padding: 10px 15px;
@@ -65,8 +65,7 @@
         
         /* 3. Ajuste para videos (Modo Cine Mejorado) */
         .video-cine-box {
-            width: 100%; max-width: 800px; /* Más ancho */
-            /* Altura automática basada en el contenido, con un máximo para no salirse */
+            width: 100%; max-width: 800px;
             height: auto; 
             max-height: 70vh; 
             background: #000;
@@ -74,12 +73,8 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin: 0 auto 25px auto;
             display: flex; align-items: center; justify-content: center; overflow: hidden;
         }
-        /* El video ocupa todo el ancho disponible manteniendo su proporción */
         .video-cine-box video, .video-cine-box img { 
-            width: 100%; 
-            height: auto; 
-            display: block; 
-            max-height: 70vh; /* Limite de altura */
+            width: 100%; height: auto; display: block; max-height: 70vh; 
         }
         
         /* 4. Marco de texto neón */
@@ -91,6 +86,17 @@
         .text-frame-neon::before {
             content: '❤'; position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
             background: #212529; padding: 0 15px; color: #ff4757; font-size: 1.5rem;
+        }
+
+        /* 5. Estilo Mejorado para Texto en Modales Finales */
+        .neon-text-enhanced {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(255, 107, 129, 0.8), 0 0 10px rgba(255, 107, 129, 0.4);
+            text-align: justify;
+            line-height: 1.8;
+            font-size: 1.15rem;
         }
     </style>
 </head>
@@ -354,7 +360,7 @@
                         <video id="bookFinalVideo" controls loop playsinline><source src="/media/xim.mp4" type="video/mp4"></video>
                     </div>
                     <div class="text-frame-neon">
-                        <div style="text-align: justify; color: #ddd; line-height: 1.8; font-size: 1.1rem;">
+                        <div class="neon-text-enhanced">
                             <p>Sé que no siempre lo digo, pero admiro cómo enfrentas la vida con una sonrisa incluso en los momentos difíciles. Tu fuerza, tu bondad y tu manera única de ver el mundo me inspiran cada día. Gracias por estar, por quedarte, por dar lo mejor de ti sin rendirte. Eres alguien especial, con un corazón enorme que deja huellas llenas de cariño.</p>
                             <p class="text-center mb-0 mt-3 text-white"><strong>TE QUIERO Y QUIERO QUE NUNCA LO OLVIDES... 🌹</strong></p>
                         </div>
@@ -375,7 +381,7 @@
                         <video id="finalVideo" controls loop playsinline><source src="/media/lindo.mp4" type="video/mp4"></video>
                     </div>
                     <div class="text-frame-neon">
-                        <div style="text-align: justify; color: #ddd; line-height: 1.8; font-size: 1.1rem;">
+                        <div class="neon-text-enhanced">
                             <p>No te puedo bajar la luna, pero puedo acompañarte cada vez que quieras disfrutar de su belleza. No puedo evitar tus malos momentos o tristezas, pero puedo estar contigo siempre para ayudarte a afrontarlas. Tal vez no pueda darte lo mejor del mundo, pero sí lo mejor de mí.</p>
                             <p class="text-center mb-0 mt-3 text-white" style="text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);">
                                 <strong>QUIERO QUE SEPAS QUE ERES MI VIDA Y MI MAYOR ALEGRÍA. TE AMO. ❤️</strong>
@@ -761,28 +767,35 @@
         function updateTimeline() {
             const val = document.getElementById('timelineRange').value;
             const display = document.getElementById('goalDisplay');
+            
+            // Textos de la línea de tiempo
             if(val < 20) display.innerText = "En medio de la incertidumbre de la pandemia, encontrarte fue mi milagro: entre mascarillas y distancia, descubrí que el amor puede florecer incluso en los momentos más difíciles 😷❤️✨";
             else if(val < 45) display.innerText = "La prepa no fue solo estudiar y exámenes, fue aprender a crecer contigo, a reír en los pasillos, a superar cada obstáculo de la mano, y a descubrir que juntos somos invencibles 🎓💪❤️";
             else if(val < 70) display.innerText = "La universidad nos reta, pero también nos regala la oportunidad de construir sueños lado a lado. Cada desvelo, cada logro, cada paso nos acerca más a la vida que imaginamos 🚀📚❤️";
             else if(val < 99) display.innerText = "Nuestro futuro no es solo una boda, es la promesa de despertar juntos cada día, de llenar nuestra casa de risas, de amor y de recuerdos que aún nos esperan 💍🏠💫";
             else {
-                // FINAL (100%)
+                // --- FINAL (100%) ---
                 display.innerText = "Más allá de todo lo que hemos vivido y lo que vendrá, lo único que sé con certeza es que contigo quiero escribir cada capítulo de mi vida ❤️📖✨";
                 
+                // 1. Pausar música de fondo antes de abrir la alerta
                 if(!bgMusic.paused){
                     bgMusic.pause();
                     musicPlayerBtn.classList.remove('playing');
+                    isMusicPausedByVideo = true;
                 }
 
                 Swal.fire({ 
                     title: '<span class="romantic-font text-danger">¡Eternidad!</span>', 
+                    // NOTA: Quité 'autoplay' de la etiqueta video aquí abajo para evitar el parpadeo de la barra
                     html: `
-                        <p class="lead text-muted" style="font-family:'Playfair Display'; font-style:italic;">
-                            Más allá de todo lo que hemos vivido y lo que vendrá, lo único que sé con certeza es que contigo quiero escribir cada capítulo de mi vida ❤️📖✨
-                        </p>
+                        <div class="text-frame-neon">
+                            <div class="neon-text-enhanced" style="text-align:center; font-style:italic;">
+                                <p>Más allá de todo lo que hemos vivido y lo que vendrá, lo único que sé con certeza es que contigo quiero escribir cada capítulo de mi vida ❤️📖✨</p>
+                            </div>
+                        </div>
                         
-                        <div class="video-cine-box mb-3" style="height: auto; max-height: 60vh;">
-                            <video id="timelineVideo" controls autoplay playsinline style="width: 100%; height: 100%; object-fit: contain;">
+                        <div class="video-cine-box mb-3 mt-3" style="height: auto; max-height: 60vh;">
+                            <video id="timelineVideo" controls loop playsinline style="width: 100%; height: 100%; object-fit: contain;">
                                 <source src="/media/beso.mp4" type="video/mp4">
                                 Tu navegador no soporta videos.
                             </video>
@@ -791,13 +804,30 @@
                         <button class="btn btn-danger rounded-pill px-4 mt-2" onclick="Swal.close()">Te Amo</button>
                     `, 
                     showConfirmButton: false, 
-                    background: '#fffcf5', 
+                    background: '#1a1a1a', 
                     backdrop: `rgba(255,215,0,0.2)`, 
                     padding: '2em',
                     width: '800px',
+                    // 2. didOpen: Se ejecuta cuando la alerta ya se abrió completamente.
+                    // Aquí le damos play para que la barra de controles se vea estable.
+                    didOpen: () => {
+                        const v = document.getElementById('timelineVideo');
+                        if(v) {
+                            // Un pequeño retraso casi invisible asegura que la UI esté lista
+                            setTimeout(() => {
+                                v.play().catch(e => console.log("Esperando interacción", e));
+                            }, 100);
+                        }
+                    },
                     willClose: () => {
                         const v = document.getElementById('timelineVideo');
                         if(v) v.pause();
+                        // Reanudar música de fondo al cerrar
+                        if(isMusicPausedByVideo) {
+                            bgMusic.play();
+                            musicPlayerBtn.classList.add('playing');
+                            isMusicPausedByVideo = false;
+                        }
                     }
                 });
                 
