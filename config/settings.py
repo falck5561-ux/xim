@@ -76,11 +76,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # CORRECCIÓN 2: Configuración Híbrida (Neon en la nube, SQLite en tu PC)
 # --- CONEXIÓN MANUAL A SUPABASE ---
 # --- CONFIGURACIÓN INTELIGENTE (Híbrida) ---
+# --- CONEXIÓN DIRECTA ESTÁNDAR (Funciona en Render) ---
 DATABASES = {
-    'default': dj_database_url.config(
-        default='sqlite:///db.sqlite3',
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',  # Usuario simple (sin puntos raros)
+        'PASSWORD': 'xim04perez002',
+        'HOST': 'db.lysndjiunobgtxkymkfb.supabase.co', # Host oficial
+        'PORT': '5432',
+    }
 }
 
 
