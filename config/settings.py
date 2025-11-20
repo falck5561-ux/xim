@@ -77,13 +77,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # --- CONEXIÓN MANUAL A SUPABASE ---
 # --- CONFIGURACIÓN INTELIGENTE (Híbrida) ---
 # --- CONEXIÓN DIRECTA ESTÁNDAR (Funciona en Render) ---
+# --- CONEXIÓN MAESTRA (IPv4 + Usuario Completo + Puerto Sesión) ---
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
-        'USER': 'postgres',  # Usuario simple (sin puntos raros)
+        'USER': 'postgres.lysndjiunobgtxkymkfb',  # <--- El secreto está aquí
         'PASSWORD': 'xim04perez002',
-        'HOST': 'db.lysndjiunobgtxkymkfb.supabase.co', # Host oficial
+        'HOST': 'aws-0-us-east-1.pooler.supabase.com',
         'PORT': '5432',
     }
 }
