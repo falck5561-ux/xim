@@ -74,6 +74,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # CORRECCIÓN 2: Configuración Híbrida (Neon en la nube, SQLite en tu PC)
+# --- CONEXIÓN MANUAL A SUPABASE ---
+# --- CONFIGURACIÓN INTELIGENTE (Híbrida) ---
 DATABASES = {
     'default': dj_database_url.config(
         default='sqlite:///db.sqlite3',
