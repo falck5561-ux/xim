@@ -1,15 +1,17 @@
 from django.db import models
+from cloudinary.models import CloudinaryField  # <--- IMPORTANTE: Importar esto
 
-# --- MODELO DE RECUERDOS (Ya lo tenías) ---
+# --- MODELO DE RECUERDOS ---
 class Momento(models.Model):
     titulo = models.CharField(max_length=100, verbose_name="Título del recuerdo")
     descripcion = models.TextField(verbose_name="Carta o Descripción")
     
-    # Foto opcional
-    foto = models.ImageField(upload_to='recuerdos/', verbose_name="Foto", blank=True, null=True)
+    # CORRECCIÓN 1: Usar CloudinaryField para la foto
+    foto = CloudinaryField('image', folder='recuerdos', blank=True, null=True)
     
-    # Video opcional
-    video = models.FileField(upload_to='videos/', verbose_name="Video (Opcional)", blank=True, null=True)
+    # CORRECCIÓN 2: Usar CloudinaryField para el video
+    # resource_type='video' es OBLIGATORIO para videos
+    video = CloudinaryField('video', resource_type='video', folder='videos', blank=True, null=True)
     
     fecha = models.DateField(verbose_name="Fecha del recuerdo")
 
@@ -25,7 +27,10 @@ class Momento(models.Model):
 # --- NUEVO MODELO PARA EL GESTOR DE MÚSICA ---
 class Cancion(models.Model):
     titulo = models.CharField(max_length=100, verbose_name="Título de la canción")
-    archivo = models.FileField(upload_to='musica/', verbose_name="Archivo de Audio")
+    
+    # CORRECCIÓN 3: La música también se trata como 'video' (audio/video) en Cloudinary
+    archivo = CloudinaryField('audio', resource_type='video', folder='musica')
+    
     fecha_subida = models.DateTimeField(auto_now_add=True)
 
     class Meta:
