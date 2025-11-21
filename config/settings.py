@@ -5,6 +5,9 @@ Django settings for config project.
 from pathlib import Path
 import os
 import dj_database_url
+import cloudinary # <--- IMPORTANTE: Necesario para la configuración de video
+import cloudinary.uploader
+import cloudinary.api
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,9 +29,9 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    # --- 1. CLOUDINARY (Agregado aquí arriba) ---
+    # --- 1. CLOUDINARY (Orden correcto) ---
     'cloudinary_storage',
-    'django.contrib.staticfiles',  # Debe estar DEBAJO de cloudinary_storage
+    'django.contrib.staticfiles',
     'cloudinary',
     # --------------------------------------------
     'django.contrib.admin',
@@ -41,7 +44,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # <--- MUÉVELA AQUÍ (Segunda posición)
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # <--- Whitenoise aquí
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -73,7 +76,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# CORRECCIÓN 2: Configuración Híbrida (Neon en la nube, SQLite en tu PC)
+# CORRECCIÓN 2: Configuración Híbrida (Supabase en la nube, SQLite en tu PC)
 DATABASES = {
     'default': dj_database_url.config(
         default='sqlite:///db.sqlite3',
@@ -119,9 +122,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# CORRECCIÓN 4 (LA MÁS IMPORTANTE): Esto arregla el error del Log
+# CORRECCIÓN 4: Whitenoise
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
@@ -133,12 +135,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# --- 2. CONFIGURACIÓN DE CLOUDINARY (Para guardar fotos por siempre) ---
+# --- 2. CONFIGURACIÓN DE CLOUDINARY (Para guardar fotos y videos) ---
+
+# Configuración de almacenamiento (Storage)
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': 'dd8x5gurg',
     'API_KEY': '939939232259447',
-    'API_SECRET': 'E0awkZBKCn2XiJoubUc6sJp333Q'
+    'API_SECRET': 'E0awkZBKCn2XiJoubUc6sJp333Q',
+    'SECURE_URL_PREFIX': 'https://' # Importante para evitar errores de seguridad
 }
 
 # Instrucción para que Django use Cloudinary al subir archivos
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# --- CONFIGURACIÓN DE LA LIBRERÍA NATIVA (ESTO ARREGLA EL ERROR DE VIDEO) ---
+cloudinary.config( 
+  cloud_name = "dd8x5gurg", 
+  api_key = "939939232259447", 
+  api_secret = "E0awkZBKCn2XiJoubUc6sJp333Q",
+  secure = True
+)
