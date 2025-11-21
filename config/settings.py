@@ -26,16 +26,12 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    # --- 1. CLOUDINARY (Agregado aquí arriba) ---
-    'cloudinary_storage',
-    'django.contrib.staticfiles',  # Debe estar DEBAJO de cloudinary_storage
-    'cloudinary',
-    # --------------------------------------------
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
     'historia',  
 ]
 
@@ -74,19 +70,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # CORRECCIÓN 2: Configuración Híbrida (Neon en la nube, SQLite en tu PC)
-# --- CONEXIÓN MANUAL A SUPABASE ---
-# --- CONFIGURACIÓN INTELIGENTE (Híbrida) ---
-# --- CONEXIÓN DIRECTA ESTÁNDAR (Funciona en Render) ---
-# --- CONEXIÓN MAESTRA (IPv4 + Usuario Completo + Puerto Sesión) ---
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres.lysndjiunobgtxkymkfb',  # <--- El secreto está aquí
-        'PASSWORD': 'xim04perez002',
-        'HOST': 'aws-0-us-east-1.pooler.supabase.com',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default='sqlite:///db.sqlite3',
+        conn_max_age=600
+    )
 }
 
 
@@ -137,16 +125,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# --- CONFIGURACIÓN DE ARCHIVOS MULTIMEDIA ---
+# --- CONFIGURACIÓN DE ARCHIVOS MULTIMEDIA (FOTOS, VIDEOS Y MÚSICA) ---
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# --- 2. CONFIGURACIÓN DE CLOUDINARY (Para guardar fotos por siempre) ---
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dd8x5gurg',
-    'API_KEY': '939939232259447',
-    'API_SECRET': 'E0awkZBKCn2XiJoubUc6sJp333Q'
-}
-
-# Instrucción para que Django use Cloudinary al subir archivos
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
