@@ -102,7 +102,7 @@
 </head>
 <body>
 
-    <audio id="bgMusic" loop><source src="/media/cancion.mp3" type="audio/mpeg"></audio>
+    <audio id="bgMusic"><source src="/media/cancion.mp3" type="audio/mpeg"></audio>
     <audio id="birthdayAudio"><source src="/media/cumpleaños.mp3" type="audio/mpeg"></audio>
 
     <div id="mainMusicBtn" class="music-player"><i class="bi bi-music-note-beamed text-white fs-4"></i></div>
@@ -730,11 +730,29 @@
         if(shuffleCheckbox) shuffleCheckbox.addEventListener('change', (e) => { isShuffle = e.target.checked; });
         
         bgMusic.addEventListener('ended', () => {
-            if(isShuffle && songList.length > 0) {
-                let nextIndex;
-                do { nextIndex = Math.floor(Math.random() * songList.length); } while (songList.length > 1 && nextIndex === currentSongIndex);
-                playSong(songList[nextIndex].archivo, nextIndex);
-            } else { bgMusic.currentTime = 0; bgMusic.play(); }
+        // Si la lista está vacía, no hacemos nada
+            if(songList.length === 0) return;
+
+            let nextIndex;
+
+            if(isShuffle) {
+            // --- LÓGICA ALEATORIA ---
+            // Elegimos una al azar, intentando que no sea la misma de ahorita
+            do { 
+            nextIndex = Math.floor(Math.random() * songList.length); 
+            } while (songList.length > 1 && nextIndex === currentSongIndex);
+    
+            } else {
+            // --- LÓGICA NORMAL (Siguiente canción) ---
+            nextIndex = currentSongIndex + 1;
+            // Si llegamos al final de la lista, volvemos a la primera (0)
+            if (nextIndex >= songList.length) {
+            nextIndex = 0;
+        }
+            }
+
+            // Reproducimos la nueva canción elegida
+            playSong(songList[nextIndex].archivo, nextIndex);
         });
 
         musicPlayerBtn.addEventListener('mousedown', handleStart);
