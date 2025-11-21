@@ -26,12 +26,16 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    # --- 1. CLOUDINARY (Agregado aquí arriba) ---
+    'cloudinary_storage',
+    'django.contrib.staticfiles',  # Debe estar DEBAJO de cloudinary_storage
+    'cloudinary',
+    # --------------------------------------------
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
     'historia',  
 ]
 
@@ -125,6 +129,16 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# --- CONFIGURACIÓN DE ARCHIVOS MULTIMEDIA (FOTOS, VIDEOS Y MÚSICA) ---
+# --- CONFIGURACIÓN DE ARCHIVOS MULTIMEDIA ---
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# --- 2. CONFIGURACIÓN DE CLOUDINARY (Para guardar fotos por siempre) ---
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dd8x5gurg',
+    'API_KEY': '939939232259447',
+    'API_SECRET': 'E0awkZBKCn2XiJoubUc6sJp333Q'
+}
+
+# Instrucción para que Django use Cloudinary al subir archivos
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
