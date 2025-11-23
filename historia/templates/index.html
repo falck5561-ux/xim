@@ -158,7 +158,7 @@
         <h2 class="text-center romantic-font mb-5 display-5 text-danger">Nuestra Historia</h2>
         <div class="row g-4">
             {% for momento in momentos %}
-            <div class="col-md-6 col-lg-4" data-aos="fade-up">
+            <div class="col-6 col-lg-4" data-aos="fade-up">
                 <div class="glass-card h-100" 
                     data-id="{{ momento.id }}" data-titulo="{{ momento.titulo }}" 
                     data-fecha="{{ momento.fecha|date:'Y-m-d' }}" data-desc="{{ momento.descripcion }}" 
