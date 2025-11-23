@@ -204,7 +204,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content bg-dark text-white border-0 shadow-lg" style="border-radius: 20px;">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title romantic-font text-danger fs-3">🎧 DJ del Amor</h5>
+                    <h5 class="modal-title romantic-font text-danger fs-3">🎧 JX</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -383,7 +383,7 @@
                     <h1 class="romantic-font text-danger display-4 mb-2">Simplemente Contigo</h1>
                     <p class="text-muted fst-italic mb-4">Un recordatorio de lo mucho que te amo:</p>
                     <div class="video-cine-box">
-                        <video id="finalVideo" controls loop playsinline><source src="/media/lindo.mp4" type="video/mp4"></video>
+                         <video id="finalVideo" controls loop playsinline><source src="/media/lindo.mp4" type="video/mp4"></video>
                     </div>
                     <div class="text-frame-neon">
                         <div class="neon-text-enhanced">
@@ -809,7 +809,8 @@
 
                 Swal.fire({ 
                     title: '<span class="romantic-font text-danger">¡Eternidad!</span>', 
-                    // NOTA: Quité 'autoplay' de la etiqueta video aquí abajo para evitar el parpadeo de la barra
+                    // CORRECCIÓN CLAVE: Sin controls, con autoplay, pero SIN muted (para que suene)
+                    // La barra está oculta inicialmente gracias a que quitamos 'controls' aquí
                     html: `
                         <div class="text-frame-neon">
                             <div class="neon-text-enhanced" style="text-align:center; font-style:italic;">
@@ -818,7 +819,7 @@
                         </div>
                         
                         <div class="video-cine-box mb-3 mt-3" style="height: auto; max-height: 60vh;">
-                            <video id="timelineVideo" controls loop playsinline preload="auto" style="width: 100%; height: 100%; object-fit: contain;">
+                            <video id="timelineVideo" loop playsinline preload="auto" style="width: 100%; height: 100%; object-fit: contain;">
                                 <source src="/media/beso.mp4" type="video/mp4">
                                 Tu navegador no soporta videos.
                             </video>
@@ -831,12 +832,19 @@
                     backdrop: `rgba(255,215,0,0.2)`, 
                     padding: '2em',
                     width: '800px',
-                    // 2. didOpen: Se ejecuta cuando la alerta ya se abrió completamente.
-                    // Aquí le damos play para que la barra de controles se vea estable.
+                    // Lógica para controlar la barra y el play
                     didOpen: () => {
                         const v = document.getElementById('timelineVideo');
                         if(v) {
-                            // Un pequeño retraso casi invisible asegura que la UI esté lista
+                            // Forzamos que la barra esté oculta al inicio
+                            v.controls = false;
+
+                            // Magia para mostrar controles SOLO al pasar el mouse (Hover)
+                            v.onmouseenter = () => v.controls = true;
+                            v.onmouseleave = () => v.controls = false;
+                            
+                            // Intentamos reproducir CON sonido
+                            // Como el usuario acaba de interactuar con el slider, el navegador debería permitir el audio
                             setTimeout(() => {
                                 v.play().catch(e => console.log("Esperando interacción", e));
                             }, 500);
