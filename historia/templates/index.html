@@ -20,107 +20,120 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <style>
-        /* --- ESTILOS ESPECÍFICOS --- */
-        
-        /* 1. Gestor de Música */
-        .song-item { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); 
-            cursor: pointer; transition: all 0.3s; border-radius: 10px; 
+        /* --- ESTILOS GENERALES Y ESPECÍFICOS --- */
+        body { overflow-x: hidden; }
+
+        /* 1. Bucket List Dinámica (MEJORADA) */
+        .bucket-container { 
+            background: rgba(255, 255, 255, 0.9); 
+            border-radius: 20px; 
+            padding: 2rem; 
+            box-shadow: 0 10px 30px rgba(255, 107, 129, 0.2); 
+            backdrop-filter: blur(10px); 
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            max-width: 800px;
+            margin: 0 auto;
         }
+        
+        .bucket-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            background: #fff;
+            padding: 5px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid #ffeaa7;
+        }
+        
+        .bucket-input {
+            border: none;
+            flex-grow: 1;
+            padding: 10px 20px;
+            border-radius: 50px;
+            outline: none;
+            font-family: 'Montserrat', sans-serif;
+            color: #2d3436;
+        }
+        
+        .bucket-btn-add {
+            background: #ff6b81;
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        .bucket-btn-add:hover { transform: scale(1.1); background: #ff4757; }
+
+        .bucket-item { 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 12px; 
+            padding: 12px 15px; 
+            border-bottom: 1px dashed #fab1a0; 
+            transition: all 0.3s; 
+            background: rgba(255,255,255,0.5);
+            border-radius: 10px;
+        }
+        .bucket-item:hover { background: #fff0f3; transform: translateX(5px); }
+        
+        .bucket-checkbox { 
+            width: 22px; height: 22px; margin-right: 15px; 
+            accent-color: #ff6b81; cursor: pointer; flex-shrink: 0;
+        }
+        
+        .bucket-text { 
+            font-family: 'Montserrat', sans-serif; 
+            font-size: 1.05rem; color: #2d3436; 
+            transition: all 0.3s; width: 100%; text-align: left; 
+            word-break: break-word;
+        }
+        .bucket-text.completed { text-decoration: line-through; color: #b2bec3; font-style: italic; }
+        
+        .bucket-delete-btn {
+            background: transparent;
+            border: none;
+            color: #fab1a0;
+            cursor: pointer;
+            transition: color 0.3s;
+            padding: 5px;
+        }
+        .bucket-delete-btn:hover { color: #ff4757; }
+
+        /* 2. Gestor de Música */
+        .song-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: all 0.3s; border-radius: 10px; }
         .song-item:hover { background: rgba(255,255,255,0.1); transform: translateX(5px); }
         .song-item.active-song { background: rgba(255, 71, 87, 0.2); border: 1px solid #ff4757; }
-        .song-item-cover {
-            width: 40px; height: 40px; border-radius: 50%; margin-right: 15px;
-            background: #ff6b81; display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; overflow: hidden; position: relative; box-shadow: 0 0 5px rgba(0,0,0,0.1);
-        }
+        .song-item-cover { width: 40px; height: 40px; border-radius: 50%; margin-right: 15px; background: #ff6b81; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; position: relative; }
         .song-item-cover img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .music-upload-zone { 
-            border: 2px dashed #555; border-radius: 15px; padding: 30px; 
-            text-align: center; color: #888; cursor: pointer; 
-            transition: all 0.3s; background: rgba(0,0,0,0.2); 
-        }
+        .music-upload-zone { border: 2px dashed #555; border-radius: 15px; padding: 30px; text-align: center; color: #888; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.2); }
         .music-upload-zone:hover { border-color: #ff4757; color: #fff; background: rgba(255, 71, 87, 0.1); }
-        
         #musicManagerModal .modal-content { background: linear-gradient(145deg, #1a1a1a, #2d2d2d); }
 
-        /* 2. Burbuja de Instrucciones */
-        .music-hint-bubble {
-            position: fixed; bottom: 95px; left: 30px;
-            background: rgba(255, 255, 255, 0.95); padding: 10px 15px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            border: 2px solid #ff9a9e; color: #ff4757; font-size: 0.8rem; font-weight: 600;
-            z-index: 998; pointer-events: none; 
-            opacity: 0; transform: translateY(10px); 
-            transition: all 0.3s ease; max-width: 200px; line-height: 1.4;
-        }
+        /* 3. Burbuja Instrucciones */
+        .music-hint-bubble { position: fixed; bottom: 95px; left: 30px; background: rgba(255, 255, 255, 0.95); padding: 10px 15px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border: 2px solid #ff9a9e; color: #ff4757; font-size: 0.8rem; font-weight: 600; z-index: 998; pointer-events: none; opacity: 0; transform: translateY(10px); transition: all 0.3s ease; max-width: 200px; }
+        .music-hint-bubble.show-hint, .music-player:hover + .music-hint-bubble { opacity: 1; transform: translateY(0); }
         
-        .music-hint-bubble.show-hint,
-        .music-player:hover + .music-hint-bubble { opacity: 1; transform: translateY(0); }
-        
-        .hint-icon { vertical-align: middle; margin: 0 3px; font-size: 1.1em; }
-        
-        /* 3. Ajuste para videos e imágenes (Modo Cine NEGRO ALINEADO) */
-        .video-cine-box {
-            width: 100%; 
-            /* Ancho máximo IGUAL al del texto para que se vean alineados */
-            max-width: 650px; 
-            height: auto; 
-            /* Altura máxima controlada */
-            max-height: 50vh; 
-            background: #000; /* Fondo negro puro */
-            border-radius: 15px; 
-            box-shadow: 0 15px 40px rgba(0,0,0,0.5); 
-            margin: 0 auto 20px auto;
-            display: flex; align-items: center; justify-content: center; overflow: hidden;
-        }
-        
-        .video-cine-box video, .video-cine-box img { 
-            width: 100%; 
-            height: 100%; 
-            max-height: 50vh; 
-            display: block; 
-            object-fit: contain; 
-        }
+        /* 4. Video Cine Box & Neon */
+        .video-cine-box { width: 100%; max-width: 650px; height: auto; max-height: 50vh; background: #000; border-radius: 15px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); margin: 0 auto 20px auto; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .video-cine-box video, .video-cine-box img { width: 100%; height: 100%; max-height: 50vh; display: block; object-fit: contain; }
+        @media (max-width: 768px) { .video-cine-box, .video-cine-box video { max-height: 40vh; } }
+        .text-frame-neon { background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 107, 129, 0.4); border-radius: 15px; padding: 30px; position: relative; margin: 0 auto 25px auto; width: 100%; max-width: 650px; box-shadow: inset 0 0 30px rgba(0,0,0,0.5); }
+        .text-frame-neon::before { content: '❤'; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); background: #212529; padding: 0 15px; color: #ff4757; font-size: 1.5rem; }
+        .neon-text-enhanced { font-family: 'Montserrat', sans-serif; font-weight: 500; color: #fff; text-shadow: 0 0 5px rgba(255, 107, 129, 0.8); text-align: justify; line-height: 1.8; font-size: 1.15rem; }
 
-        /* Ajuste para Móvil */
-        @media (max-width: 768px) {
-            .video-cine-box {
-                max-height: 40vh; 
-            }
-            .video-cine-box video, .video-cine-box img {
-                max-height: 40vh;
-            }
-        }
-        
-        /* 4. Marco de texto neón (ALINEADO CON EL VIDEO) */
-        .text-frame-neon {
-            background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 107, 129, 0.4);
-            border-radius: 15px; padding: 30px; position: relative; 
-            margin: 0 auto 25px auto; 
-            width: 100%;
-            /* EXACTAMENTE EL MISMO ANCHO MÁXIMO QUE EL VIDEO */
-            max-width: 650px; 
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
-        }
-        .text-frame-neon::before {
-            content: '❤'; position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
-            background: #212529; padding: 0 15px; color: #ff4757; font-size: 1.5rem;
-        }
-
-        /* 5. Estilo Mejorado para Texto en Modales Finales */
-        .neon-text-enhanced {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-            color: #fff;
-            text-shadow: 0 0 5px rgba(255, 107, 129, 0.8), 0 0 10px rgba(255, 107, 129, 0.4);
-            text-align: justify;
-            line-height: 1.8;
-            font-size: 1.15rem;
-        }
+        /* 5. Capsule */
+        .capsule-card { background: linear-gradient(135deg, #2d3436, #000000); border: 2px solid #fdcb6e; color: #fdcb6e; border-radius: 20px; padding: 3rem; text-align: center; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; position: relative; overflow: hidden; }
+        .capsule-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(253, 203, 110, 0.3); }
+        .capsule-icon { font-size: 4rem; margin-bottom: 1rem; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
     </style>
 </head>
 <body>
@@ -167,8 +180,24 @@
         </div>
     </div>
 
+    <div class="container mb-5" data-aos="fade-up">
+        <h2 class="text-center romantic-font mb-4 text-danger display-5">Nuestra Lista de Deseos ✅</h2>
+        <div class="bucket-container">
+            <p class="text-center text-muted mb-4 small">Escriban aquí sus sueños y márquenlos al cumplirlos.</p>
+            
+            <div class="bucket-input-group">
+                <input type="text" id="bucketInput" class="bucket-input" placeholder="Ej: Viajar a ver auroras boreales ✨" onkeypress="handleBucketEnter(event)">
+                <button class="bucket-btn-add" onclick="addBucketItem()"><i class="bi bi-plus-lg"></i></button>
+            </div>
+
+            <div id="bucketListContainer">
+                </div>
+        </div>
+    </div>
+
     <div class="container mb-5">
         <h2 class="text-center romantic-font mb-4 text-danger display-5">Ábrela cuando... 💌</h2>
+        <p class="text-center text-muted mb-3 small">(Ahora con notas de voz 🎙️)</p>
         <div class="row g-3">
             <div class="col-md-3 col-6" data-aos="fade-up"><div class="letter-card" onclick="leerCarta('hoy')"><div class="letter-icon"><i class="bi bi-calendar-heart"></i></div><h5 class="romantic-font fw-bold">Sea hoy</h5><small class="text-muted">¡Felices 20 años!</small></div></div>
             <div class="col-md-3 col-6" data-aos="fade-up"><div class="letter-card" onclick="leerCarta('triste')"><div class="letter-icon"><i class="bi bi-cloud-drizzle"></i></div><h5 class="romantic-font fw-bold">Estés triste</h5><small class="text-muted">Léeme para sonreír</small></div></div>
@@ -214,6 +243,15 @@
         </div>
     </div>
 
+    <div class="container mb-5" data-aos="zoom-in">
+        <div class="capsule-card" onclick="verificarCapsula()">
+            <div class="capsule-icon">⏳</div>
+            <h2 class="romantic-font text-warning mb-3">Cápsula del Tiempo</h2>
+            <p class="mb-0">Hemos guardado un mensaje para el futuro.</p>
+            <small class="text-muted fst-italic">Programado para: 31 Dic 2030</small>
+        </div>
+    </div>
+
     <div class="container pb-5">
         <div class="footer-surprise" onclick="verSorpresaFinal()">
             <h3 class="romantic-font text-danger">¿Llegaste hasta aquí? ❤️</h3>
@@ -222,108 +260,6 @@
     </div>
 
     <button class="btn-add" data-bs-toggle="modal" data-bs-target="#addModal" title="Agregar Recuerdo"><i class="bi bi-plus-lg"></i></button>
-
-    <div class="modal fade" id="musicManagerModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content bg-dark text-white border-0 shadow-lg" style="border-radius: 20px;">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title romantic-font text-danger fs-3">🎧 JX</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="music-upload-zone mb-4" onclick="document.getElementById('songFileInput').click()">
-                        <i class="bi bi-cloud-upload fs-1 mb-2"></i>
-                        <h6 class="mb-1 fw-bold">Subir Nueva Canción</h6>
-                        <p class="mb-0 small">Toca aquí para elegir un archivo</p>
-                        <input type="file" id="songFileInput" accept="audio/*" style="display: none;" onchange="subirCancion(this)">
-                    </div>
-                    <h6 class="text-uppercase text-info small ls-2 mb-3 ps-2">Tu Lista de Reproducción</h6>
-                    <div id="songListContainer" style="max-height: 300px; overflow-y: auto; padding-right: 5px;">
-                        <div class="text-center text-muted py-3"><div class="spinner-border text-danger spinner-border-sm" role="status"></div><span class="ms-2">Cargando canciones...</span></div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mt-4 border-top border-secondary pt-3">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="shuffleMode" style="cursor: pointer;">
-                            <label class="form-check-label small" for="shuffleMode">Modo Aleatorio 🔀</label>
-                        </div>
-                        <small class="text-white-50 fst-italic">Mantén presionado el disco para volver aquí.</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="birthdayModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="background-color: transparent; border: none; box-shadow: none;"> 
-                <div class="modal-body text-center p-0">
-                    <div class="birthday-card">
-                        <div class="display-1 mb-3">🥳🎉🎁</div>
-                        <h2 class="rainbow-text mb-4">¡Feliz Cumpleaños Ximena!</h2>
-                        <p class="lead book-font">Que este día esté lleno de alegría, amor y todo lo que deseas.</p>
-                        <div class="mt-4">
-                            <div id="birthdayDiscPlayer" class="vinyl-record-css" onclick="toggleBirthdayAudio()">
-                                <div class="vinyl-label"><i class="bi bi-music-note-beamed"></i></div>
-                            </div>
-                        </div>
-                        <p class="mt-4 mb-2 book-font" style="color: #666;">¡Esta canción es para ti mi niña!</p>
-                        <small>Toca fuera de la tarjeta para cerrar.</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="momentModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
-                <div class="modal-header border-0 pb-0 bg-white position-relative"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body pt-0 px-4 pb-5 bg-white">
-                    <div class="text-center mb-3"><h2 id="detTitle" class="romantic-font text-danger display-5"></h2><span id="detDate" class="text-muted text-uppercase small ls-2"></span></div>
-                    <div class="d-flex justify-content-center mb-4"><div id="detMedia" class="w-100 text-center"></div></div>
-                    <div class="text-center mb-3"><i class="bi bi-suit-heart-fill text-danger opacity-25 fs-4"></i></div>
-                    <div class="story-paper"><span class="quote-icon quote-start">“</span><p id="detDesc" class="story-text text-center mb-0"></p><span class="quote-icon quote-end">”</span></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="addModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-4 border-0 shadow">
-                <div class="modal-header border-0 position-relative"><h3 class="romantic-font text-danger text-center mb-0 w-100">Nuevo Recuerdo</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body">
-                    <form method="POST" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <div class="mb-3"><label class="form-label fw-bold">Título</label>{{ form.titulo }}</div>
-                        <div class="mb-3"><label class="form-label fw-bold">Fecha</label>{{ form.fecha }}</div>
-                        <div class="mb-3"><label class="form-label fw-bold">Descripcion</label>{{ form.descripcion }}</div>
-                        <div class="mb-3 border p-2 rounded bg-light"><label class="form-label text-danger fw-bold d-block mb-2"><i class="bi bi-camera-fill me-2"></i>Subir Foto (Opcional)</label>{{ form.foto }}</div>
-                        <div class="mb-3 border p-2 rounded bg-light"><label class="form-label text-danger fw-bold d-block mb-2"><i class="bi bi-camera-reels-fill me-2"></i>Subir Video (Opcional)</label>{{ form.video }}</div>
-                        <button class="btn btn-danger w-100 rounded-pill mt-2 shadow">Guardar Recuerdo</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="editModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-4 border-0 shadow"><div class="modal-header border-0 position-relative"><h3 class="romantic-font text-primary text-center mb-0 w-100">Editar Recuerdo</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body">
-                    <form method="POST" enctype="multipart/form-data" id="editForm">
-                        {% csrf_token %}
-                        <div class="mb-3"><label class="form-label fw-bold">Título</label><input type="text" name="titulo" id="editTitle" class="form-control"></div>
-                        <div class="mb-3"><label class="form-label fw-bold">Fecha</label><input type="date" name="fecha" id="editDate" class="form-control"></div>
-                        <div class="mb-3"><label class="form-label fw-bold">Descripcion</label><textarea name="descripcion" id="editDesc" class="form-control" rows="3"></textarea></div>
-                        <div class="mb-3 border p-2 rounded bg-light"><label class="form-label text-danger fw-bold d-block mb-2"><i class="bi bi-camera-fill me-2"></i>Cambiar Foto</label><input type="file" name="foto" class="form-control"></div>
-                        <div class="mb-3 border p-2 rounded bg-light"><label class="form-label text-danger fw-bold d-block mb-2"><i class="bi bi-camera-reels-fill me-2"></i>Cambiar Video</label><input type="file" name="video" class="form-control"></div>
-                        <button class="btn btn-primary w-100 rounded-pill mt-2 shadow">Guardar Cambios</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div class="modal fade" id="bookModal" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -337,6 +273,7 @@
                     </div>
                     <div class="d-flex justify-content-between align-items-center px-5 pb-4">
                         <button class="book-nav-btn" onclick="prevPage()">Anterior</button>
+                        <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="toggleAutoBook()" id="btnAutoBook">▶️ Auto</button>
                         <button class="book-nav-btn btn-danger" onclick="nextPage()">Siguiente</button>
                     </div>
                     <div class="page-number">Página <span id="pageNum">1</span> de 201</div>
@@ -345,99 +282,15 @@
         </div>
     </div>
 
-    <div class="modal fade" id="triviaModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-4 border-0 shadow-lg" style="border-radius: 20px;">
-                <div class="modal-header border-0 pb-0 position-relative"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body text-center">
-                    <h2 class="romantic-font text-danger mb-4 display-5">Trivia de Amor</h2>
-                    <div id="question-container"><h4 id="triviaQuestion" class="mb-4 fw-bold text-dark"></h4><div id="triviaOptions" class="d-grid gap-2"></div></div>
-                    <div id="win-container" style="display:none;" class="win-card">
-                        <div class="display-1 mb-2">🎉</div>
-                        <h2 class="romantic-font text-danger display-6 win-text">¡Ganaste mi Amor!</h2>
-                        <p class="text-muted">Has desbloqueado tus regalos especiales:</p>
-                        <hr>
-                        <h3 class="book-font fst-italic text-dark">¡Para que te veas hermosa! 🎁</h3>
-                        <div class="gift-container">
-                            <img src="/media/regalo_bolsa.png" alt="Bolsa" class="gift-img">
-                            <img src="/media/regalo_sandalias.png" alt="Sandalias" class="gift-img">
-                            <img src="/media/bolsa.webp" alt="Bolsa Adicional" class="gift-img">
-                            <img src="/media/pijama.webp" alt="Pijama" class="gift-img">
-                            <img src="/media/pulsera.webp" alt="Pulsera" class="gift-img">
-                            <img src="/media/EZwear Pantalon.png" alt="Pulsera" class="gift-img">
-                            <img src="/media/INAWLY.png" alt="Pulsera" class="gift-img">
-                            <img src="/media/Elamini Vestido mini casual.png" alt="Pulsera" class="gift-img">
-                            <img src="/media/DAZY Chaqueta deportiva.png" alt="Pulsera" class="gift-img">
-                            <img src="/media/DAZY Camiseta.png" alt="Pulsera" class="gift-img">
-                        </div>
-                        <small class="text-muted d-block mt-3">Espero que te encanten ❤️</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="finalBookModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down">
-            <div class="modal-content bg-dark text-white border-0 text-center p-4 position-relative overflow-hidden" style="border-radius: 20px;">
-                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
-                <div class="modal-body position-relative" style="z-index: 2;">
-                    <h1 class="romantic-font text-info display-4 mb-2">Nunca podría dejarte...</h1>
-                    <p class="text-muted fst-italic mb-4">La razón #201 es imposible, pero mira esto:</p>
-                    
-                    <div class="video-cine-box">
-                        <video id="bookFinalVideo" controls loop playsinline><source src="/media/xim.mp4" type="video/mp4"></video>
-                    </div>
-
-                    <div class="text-frame-neon">
-                        <div class="neon-text-enhanced">
-                            <p>Sé que no siempre lo digo, pero admiro cómo enfrentas la vida con una sonrisa incluso en los momentos difíciles. Tu fuerza, tu bondad y tu manera única de ver el mundo me inspiran cada día. Gracias por estar, por quedarte, por dar lo mejor de ti sin rendirte. Eres alguien especial, con un corazón enorme que deja huellas llenas de cariño.</p>
-                            <p class="text-center mb-0 mt-3 text-white"><strong>TE QUIERO Y QUIERO QUE NUNCA LO OLVIDES... 🌹</strong></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="finalSurpriseModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down">
-            <div class="modal-content bg-dark text-white border-0 text-center p-4 position-relative overflow-hidden" style="border-radius: 20px;">
-                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
-                <div class="modal-body position-relative" style="z-index: 2;">
-                    <h1 class="romantic-font text-danger display-4 mb-2">Simplemente Contigo</h1>
-                    <p class="text-muted fst-italic mb-4">Un recordatorio de lo mucho que te amo:</p>
-                    
-                    <div class="video-cine-box">
-                         <video id="finalVideo" controls loop playsinline><source src="/media/lindo.mp4" type="video/mp4"></video>
-                    </div>
-
-                    <div class="text-frame-neon">
-                        <div class="neon-text-enhanced">
-                            <p>No te puedo bajar la luna, pero puedo acompañarte cada vez que quieras disfrutar de su belleza. No puedo evitar tus malos momentos o tristezas, pero puedo estar contigo siempre para ayudarte a afrontarlas. Tal vez no pueda darte lo mejor del mundo, pero sí lo mejor de mí.</p>
-                            <p class="text-center mb-0 mt-3 text-white" style="text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);">
-                                <strong>QUIERO QUE SEPAS QUE ERES MI VIDA Y MI MAYOR ALEGRÍA. TE AMO. ❤️</strong>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade bg-dark" id="musicModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg bg-dark text-white text-center p-4" style="border-radius: 20px;">
-                <div class="modal-header border-0 pb-0 position-relative"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body">
-                    <i class="bi bi-disc-fill display-1 text-danger mb-3 d-block" style="animation: spin 4s linear infinite;"></i>
-                    <h3 class="romantic-font mb-3">Nuestra Canción Especial</h3>
-                    <p class="text-white-50 mb-4">Para escuchar cuando me extrañes...</p>
-                    <div style="position: relative; z-index: 9999;"><audio id="modalAudio" controls class="w-100" style="cursor: pointer;"><source src="/media/letra.mp3" type="audio/mpeg"></audio></div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="modal fade" id="musicManagerModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content bg-dark text-white border-0 shadow-lg" style="border-radius: 20px;"><div class="modal-header border-0"><h5 class="modal-title romantic-font text-danger fs-3">🎧 JX</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="music-upload-zone mb-4" onclick="document.getElementById('songFileInput').click()"><i class="bi bi-cloud-upload fs-1 mb-2"></i><h6 class="mb-1 fw-bold">Subir Nueva Canción</h6><p class="mb-0 small">Toca aquí para elegir un archivo</p><input type="file" id="songFileInput" accept="audio/*" style="display: none;" onchange="subirCancion(this)"></div><h6 class="text-uppercase text-info small ls-2 mb-3 ps-2">Tu Lista de Reproducción</h6><div id="songListContainer" style="max-height: 300px; overflow-y: auto; padding-right: 5px;"><div class="text-center text-muted py-3"><div class="spinner-border text-danger spinner-border-sm" role="status"></div><span class="ms-2">Cargando canciones...</span></div></div><div class="d-flex justify-content-between align-items-center mt-4 border-top border-secondary pt-3"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="shuffleMode" style="cursor: pointer;"><label class="form-check-label small" for="shuffleMode">Modo Aleatorio 🔀</label></div><small class="text-white-50 fst-italic">Mantén presionado el disco para volver aquí.</small></div></div></div></div></div>
+    <div class="modal fade" id="birthdayModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content" style="background-color: transparent; border: none; box-shadow: none;"><div class="modal-body text-center p-0"><div class="birthday-card"><div class="display-1 mb-3">🥳🎉🎁</div><h2 class="rainbow-text mb-4">¡Feliz Cumpleaños Ximena!</h2><p class="lead book-font">Que este día esté lleno de alegría, amor y todo lo que deseas.</p><div class="mt-4"><div id="birthdayDiscPlayer" class="vinyl-record-css" onclick="toggleBirthdayAudio()"><div class="vinyl-label"><i class="bi bi-music-note-beamed"></i></div></div></div><p class="mt-4 mb-2 book-font" style="color: #666;">¡Esta canción es para ti mi niña!</p><small>Toca fuera de la tarjeta para cerrar.</small></div></div></div></div></div>
+    <div class="modal fade" id="momentModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;"><div class="modal-header border-0 pb-0 bg-white position-relative"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body pt-0 px-4 pb-5 bg-white"><div class="text-center mb-3"><h2 id="detTitle" class="romantic-font text-danger display-5"></h2><span id="detDate" class="text-muted text-uppercase small ls-2"></span></div><div class="d-flex justify-content-center mb-4"><div id="detMedia" class="w-100 text-center"></div></div><div class="text-center mb-3"><i class="bi bi-suit-heart-fill text-danger opacity-25 fs-4"></i></div><div class="story-paper"><span class="quote-icon quote-start">“</span><p id="detDesc" class="story-text text-center mb-0"></p><span class="quote-icon quote-end">”</span></div></div></div></div></div>
+    <div class="modal fade" id="addModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content p-4 border-0 shadow"><div class="modal-header border-0 position-relative"><h3 class="romantic-font text-danger text-center mb-0 w-100">Nuevo Recuerdo</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form method="POST" enctype="multipart/form-data">{% csrf_token %}<div class="mb-3"><label class="form-label fw-bold">Título</label>{{ form.titulo }}</div><div class="mb-3"><label class="form-label fw-bold">Fecha</label>{{ form.fecha }}</div><div class="mb-3"><label class="form-label fw-bold">Descripcion</label>{{ form.descripcion }}</div><div class="mb-3 border p-2 rounded bg-light"><label class="form-label text-danger fw-bold d-block mb-2"><i class="bi bi-camera-fill me-2"></i>Subir Foto (Opcional)</label>{{ form.foto }}</div><div class="mb-3 border p-2 rounded bg-light"><label class="form-label text-danger fw-bold d-block mb-2"><i class="bi bi-camera-reels-fill me-2"></i>Subir Video (Opcional)</label>{{ form.video }}</div><button class="btn btn-danger w-100 rounded-pill mt-2 shadow">Guardar Recuerdo</button></form></div></div></div></div>
+    <div class="modal fade" id="editModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content p-4 border-0 shadow"><div class="modal-header border-0 position-relative"><h3 class="romantic-font text-primary text-center mb-0 w-100">Editar Recuerdo</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form method="POST" enctype="multipart/form-data" id="editForm">{% csrf_token %}<div class="mb-3"><label class="form-label fw-bold">Título</label><input type="text" name="titulo" id="editTitle" class="form-control"></div><div class="mb-3"><label class="form-label fw-bold">Fecha</label><input type="date" name="fecha" id="editDate" class="form-control"></div><div class="mb-3"><label class="form-label fw-bold">Descripcion</label><textarea name="descripcion" id="editDesc" class="form-control" rows="3"></textarea></div><div class="mb-3 border p-2 rounded bg-light"><label class="form-label text-danger fw-bold d-block mb-2"><i class="bi bi-camera-fill me-2"></i>Cambiar Foto</label><input type="file" name="foto" class="form-control"></div><div class="mb-3 border p-2 rounded bg-light"><label class="form-label text-danger fw-bold d-block mb-2"><i class="bi bi-camera-reels-fill me-2"></i>Cambiar Video</label><input type="file" name="video" class="form-control"></div><button class="btn btn-primary w-100 rounded-pill mt-2 shadow">Guardar Cambios</button></form></div></div></div></div>
+    <div class="modal fade" id="triviaModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content p-4 border-0 shadow-lg" style="border-radius: 20px;"><div class="modal-header border-0 pb-0 position-relative"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><h2 class="romantic-font text-danger mb-4 display-5">Trivia de Amor</h2><div id="question-container"><h4 id="triviaQuestion" class="mb-4 fw-bold text-dark"></h4><div id="triviaOptions" class="d-grid gap-2"></div></div><div id="win-container" style="display:none;" class="win-card"><div class="display-1 mb-2">🎉</div><h2 class="romantic-font text-danger display-6 win-text">¡Ganaste mi Amor!</h2><p class="text-muted">Has desbloqueado tus regalos especiales:</p><hr><h3 class="book-font fst-italic text-dark">¡Para que te veas hermosa! 🎁</h3><div class="gift-container"><img src="/media/regalo_bolsa.png" alt="Bolsa" class="gift-img"><img src="/media/regalo_sandalias.png" alt="Sandalias" class="gift-img"><img src="/media/bolsa.webp" alt="Bolsa Adicional" class="gift-img"><img src="/media/pijama.webp" alt="Pijama" class="gift-img"><img src="/media/pulsera.webp" alt="Pulsera" class="gift-img"><img src="/media/EZwear Pantalon.png" alt="Pulsera" class="gift-img"><img src="/media/INAWLY.png" alt="Pulsera" class="gift-img"><img src="/media/Elamini Vestido mini casual.png" alt="Pulsera" class="gift-img"><img src="/media/DAZY Chaqueta deportiva.png" alt="Pulsera" class="gift-img"><img src="/media/DAZY Camiseta.png" alt="Pulsera" class="gift-img"></div><small class="text-muted d-block mt-3">Espero que te encanten ❤️</small></div></div></div></div></div>
+    <div class="modal fade" id="finalBookModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down"><div class="modal-content bg-dark text-white border-0 text-center p-4 position-relative overflow-hidden" style="border-radius: 20px;"><button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button><div class="modal-body position-relative" style="z-index: 2;"><h1 class="romantic-font text-info display-4 mb-2">Nunca podría dejarte...</h1><p class="text-muted fst-italic mb-4">La razón #201 es imposible, pero mira esto:</p><div class="video-cine-box"><video id="bookFinalVideo" controls loop playsinline><source src="/media/xim.mp4" type="video/mp4"></video></div><div class="text-frame-neon"><div class="neon-text-enhanced"><p>Sé que no siempre lo digo, pero admiro cómo enfrentas la vida con una sonrisa incluso en los momentos difíciles. Tu fuerza, tu bondad y tu manera única de ver el mundo me inspiran cada día. Gracias por estar, por quedarte, por dar lo mejor de ti sin rendirte. Eres alguien especial, con un corazón enorme que deja huellas llenas de cariño.</p><p class="text-center mb-0 mt-3 text-white"><strong>TE QUIERO Y QUIERO QUE NUNCA LO OLVIDES... 🌹</strong></p></div></div></div></div></div></div>
+    <div class="modal fade" id="finalSurpriseModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down"><div class="modal-content bg-dark text-white border-0 text-center p-4 position-relative overflow-hidden" style="border-radius: 20px;"><button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button><div class="modal-body position-relative" style="z-index: 2;"><h1 class="romantic-font text-danger display-4 mb-2">Simplemente Contigo</h1><p class="text-muted fst-italic mb-4">Un recordatorio de lo mucho que te amo:</p><div class="video-cine-box"><video id="finalVideo" controls loop playsinline><source src="/media/lindo.mp4" type="video/mp4"></video></div><div class="text-frame-neon"><div class="neon-text-enhanced"><p>No te puedo bajar la luna, pero puedo acompañarte cada vez que quieras disfrutar de su belleza. No puedo evitar tus malos momentos o tristezas, pero puedo estar contigo siempre para ayudarte a afrontarlas. Tal vez no pueda darte lo mejor del mundo, pero sí lo mejor de mí.</p><p class="text-center mb-0 mt-3 text-white" style="text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);"><strong>QUIERO QUE SEPAS QUE ERES MI VIDA Y MI MAYOR ALEGRÍA. TE AMO. ❤️</strong></p></div></div></div></div></div></div>
+    <div class="modal fade bg-dark" id="musicModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg bg-dark text-white text-center p-4" style="border-radius: 20px;"><div class="modal-header border-0 pb-0 position-relative"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><i class="bi bi-disc-fill display-1 text-danger mb-3 d-block" style="animation: spin 4s linear infinite;"></i><h3 class="romantic-font mb-3">Nuestra Canción Especial</h3><p class="text-white-50 mb-4">Para escuchar cuando me extrañes...</p><div style="position: relative; z-index: 9999;"><audio id="modalAudio" controls class="w-100" style="cursor: pointer;"><source src="/media/letra.mp3" type="audio/mpeg"></audio></div></div></div></div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -454,6 +307,7 @@
         let heartCounter = 0;
         let currentPage = 0; 
         let qIdx = 0;
+        let bookInterval = null;
 
         const musicPlayerBtn = document.getElementById('mainMusicBtn');
         const musicHint = document.getElementById('musicHint'); 
@@ -465,26 +319,7 @@
         const shuffleCheckbox = document.getElementById('shuffleMode');
         const installBtn = document.getElementById('installBtn');
 
-        const baseReasons = ["porque te quiero", "porque te amo", "porque te adoro", "porque amo tus cachetitos", "porque con saludarme me haces el dia", "porque eres mi cielo en la tierra", "porque te preocupas por mi", "porque entiendes como estoy sin decirte nada", "porque contigo soy yo mismo", "porque me conoces mas que nadie y aun asi sigues aqui",
-        "porque no me imagino mi vida sin ti", "porque solo quiero un futuro a tu lado", "porque gracias a ti creo en un para siempre", "porque quiero compartir todo contigo", "porque quiero estar siempre contigo", "por ti haria hasta lo imposible", "por ti soy el mas feliz del mundo", "porque tu sonrisa me encanta", "porque tu mirada me hipnotiza", "porque tu alegria es lo que siempre deseo",
-        "porque tu bienestar es lo mas importante para mi", "porque tu felicidad es mi mision", "porque me encantan tus besos", "porque iluminas mis dias aun mas que el sol", "porque eres la mayor bendicion", "porque te gusta verme feliz", "porque contigo siempre quiero intentar todo", "porque sonries con mis tonterias que hago o digo", "porque por ti soy valiente", "por ti tengo fuerza para enfrentar todo",
-        "porque quiero darte todo", "porque me haces ser mejor de lo que soy", "porque cuando hablo de ti mi creen loco de amor", "porque contigo sueño a diario", "me haces sentir especial", "porque eres la razon de mi existir", "porque te veo siempre aunque no estes basta con cerrar los ojos y ahi estas", "por ti me aferro a la vida", "aunque por ti daria mi vida", "porque eres mi debilidad",
-        "porque eres la persona mas maravillosa de este universo", "porque sin ti no se vivir", "porque eres la sinfonia de mi corazon", "porque mi sangre hierve por ti", "porque elevas al maximo mi autoestima", "porque soy todo tuyo", "porque nos pertenecemos mutuamente", "porque no te puedo mentir", "el solo recordarte me hace suspirar", "porque para mi eres perfecta",
-        "porque tenemos nuestro pequeño universo solo para nosotros dos", "porque eres mi devocion", "porque deseo siempre escucharte", "solo tu calor me abriga", "me encantan tus detalles", "solo existimos nosotros dos al estar juntos", "porque lo que siento por ti es interminable", "porque cada dia te lo dedico a ti", "porque contigo me gobierna la felicidad", "porque te secuestraria para estar siempre juntos",
-        "porque eres la luz de todos mis caminos", "porque te deseo", "porque me vuelves loco por ti", "eres el escape divino hacia el cielo", "porque adoro tu aroma", "porque tenemos cosas en comun", "porque tenemos cosas tan distintas", "porque conquistaste todo mi ser", "porque eres mi vida", "porque eres mi mundo",
-        "porque eres mi alma gemela", "porque eres todo para mi", "contigo todo es mas bello", "contigo todo lo disfruto al maximo", "porque mi corazon tiene tu nombre tatuado", "porque me haces perder la razon", "porque me haces suspirar tan profundamente", "porque me haces sonreir como nunca lo he hecho", "por todos los bellos momentos que compartiremos juntos", "por todas las sonrisas que tendremos",
-        "por todas las locuras que haremos", "porque no puedo dejar de pensar en ti", "porque muero por despertar a tu lado", "porque te necesito", "porque me encanta cuando cantas", "por cada abrazo que me das", "por nuestros momentos de ser cursis", "porque eres la unica en mi vida", "porque me encantan tus mensajes cursis", "porque me has mostrado lo que es querer de verdad",
-        "porque gracias a ti e sentido lo que es que te quieran", "porque me soportas dia a dia", "por esos momentos cuando nos quedabamos dormidos juntos", "por estar siempre ahi", "por aguantar cuando pasaba por algo dificil", "por nuestras conversaciones hasta la madrugada", "por todos nuestros planes que tenemos juntos", "porque cada segundo a tu lado a sido increible", "porque me has hecho vivir la mejor etapa de mi vida", "por esas salidas a cualquier lado caminando de la mano",
-        "por tus caricias", "por toda tu dulzura que tienes", "porque conviertes mis lagrimas en sonrisas", "porque eres mi sueño hecho realidad", "porque cada segundo que estamos lejos te extraño", "porque jamas olvidare nuestro primer bes", "ni la primera vez que fuimos al cine", "o todo lo que nos pasa cuando vamos al cine", "por las canciones que me dedicas", "porque no puedo evitar amarte",
-        "porque me haces sentir tan afortunado al estar a tu lado", "porque siempre me das animo", "porque siempre te trato como a una princesa", "porque aguantas mi mal caracter", "por hacerme sentir guapo", "por estar conmigo en la prepa aunque tengas sueño", "por dejarme acompañarte hasta tu casa", "por ese 3 de noviembre que me acompañaste aunque morias de nervios", "por ese 15 de febrero que fue mi competencia", "por estar ahi aunque tuvieras sueño y hambre",
-        "por esos gritos de apoyo que hizo que diera todo", "por querer lo mejor para mi", "porque siempre te quiero ver", "por haberte fijado en mi", "por todos esos momentos que comemos juntos", "porque siempre evito pelear contigo", "porque me encanta verte jugar", "porque me gusta acompañarte a cualquier lado y hora con tal de verte jugar", "por cada sabado que pasamos todo el dia juntos", "por esas salidas al parque que hasta vimos una vaca",
-        "por cuando vamos por crepas aunque esten caras pero te encantan", "porque me encantaria detener el tiempo cuando estoy a tu lado", "porque quiero besarte por todas partes: tus labios, tu frente , tu cuello, y mucho mas", "porque me encanta hacerte consquillas", "porque para mi siempre seras la mas hermosa de todas", "no importa si te veo en pijama, o con vestido, o casual siempre me fascinas", "porque solo nosotros nos entendemos", "porque me encanta mirarte", "porque me gusta cuando nos vemos a los ojos", "porque me enseñas tu lengua apretando los ojos",
-        "porque eres increiblemente perfecta", "porque no quiero perderte", "por todas las sorpresas que faltan por darte", "por estar ahi cuando mas te necesito", "porque doy todo por sacarte una sonrisa cuando estas triste", "porque quiero convertir tus lagrimas en sonrisas", "porque gracias a ti todo es mas bello", "porque aparte de mi novia eres mi amiga", "porque te cuido", "porque nuestro amor es sincero",
-        "porque a tu lado horas son segundos", "por nuestros momentos de risa", "por aguantar mi borrachera", "por serme fiel", "por nuestros apodos cariñosos que tenemos", "porque te entrego mi corazon y no hay devoluciones", "porque no quiero olvidarte nunca", "por todos los viajes que haremos", "porque con una mirada basta para enamorarme", "porque odio que agarres mis cachetes pero es lindo",
-        "porque cada dia intento enamorarte", "porque contigo no busco una historia con final feliz sino una historia sin final", "porque aceptas mis defectos", "y yo los tuyos", "porque el destino nos unio", "por tu comprension", "porque contigo no existe la monotonia", "por compartir tu vida conmigo", "porque eres increible", "porque has dejado huella en mi vida",
-        "por nuestro primer 'te amo'", "por todos los dias que quedan por vernos", "porque me das esperanza para creer en el amor", "por todo lo que me enseñas", "por como me haces piojito", "por tu cara de niña buena", "por los pequeños detalles", "por cada palabra que dices", "por lo cariñosa que eres conmigo", "porque me dejas sin palabras",
-        "por las ganas que tengo de verte", "por que eres divertida", "porque nunca e sido asi con nadie mas", "porque que quiero ser el ultimo en tu vida", "porque confio en ti", "porque siempre me haces reir", "por tu amor incondicional", "por todo lo que me escribes en mi piel", "por todos los mensajes que hemos enviado", "porque eres imprescindible en mi vida",
-        "porque nunca nos quedamos sin tema de conversacion", "porque te voy a comer a besos cuando te vea", "porque me gusta apapacharte", "porque me encanta que te acurruques en mi", "porque me gusta cuando duermes a mi lado y te hago piojito", "porque cada dia te amo mas", "porque contigo ya no tengo vergüenza de nada", "por todos esos minutos hablando por telefono", "por todo lo que nos queda", "porque cada momento a tu lado es especial e inolvidable"];
+        const baseReasons = ["porque te quiero", "porque te amo", "porque te adoro", "porque amo tus cachetitos", "porque con saludarme me haces el dia", "porque eres mi cielo en la tierra", "porque te preocupas por mi", "porque entiendes como estoy sin decirte nada", "porque contigo soy yo mismo", "porque me conoces mas que nadie y aun asi sigues aqui", "porque no me imagino mi vida sin ti", "porque solo quiero un futuro a tu lado", "porque gracias a ti creo en un para siempre", "porque quiero compartir todo contigo", "porque quiero estar siempre contigo", "por ti haria hasta lo imposible", "por ti soy el mas feliz del mundo", "porque tu sonrisa me encanta", "porque tu mirada me hipnotiza", "porque tu alegria es lo que siempre deseo", "porque tu bienestar es lo mas importante para mi", "porque tu felicidad es mi mision", "porque me encantan tus besos", "porque iluminas mis dias aun mas que el sol", "porque eres la mayor bendicion", "porque te gusta verme feliz", "porque contigo siempre quiero intentar todo", "porque sonries con mis tonterias que hago o digo", "porque por ti soy valiente", "por ti tengo fuerza para enfrentar todo", "porque quiero darte todo", "porque me haces ser mejor de lo que soy", "porque cuando hablo de ti mi creen loco de amor", "porque contigo sueño a diario", "me haces sentir especial", "porque eres la razon de mi existir", "porque te veo siempre aunque no estes basta con cerrar los ojos y ahi estas", "por ti me aferro a la vida", "aunque por ti daria mi vida", "porque eres mi debilidad", "porque eres la persona mas maravillosa de este universo", "porque sin ti no se vivir", "porque eres la sinfonia de mi corazon", "porque mi sangre hierve por ti", "porque elevas al maximo mi autoestima", "porque soy todo tuyo", "porque nos pertenecemos mutuamente", "porque no te puedo mentir", "el solo recordarte me hace suspirar", "porque para mi eres perfecta", "porque tenemos nuestro pequeño universo solo para nosotros dos", "porque eres mi devocion", "porque deseo siempre escucharte", "solo tu calor me abriga", "me encantan tus detalles", "solo existimos nosotros dos al estar juntos", "porque lo que siento por ti es interminable", "porque cada dia te lo dedico a ti", "porque contigo me gobierna la felicidad", "porque te secuestraria para estar siempre juntos", "porque eres la luz de todos mis caminos", "porque te deseo", "porque me vuelves loco por ti", "eres el escape divino hacia el cielo", "porque adoro tu aroma", "porque tenemos cosas en comun", "porque tenemos cosas tan distintas", "porque conquistaste todo mi ser", "porque eres mi vida", "porque eres mi mundo", "porque eres mi alma gemela", "porque eres todo para mi", "contigo todo es mas bello", "contigo todo lo disfruto al maximo", "porque mi corazon tiene tu nombre tatuado", "porque me haces perder la razon", "porque me haces suspirar tan profundamente", "porque me haces sonreir como nunca lo he hecho", "por todos los bellos momentos que compartiremos juntos", "por todas las sonrisas que tendremos", "por todas las locuras que haremos", "porque no puedo dejar de pensar en ti", "porque muero por despertar a tu lado", "porque te necesito", "porque me encanta cuando cantas", "por cada abrazo que me das", "por nuestros momentos de ser cursis", "porque eres la unica en mi vida", "porque me encantan tus mensajes cursis", "porque me has mostrado lo que es querer de verdad", "porque gracias a ti e sentido lo que es que te quieran", "porque me soportas dia a dia", "por esos momentos cuando nos quedabamos dormidos juntos", "por estar siempre ahi", "por aguantar cuando pasaba por algo dificil", "por nuestras conversaciones hasta la madrugada", "por todos nuestros planes que tenemos juntos", "porque cada segundo a tu lado a sido increible", "porque me has hecho vivir la mejor etapa de mi vida", "por esas salidas a cualquier lado caminando de la mano", "por tus caricias", "por toda tu dulzura que tienes", "porque conviertes mis lagrimas en sonrisas", "porque eres mi sueño hecho realidad", "porque cada segundo que estamos lejos te extraño", "porque jamas olvidare nuestro primer bes", "ni la primera vez que fuimos al cine", "o todo lo que nos pasa cuando vamos al cine", "por las canciones que me dedicas", "porque no puedo evitar amarte", "porque me haces sentir tan afortunado al estar a tu lado", "porque siempre me das animo", "porque siempre te trato como a una princesa", "porque aguantas mi mal caracter", "por hacerme sentir guapo", "por estar conmigo en la prepa aunque tengas sueño", "por dejarme acompañarte hasta tu casa", "por ese 3 de noviembre que me acompañaste aunque morias de nervios", "por ese 15 de febrero que fue mi competencia", "por estar ahi aunque tuvieras sueño y hambre", "por esos gritos de apoyo que hizo que diera todo", "por querer lo mejor para mi", "porque siempre te quiero ver", "por haberte fijado en mi", "por todos esos momentos que comemos juntos", "porque siempre evito pelear contigo", "porque me encanta verte jugar", "porque me gusta acompañarte a cualquier lado y hora con tal de verte jugar", "por cada sabado que pasamos todo el dia juntos", "por esas salidas al parque que hasta vimos una vaca", "por cuando vamos por crepas aunque esten caras pero te encantan", "porque me encantaria detener el tiempo cuando estoy a tu lado", "porque quiero besarte por todas partes: tus labios, tu frente , tu cuello, y mucho mas", "porque me encanta hacerte consquillas", "porque para mi siempre seras la mas hermosa de todas", "no importa si te veo en pijama, o con vestido, o casual siempre me fascinas", "porque solo nosotros nos entendemos", "porque me encanta mirarte", "porque me gusta cuando nos vemos a los ojos", "porque me enseñas tu lengua apretando los ojos", "porque eres increiblemente perfecta", "porque no quiero perderte", "por todas las sorpresas que faltan por darte", "por estar ahi cuando mas te necesito", "porque doy todo por sacarte una sonrisa cuando estas triste", "porque quiero convertir tus lagrimas en sonrisas", "porque gracias a ti todo es mas bello", "porque aparte de mi novia eres mi amiga", "porque te cuido", "porque nuestro amor es sincero", "porque a tu lado horas son segundos", "por nuestros momentos de risa", "por aguantar mi borrachera", "por serme fiel", "por nuestros apodos cariñosos que tenemos", "porque te entrego mi corazon y no hay devoluciones", "porque no quiero olvidarte nunca", "por todos los viajes que haremos", "porque con una mirada basta para enamorarme", "porque odio que agarres mis cachetes pero es lindo", "porque cada dia intento enamorarte", "porque contigo no busco una historia con final feliz sino una historia sin final", "porque aceptas mis defectos", "y yo los tuyos", "porque el destino nos unio", "por tu comprension", "porque contigo no existe la monotonia", "por compartir tu vida conmigo", "porque eres increible", "porque has dejado huella en mi vida", "por nuestro primer 'te amo'", "por todos los dias que quedan por vernos", "porque me das esperanza para creer en el amor", "por todo lo que me enseñas", "por como me haces piojito", "por tu cara de niña buena", "por los pequeños detalles", "por cada palabra que dices", "por lo cariñosa que eres conmigo", "porque me dejas sin palabras", "por las ganas que tengo de verte", "por que eres divertida", "porque nunca e sido asi con nadie mas", "porque que quiero ser el ultimo en tu vida", "porque confio en ti", "porque siempre me haces reir", "por tu amor incondicional", "por todo lo que me escribes en mi piel", "por todos los mensajes que hemos enviado", "porque eres imprescindible en mi vida", "porque nunca nos quedamos sin tema de conversacion", "porque te voy a comer a besos cuando te vea", "porque me gusta apapacharte", "porque me encanta que te acurruques en mi", "porque me gusta cuando duermes a mi lado y te hago piojito", "porque cada dia te amo mas", "porque contigo ya no tengo vergüenza de nada", "por todos esos minutos hablando por telefono", "por todo lo que nos queda", "porque cada momento a tu lado es especial e inolvidable"];
         
         let allPages = []; 
         for(let i=0; i<baseReasons.length; i++) { allPages.push(`<strong>Razón #${i+1}:</strong><br>${baseReasons[i]}`); }
@@ -492,15 +327,183 @@
 
         const triviaQuestions = [{ q: "¿Dónde fue nuestro primer beso? 💋", opts: ["Escuela", "Parque", "Cine"], ans: 0 }, { q: "¿Cuánto me amas? 📈", opts: ["10", "100", "Infinito"], ans: 2 }, { q: "¿Qué me regalaste primero? 🎁", opts: ["Carta", "Lechuga 🥬", "Chocolate"], ans: 1 }];
 
+        // --- LÓGICA DE CARTAS CON NOTAS DE VOZ ---
         function leerCarta(tipo) {
-            let t="", b="", i="";
-            if(tipo==='hoy'){ t="¡Felices 20 Años Amor!"; b="Estos 5 años viéndote crecer han sido el mejor regalo. Cumplir 20 es solo el inicio de tu mejor época, y mi mayor orgullo es estar ahí, en primera fila, amándote en cada paso."; i="🎂"; }
-            else if(tipo==='triste'){ t="Si estás triste..."; b=`<span style="text-align:left; display:block;">Precisamente no entiendo cuándo tu sonrisa, tus emociones, tus sentimientos y tus palabras empezaron a ser prioridad para mí.<br><br>Exactamente no podría explicar lo que siento por ti, solo sé que mi corazón palpita más rápido cuando estoy cerca de ti.<br><br>Solo sé que cuando estoy a tu lado los demás son indiferentes para mí. Tú eres lo que pienso cuando despierto y lo que pienso antes de dormir. No puedo dejar de pensar y hablar de ti.</span>`; i="🌈"; }
-            else if(tipo==='extrañes'){ t="Si me extrañas..."; b="Cierra los ojos. No estoy lejos. Estoy en cada latido que se acelera cuando piensas en mí. La distancia es una prueba que nuestro amor supera a diario. Te extraño tanto como tú a mí."; i="❤️"; }
-            else if(tipo==='dudes'){ t="Si dudas de nosotros..."; b="Mírame a los ojos (o a este mensaje). Tú eres mi prioridad absoluta. No hay nadie más. Desde que llegaste, el resto del mundo se volvió borroso. Mi lealtad es tuya, hoy y siempre."; i="💍"; }
-            Swal.fire({ title: `<span class="romantic-font" style="font-size:2.5rem; color:#ff6b81">${t}</span>`, html: `<div style="font-family:'Playfair Display'; font-style:italic; font-size:1.1rem; line-height:1.6">${b}</div><div style="font-size:3rem; margin-top:15px;">${i}</div>`, confirmButtonText: 'Te amo', confirmButtonColor: '#ff6b81', background: '#fffdf9', width: 600, padding: '2.5em', backdrop: `rgba(255, 107, 129, 0.1)` });
+            let t="", b="", i="", audioSrc="";
+            if(tipo==='hoy'){ 
+                t="¡Felices 20 Años Amor!"; 
+                b="Estos 5 años viéndote crecer han sido el mejor regalo. Cumplir 20 es solo el inicio de tu mejor época, y mi mayor orgullo es estar ahí, en primera fila, amándote en cada paso."; 
+                i="🎂"; 
+                audioSrc="/media/audio_hoy.mp3"; 
+            }
+            else if(tipo==='triste'){ 
+                t="Si estás triste..."; 
+                b=`<span style="text-align:left; display:block;">Precisamente no entiendo cuándo tu sonrisa, tus emociones, tus sentimientos y tus palabras empezaron a ser prioridad para mí.<br><br>Exactamente no podría explicar lo que siento por ti, solo sé que mi corazón palpita más rápido cuando estoy cerca de ti.</span>`; 
+                i="🌈";
+                audioSrc="/media/audio_triste.mp3"; 
+            }
+            else if(tipo==='extrañes'){ 
+                t="Si me extrañas..."; 
+                b="Cierra los ojos. No estoy lejos. Estoy en cada latido que se acelera cuando piensas en mí. La distancia es una prueba que nuestro amor supera a diario. Te extraño tanto como tú a mí."; 
+                i="❤️";
+                audioSrc="/media/audio_extranes.mp3"; 
+            }
+            else if(tipo==='dudes'){ 
+                t="Si dudas de nosotros..."; 
+                b="Mírame a los ojos. Tú eres mi prioridad absoluta. No hay nadie más. Desde que llegaste, el resto del mundo se volvió borroso. Mi lealtad es tuya, hoy y siempre."; 
+                i="💍";
+                audioSrc="/media/audio_dudes.mp3"; 
+            }
+
+            let audioHtml = audioSrc ? `<div class="mt-3 w-100 p-2 bg-light rounded"><p class="small text-muted mb-1">Escucha mi voz ❤️:</p><audio controls class="w-100"><source src="${audioSrc}" type="audio/mpeg"></audio></div>` : '';
+
+            Swal.fire({ 
+                title: `<span class="romantic-font" style="font-size:2.5rem; color:#ff6b81">${t}</span>`, 
+                html: `<div style="font-family:'Playfair Display'; font-style:italic; font-size:1.1rem; line-height:1.6">${b}</div>${audioHtml}<div style="font-size:3rem; margin-top:15px;">${i}</div>`, 
+                confirmButtonText: 'Te amo', 
+                confirmButtonColor: '#ff6b81', 
+                background: '#fffdf9', 
+                width: 600, 
+                padding: '2.5em', 
+                backdrop: `rgba(255, 107, 129, 0.1)` 
+            });
         }
 
+        // --- LÓGICA DE CÁPSULA DEL TIEMPO (5 AÑOS) ---
+        function verificarCapsula() {
+            const today = new Date();
+            const targetDate = new Date('2030-12-31T00:00:00');
+            
+            if (today >= targetDate) {
+                 Swal.fire({
+                    title: '¡Es hora! 🔓',
+                    html: `<h3 class="romantic-font text-danger">Mensaje del Pasado</h3>
+                           <p>Hola mi amor del futuro. Si estás viendo esto, lo logramos. Pasaron 5 años y aquí seguimos...</p>
+                           <video controls class="w-100 rounded shadow mt-2"><source src="/media/video_capsula.mp4" type="video/mp4"></video>`,
+                    width: 600,
+                    confirmButtonColor: '#ff6b81'
+                });
+            } else {
+                const diffTime = Math.abs(targetDate - today);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                Swal.fire({
+                    icon: 'lock',
+                    title: 'Cápsula Bloqueada 🔒',
+                    html: `Este mensaje es para nuestro futuro.<br>Faltan <b>${diffDays} días</b> para abrirlo.<br><br><i>"La paciencia es amarga, pero su fruto es dulce".</i>`,
+                    confirmButtonText: 'Esperaré',
+                    confirmButtonColor: '#2d3436',
+                    background: '#fff',
+                    backdrop: `rgba(0,0,0,0.8)`
+                });
+            }
+        }
+
+        // --- LÓGICA DE BUCKET LIST DINÁMICA (100% MEJORADA) ---
+        const BUCKET_KEY = 'jx_bucketlist_dynamic';
+
+        function loadBucketList() {
+            const stored = localStorage.getItem(BUCKET_KEY);
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        function saveBucketList(list) {
+            localStorage.setItem(BUCKET_KEY, JSON.stringify(list));
+        }
+
+        function addBucketItem() {
+            const input = document.getElementById('bucketInput');
+            const text = input.value.trim();
+            
+            if (!text) {
+                Swal.fire({ title: '¡Ups!', text: 'Escribe un deseo primero 😅', icon: 'info', confirmButtonColor: '#ff6b81' });
+                return;
+            }
+
+            const list = loadBucketList();
+            // Creamos un ID único usando la fecha actual
+            const newItem = { id: Date.now(), text: text, done: false };
+            list.push(newItem);
+            
+            saveBucketList(list);
+            renderBucketList();
+            input.value = '';
+            
+            // Recompensa visual
+            lanzarConfetiSuave();
+        }
+
+        function toggleBucketItem(id) {
+            let list = loadBucketList();
+            list = list.map(item => {
+                if(item.id === id) item.done = !item.done;
+                return item;
+            });
+            saveBucketList(list);
+            renderBucketList();
+            
+            // Si se marcó como hecho, lanzar confeti
+            const item = list.find(i => i.id === id);
+            if(item && item.done) lanzarConfetiSuave();
+        }
+
+        function deleteBucketItem(id) {
+            Swal.fire({
+                title: '¿Eliminar?',
+                text: "Se borrará este deseo de la lista",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#ff6b81',
+                confirmButtonText: 'Sí, borrar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let list = loadBucketList();
+                    list = list.filter(item => item.id !== id);
+                    saveBucketList(list);
+                    renderBucketList();
+                }
+            });
+        }
+
+        function handleBucketEnter(e) {
+            if(e.key === 'Enter') addBucketItem();
+        }
+
+        function renderBucketList() {
+            const list = loadBucketList();
+            const container = document.getElementById('bucketListContainer');
+            container.innerHTML = '';
+            
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-stars fs-1 mb-2 d-block" style="color: #fab1a0;"></i>
+                        <p>¡Aún no hay deseos!<br>Empiecen a soñar juntos agregando uno arriba 👆</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Ordenar: primero los pendientes, luego los completados
+            list.sort((a, b) => a.done - b.done);
+
+            list.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'bucket-item animate__animated animate__fadeIn';
+                div.innerHTML = `
+                    <input type="checkbox" class="bucket-checkbox" ${item.done ? 'checked' : ''} onchange="toggleBucketItem(${item.id})">
+                    <span class="bucket-text ${item.done ? 'completed' : ''}">${item.text}</span>
+                    <button class="bucket-delete-btn" onclick="deleteBucketItem(${item.id})"><i class="bi bi-trash"></i></button>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        // Cargar lista al inicio
+        renderBucketList();
+
+
+        // --- FUNCIONES DEL LIBRO ---
         function abrirLibro() { 
             currentPage = 0; updateBook(); 
             new bootstrap.Modal(document.getElementById('bookModal')).show(); 
@@ -513,8 +516,46 @@
             setTimeout(() => document.getElementById('bookContent').style.opacity = 1, 200); 
         }
 
-        function nextPage() { if(currentPage < allPages.length - 1) { currentPage++; updateBook(); } }
-        function prevPage() { if(currentPage > 0) { currentPage--; updateBook(); } }
+        function nextPage() { 
+            if(currentPage < allPages.length - 1) { 
+                currentPage++; updateBook(); 
+            } else {
+                stopAutoBook();
+            }
+        }
+        function prevPage() { 
+            if(currentPage > 0) { 
+                currentPage--; updateBook(); 
+            } 
+        }
+
+        function toggleAutoBook() {
+            const btn = document.getElementById('btnAutoBook');
+            if(bookInterval) {
+                stopAutoBook();
+            } else {
+                btn.innerHTML = "⏸️ Pausar";
+                btn.classList.remove('btn-outline-danger');
+                btn.classList.add('btn-danger');
+                bookInterval = setInterval(() => { nextPage(); }, 5000);
+            }
+        }
+
+        function stopAutoBook() {
+            const btn = document.getElementById('btnAutoBook');
+            if(btn) {
+                btn.innerHTML = "▶️ Auto";
+                btn.classList.add('btn-outline-danger');
+                btn.classList.remove('btn-danger');
+            }
+            if(bookInterval) {
+                clearInterval(bookInterval);
+                bookInterval = null;
+            }
+        }
+
+        document.getElementById('bookModal').addEventListener('hide.bs.modal', stopAutoBook);
+
 
         function verRazonFinalLibro() { 
             const bookModalEl = document.getElementById('bookModal');
@@ -762,28 +803,21 @@
         if(shuffleCheckbox) shuffleCheckbox.addEventListener('change', (e) => { isShuffle = e.target.checked; });
         
         bgMusic.addEventListener('ended', () => {
-        // Si la lista está vacía, no hacemos nada
             if(songList.length === 0) return;
 
             let nextIndex;
 
             if(isShuffle) {
-            // --- LÓGICA ALEATORIA ---
-            // Elegimos una al azar, intentando que no sea la misma de ahorita
             do { 
             nextIndex = Math.floor(Math.random() * songList.length); 
             } while (songList.length > 1 && nextIndex === currentSongIndex);
     
             } else {
-            // --- LÓGICA NORMAL (Siguiente canción) ---
             nextIndex = currentSongIndex + 1;
-            // Si llegamos al final de la lista, volvemos a la primera (0)
             if (nextIndex >= songList.length) {
             nextIndex = 0;
         }
             }
-
-            // Reproducimos la nueva canción elegida
             playSong(songList[nextIndex].archivo, nextIndex);
         });
 
@@ -818,16 +852,13 @@
             const val = document.getElementById('timelineRange').value;
             const display = document.getElementById('goalDisplay');
             
-            // Textos de la línea de tiempo
             if(val < 20) display.innerText = "En medio de la incertidumbre de la pandemia, encontrarte fue mi milagro: entre mascarillas y distancia, descubrí que el amor puede florecer incluso en los momentos más difíciles 😷❤️✨";
             else if(val < 45) display.innerText = "La prepa no fue solo estudiar y exámenes, fue aprender a crecer contigo, a reír en los pasillos, a superar cada obstáculo de la mano, y a descubrir que juntos somos invencibles 🎓💪❤️";
             else if(val < 70) display.innerText = "La universidad nos reta, pero también nos regala la oportunidad de construir sueños lado a lado. Cada desvelo, cada logro, cada paso nos acerca más a la vida que imaginamos 🚀📚❤️";
             else if(val < 99) display.innerText = "Nuestro futuro no es solo una boda, es la promesa de despertar juntos cada día, de llenar nuestra casa de risas, de amor y de recuerdos que aún nos esperan 💍🏠💫";
             else {
-                // --- FINAL (100%) ---
                 display.innerText = "Más allá de todo lo que hemos vivido y lo que vendrá, lo único que sé con certeza es que contigo quiero escribir cada capítulo de mi vida ❤️📖✨";
                 
-                // 1. Pausar música de fondo antes de abrir la alerta
                 if(!bgMusic.paused){
                     bgMusic.pause();
                     musicPlayerBtn.classList.remove('playing');
@@ -836,22 +867,18 @@
 
                 Swal.fire({ 
                     title: '<span class="romantic-font text-danger">¡Eternidad!</span>', 
-                    // CORRECCIÓN CLAVE: Sin controls, con autoplay, pero SIN muted (para que suene)
-                    // La barra está oculta inicialmente gracias a que quitamos 'controls' aquí
                     html: `
                         <div class="text-frame-neon">
                             <div class="neon-text-enhanced" style="text-align:center; font-style:italic;">
                                 <p>Más allá de todo lo que hemos vivido y lo que vendrá, lo único que sé con certeza es que contigo quiero escribir cada capítulo de mi vida ❤️📖✨</p>
                             </div>
                         </div>
-                        
                         <div class="video-cine-box mb-3 mt-3" style="height: auto; max-height: 60vh;">
                             <video id="timelineVideo" loop playsinline preload="auto" style="width: 100%; height: 100%; object-fit: contain;">
                                 <source src="/media/beso.mp4" type="video/mp4">
                                 Tu navegador no soporta videos.
                             </video>
                         </div>
-
                         <button class="btn btn-danger rounded-pill px-4 mt-2" onclick="Swal.close()">Te Amo</button>
                     `, 
                     showConfirmButton: false, 
@@ -859,19 +886,12 @@
                     backdrop: `rgba(255,215,0,0.2)`, 
                     padding: '2em',
                     width: '800px',
-                    // Lógica para controlar la barra y el play
                     didOpen: () => {
                         const v = document.getElementById('timelineVideo');
                         if(v) {
-                            // Forzamos que la barra esté oculta al inicio
                             v.controls = false;
-
-                            // Magia para mostrar controles SOLO al pasar el mouse (Hover)
                             v.onmouseenter = () => v.controls = true;
                             v.onmouseleave = () => v.controls = false;
-                            
-                            // Intentamos reproducir CON sonido
-                            // Como el usuario acaba de interactuar con el slider, el navegador debería permitir el audio
                             setTimeout(() => {
                                 v.play().catch(e => console.log("Esperando interacción", e));
                             }, 500);
@@ -880,7 +900,6 @@
                     willClose: () => {
                         const v = document.getElementById('timelineVideo');
                         if(v) v.pause();
-                        // Reanudar música de fondo al cerrar
                         if(isMusicPausedByVideo) {
                             bgMusic.play();
                             musicPlayerBtn.classList.add('playing');
