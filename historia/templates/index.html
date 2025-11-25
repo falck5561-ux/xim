@@ -432,6 +432,37 @@
     transform: rotate(90deg) scale(1.1); /* Gira un poco */
     box-shadow: 0 4px 10px rgba(255, 107, 129, 0.3);
 }
+
+/* Estilos para el Cronómetro de la Cápsula */
+.capsule-timer-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 15px 0;
+    font-family: 'Montserrat', sans-serif;
+}
+.c-time-box {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #fdcb6e;
+    border-radius: 8px;
+    padding: 8px;
+    min-width: 60px;
+    text-align: center;
+}
+.c-number {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fdcb6e;
+    line-height: 1;
+}
+.c-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-top: 3px;
+}
+
     </style>
 </head>
 <body>
@@ -760,26 +791,34 @@
         }
 
         // 2. Función principal segura
+        // 2. Función principal segura con CRONÓMETRO
         async function verificarCapsula() {
             const today = new Date();
-            const targetDate = new Date('2030-12-31T00:00:00');
-            
-            // AQUÍ ESTÁ EL CAMBIO: La contraseña "XIM04PEREZ" convertida a código (Base64)
-            // Así nadie puede leerla a simple vista en el código.
+            const targetDate = new Date('2030-12-31T00:00:00'); // <--- FECHA OBJETIVO
             const HASH_SECRETO = "WElNMDRQRVJFWg=="; 
 
             if (today >= targetDate) {
                 mostrarContenidoCapsulaExito();
             } else {
-                const diffTime = Math.abs(targetDate - today);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                // Variable para guardar el intervalo del reloj
+                let timerInterval;
 
                 const result = await Swal.fire({
                     iconHtml: '<i class="bi bi-shield-lock-fill" style="font-size: 4rem; color: #fdcb6e;"></i>',
                     title: '<span class="romantic-font text-warning">Cápsula Sellada</span>',
-                    html: `<p class="text-white">Esta cápsula está programada para el futuro.</p>
-                           <p class="text-muted mb-4">Faltan <b>${diffDays} días</b> para su apertura automática.</p>
-                           <p class="text-warning fst-italic small border-top border-warning pt-3">¿Tienes la llave secreta para abrirla ahora? 🔑</p>`,
+                    // Aquí ponemos la estructura vacía del reloj que llenaremos con JS
+                    html: `
+                        <p class="text-white">Esta cápsula se abrirá automáticamente en:</p>
+                        
+                        <div class="capsule-timer-wrapper">
+                            <div class="c-time-box"><span class="c-number" id="c-days">00</span><span class="c-label">Días</span></div>
+                            <div class="c-time-box"><span class="c-number" id="c-hours">00</span><span class="c-label">Hrs</span></div>
+                            <div class="c-time-box"><span class="c-number" id="c-mins">00</span><span class="c-label">Min</span></div>
+                            <div class="c-time-box"><span class="c-number" id="c-secs">00</span><span class="c-label">Seg</span></div>
+                        </div>
+
+                        <p class="text-warning fst-italic small border-top border-warning pt-3 mt-3">¿Tienes la llave secreta para abrirla ahora? 🔑</p>
+                    `,
                     background: '#2d3436',
                     showCancelButton: true,
                     confirmButtonText: 'Usar Llave Secreta 🔐',
@@ -787,9 +826,46 @@
                     confirmButtonColor: '#fdcb6e',
                     cancelButtonColor: '#636e72',
                     reverseButtons: true,
-                    showClass: { popup: 'animate__animated animate__tada' }
+                    showClass: { popup: 'animate__animated animate__tada' },
+                    // ESTO OCURRE CUANDO SE ABRE LA ALERTA
+                    didOpen: () => {
+                        const content = Swal.getHtmlContainer();
+                        const $ = (selector) => content.querySelector(selector);
+                        
+                        // Función que actualiza los números
+                        const updateTimer = () => {
+                            const now = new Date().getTime();
+                            const distance = targetDate - now;
+
+                            if (distance < 0) {
+                                clearInterval(timerInterval);
+                                Swal.close(); // Si llega a 0, cerramos para que recargue
+                                return;
+                            }
+
+                            // Cálculos matemáticos de tiempo
+                            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                            // Poner los números en el HTML
+                            $('#c-days').textContent = days;
+                            $('#c-hours').textContent = hours;
+                            $('#c-mins').textContent = minutes;
+                            $('#c-secs').textContent = seconds;
+                        };
+
+                        updateTimer(); // Ejecutar una vez al inicio
+                        timerInterval = setInterval(updateTimer, 1000); // Repetir cada segundo
+                    },
+                    // ESTO OCURRE AL CERRAR (IMPORTANTE: DETENER EL RELOJ)
+                    willClose: () => {
+                        clearInterval(timerInterval);
+                    }
                 });
 
+                // Lógica de la contraseña (igual que antes)
                 if (result.isConfirmed) {
                     const { value: passwordInput } = await Swal.fire({
                         title: '<span class="text-warning">Introduce la Llave 🔑</span>',
@@ -804,15 +880,13 @@
                     });
 
                     if (passwordInput) {
-                        // AQUÍ VERIFICAMOS: Convertimos lo que ella escribe a código y comparamos
-                        // btoa() convierte texto a Base64
                         if (btoa(passwordInput) === HASH_SECRETO) {
                             mostrarContenidoCapsulaExito();
                         } else {
                             Swal.fire({
                                 icon: 'error',
                                 title: '<span class="text-danger">Clave Incorrecta ❌</span>',
-                                text: 'La cápsula permanece sellada. Esa no es la llave.',
+                                text: 'La cápsula permanece sellada.',
                                 background: '#2d3436', color: '#fff',
                                 confirmButtonColor: '#e74c3c',
                                 showClass: { popup: 'animate__animated animate__shakeX' }
@@ -1093,18 +1167,40 @@ document.getElementById('bookModal').addEventListener('hide.bs.modal', stopAutoB
     }
 
     function abrirRegaloFinal() {
-        var duration = 2000;
+        // Duración de la lluvia de corazones
+        var duration = 3000; 
         var end = Date.now() + duration;
+
         (function frame() {
-            confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff6b81', '#fdcb6e'] });
-            confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff6b81', '#fdcb6e'] });
+            // Cañón de la izquierda
+            confetti({ 
+                particleCount: 5, 
+                angle: 60, 
+                spread: 55, 
+                origin: { x: 0 }, 
+                shapes: ['heart'],              /* <--- ¡AQUÍ ESTÁ LA MAGIA! */
+                colors: ['#ff6b81', '#fdcb6e', '#ff4757'], /* Rosa y Dorado */
+                scalar: 2                       /* Tamaño doble para que se vean bien */
+            });
+            
+            // Cañón de la derecha
+            confetti({ 
+                particleCount: 5, 
+                angle: 120, 
+                spread: 55, 
+                origin: { x: 1 }, 
+                shapes: ['heart'],              /* <--- ¡AQUÍ TAMBIÉN! */
+                colors: ['#ff6b81', '#fdcb6e', '#ff4757'],
+                scalar: 2
+            });
+
             if (Date.now() < end) requestAnimationFrame(frame);
         }());
 
+        // Ocultar caja y mostrar regalos
         document.getElementById('win-container').style.display = 'none';
         document.getElementById('prizes-container').style.display = 'block';
     }
-
     // ... resto del código (música, cumpleaños, etc) ...
 
         function abrirModalMusica() { 
