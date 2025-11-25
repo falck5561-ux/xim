@@ -20,6 +20,30 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <style>
+
+        /* --- 0. FIX ANTI-PARPADEO MÓVIL --- */
+
+/* 1. Elimina el cuadro gris/negro al tocar botones */
+* {
+    -webkit-tap-highlight-color: transparent !important;
+    outline: none !important;
+}
+
+/* 2. Evita que los botones se queden "pegados" con el foco gris */
+button:focus, a:focus, .btn:focus {
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* 3. Estabiliza la pantalla para evitar parpadeos blancos/negros al abrir modales */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Esto fuerza a la tarjeta gráfica a estar lista y evita saltos */
+    backface-visibility: hidden; 
+    -webkit-backface-visibility: hidden;
+}
+
         /* --- ESTILOS GENERALES Y ESPECÍFICOS --- */
         body { overflow-x: hidden; }
 
