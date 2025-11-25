@@ -660,6 +660,41 @@ body.no-scroll {
     }
     100% { transform: scale(1); }
 }
+
+/* --- ESTABILIZADOR DEL LIBRO --- */
+
+/* 1. Contenedor del contenido: Alineación fija */
+.book-page-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Empuja el contenido y los botones a los extremos */
+    height: 100%; /* Ocupa toda la altura del libro */
+    padding: 20px 10px;
+    overflow: hidden; /* Evita desbordes feos */
+}
+
+/* 2. Área del Texto: Altura fija para que no baile */
+.reason-text-display {
+    flex-grow: 1; /* Ocupa todo el espacio disponible al centro */
+    display: flex;
+    align-items: center;     /* Centra el texto verticalmente */
+    justify-content: center; /* Centra el texto horizontalmente */
+    min-height: 250px;       /* OBLIGATORIO: Altura mínima fija */
+    max-height: 300px;       /* Límite para que no empuje los botones */
+    overflow-y: auto;        /* Si el texto es muy largo, permite scroll suave dentro */
+    
+    /* Estilo del texto */
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.4rem;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* 3. Botones fijos abajo */
+.book-controls {
+    flex-shrink: 0; /* Evita que los botones se aplasten */
+    margin-top: 10px;
+}
     </style>
 </head>
 <body>
@@ -1253,17 +1288,25 @@ function updateBook() {
             
         }, 150);
     }
+
+/* --- FUNCIONES DEL LIBRO CORREGIDAS --- */
+
 function nextPage() { 
-    // Ajustamos el límite al tamaño de tu lista de razones + 1 (la final)
+    stopAutoBook(); // <--- IMPORTANTE: Si TÚ tocas el botón, se detiene el automático.
+    
+    // Lógica normal de avanzar
     if(currentPage < baseReasons.length) { 
         currentPage++; 
         updateBook(); 
     } else {
-        stopAutoBook();
+        // Si es la última página (la 201), mostrar el botón final
+        updateBook(); 
     }
 }
 
 function prevPage() { 
+    stopAutoBook(); // <--- IMPORTANTE: Si TÚ tocas el botón, se detiene el automático.
+    
     if(currentPage > 0) { 
         currentPage--; 
         updateBook(); 
@@ -1272,13 +1315,26 @@ function prevPage() {
 
 function toggleAutoBook() {
     const btn = document.getElementById('btnAutoBook');
+    
     if(bookInterval) {
         stopAutoBook();
     } else {
+        // 1. Cambiar estilo del botón a "Pausar"
         btn.innerHTML = "<i class='bi bi-pause-fill'></i> Pausar";
         btn.classList.remove('btn-outline-danger');
         btn.classList.add('btn-danger');
-        bookInterval = setInterval(() => { nextPage(); }, 2000);
+        
+        // 2. Iniciar el ciclo automático
+        // TRUCO: No llamamos a nextPage() aquí para evitar que se detenga solo.
+        // Copiamos la lógica de avanzar dentro del intervalo.
+        bookInterval = setInterval(() => { 
+            if(currentPage < baseReasons.length) { 
+                currentPage++; 
+                updateBook(); 
+            } else {
+                stopAutoBook(); // Si llega al final, ahí sí se detiene solo.
+            }
+        }, 2000); // 2000ms = 2 segundos (Velocidad recomendada)
     }
 }
 
