@@ -1291,21 +1291,23 @@ function updateBook() {
 
 /* --- FUNCIONES DEL LIBRO CORREGIDAS --- */
 
+/* --- FUNCIONES DEL LIBRO CORREGIDAS (ÚSALAS ASÍ) --- */
+
 function nextPage() { 
-    stopAutoBook(); // <--- IMPORTANTE: Si TÚ tocas el botón, se detiene el automático.
+    stopAutoBook(); // Detiene el automático si tocas el botón manual
     
     // Lógica normal de avanzar
     if(currentPage < baseReasons.length) { 
         currentPage++; 
         updateBook(); 
     } else {
-        // Si es la última página (la 201), mostrar el botón final
+        // Si es la última página, recarga para mostrar el botón final si es necesario
         updateBook(); 
     }
 }
 
 function prevPage() { 
-    stopAutoBook(); // <--- IMPORTANTE: Si TÚ tocas el botón, se detiene el automático.
+    stopAutoBook(); // Detiene el automático si tocas el botón manual
     
     if(currentPage > 0) { 
         currentPage--; 
@@ -1325,16 +1327,15 @@ function toggleAutoBook() {
         btn.classList.add('btn-danger');
         
         // 2. Iniciar el ciclo automático
-        // TRUCO: No llamamos a nextPage() aquí para evitar que se detenga solo.
-        // Copiamos la lógica de avanzar dentro del intervalo.
+        // TRUCO: Lógica interna para no detenerse a sí mismo
         bookInterval = setInterval(() => { 
             if(currentPage < baseReasons.length) { 
                 currentPage++; 
                 updateBook(); 
             } else {
-                stopAutoBook(); // Si llega al final, ahí sí se detiene solo.
+                stopAutoBook(); // Solo se detiene solo si llega al final
             }
-        }, 2000); // 2000ms = 2 segundos (Velocidad recomendada)
+        }, 2000); // 2000ms = 2 segundos
     }
 }
 
@@ -1351,10 +1352,8 @@ function stopAutoBook() {
     }
 }
 
-// Detener al cerrar
+// Detener al cerrar el modal (Solo una vez)
 document.getElementById('bookModal').addEventListener('hide.bs.modal', stopAutoBook);
-
-        document.getElementById('bookModal').addEventListener('hide.bs.modal', stopAutoBook);
 
 
         function verRazonFinalLibro() { 
