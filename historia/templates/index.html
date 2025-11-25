@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Josue & Ximena ❤️</title>
+    <title>Josue & Ximena </title>
     
     <link rel="stylesheet" href="{% static 'styles.css' %}">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
@@ -463,9 +463,193 @@
     margin-top: 3px;
 }
 
+/* --- 10. PANTALLA DE BIENVENIDA (INTRO) --- */
+.welcome-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    z-index: 99999; /* Encima de TODO */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.welcome-content {
+    text-align: center;
+    animation: fadeInDown 1s;
+}
+
+.heart-beat-icon {
+    font-size: 5rem;
+    margin-bottom: 20px;
+    animation: heartbeat 1.5s infinite;
+}
+
+/* Clase para ocultar la pantalla suavemente */
+.welcome-hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Evitar scroll mientras está la intro */
+body.no-scroll {
+    overflow: hidden;
+}
+
+/* --- 11. BARRA DE SCROLL PERSONALIZADA (Toque Final) --- */
+
+/* El ancho de la barra */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+/* El fondo de la barra (el riel) */
+::-webkit-scrollbar-track {
+    background: #fff0f3; /* Un rosa muy pálido, casi blanco */
+}
+
+/* La barra que se mueve (el pulgar) */
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #ff6b81, #ff4757); /* Degradado rosa */
+    border-radius: 6px; /* Bordes redondos */
+    border: 3px solid #fff0f3; /* Borde blanco para que parezca flotar */
+}
+
+/* Cuando pasas el mouse por encima */
+::-webkit-scrollbar-thumb:hover {
+    background: #ff4757; /* Se pone un poco más oscuro */
+}
+
+/* --- CORRECCIÓN PARA EL LIBRO EN CELULAR --- */
+@media (max-width: 768px) {
+    /* 1. Arreglar el contenedor del libro */
+    .book-wrapper {
+        min-height: 450px !important; /* Un poco más corto para que quepa bien */
+        padding: 15px 10px !important; /* Menos relleno en los bordes */
+        
+        /* AQUÍ ESTÁ EL TRUCO: Reducimos la sombra del lomo (izquierda) */
+        /* Antes era 40px, ahora 10px para que se vea más hoja blanca */
+        box-shadow: 
+            inset 10px 0 20px rgba(0,0,0,0.1), /* Lomo finito */
+            inset -2px 0 5px rgba(0,0,0,0.05), /* Borde derecho sutil */
+            5px 5px 15px rgba(0,0,0,0.3) !important; /* Sombra externa */
+    }
+
+    /* 2. Centrar mejor el texto */
+    .book-page-content {
+        padding: 10px !important; /* Quitamos el relleno exagerado */
+        width: 100%;
+    }
+
+    .reason-text-display {
+        font-size: 2.2rem !important; /* Texto un poco más pequeño para que no se corte */
+    }
+
+    /* 3. Arreglar los botones de abajo (para que no se vayan a las esquinas) */
+    .book-controls {
+        padding: 10px 5px !important;
+        justify-content: center !important; /* Centrados al medio */
+        gap: 8px; /* Espacio entre ellos */
+    }
+
+    /* Botones laterales (Anterior/Siguiente) más compactos */
+    .book-btn {
+        font-size: 0.75rem !important; 
+        padding: 5px 10px !important;
+        width: auto;
+    }
+
+    /* Botón del medio (Leer Auto) */
+    #btnAutoBook {
+        font-size: 0.75rem !important;
+        padding: 5px 12px !important;
+        white-space: nowrap; /* Que no se parta el texto */
+    }
+
+    /* Ajustar el botón de cerrar (X) para que no estorbe */
+    .book-close-btn {
+        top: 10px !important;
+        left: 10px !important;
+        width: 30px !important;
+        height: 30px !important;
+    }
+    
+    /* Mover el separador rojo un poco */
+    .bookmark {
+        right: 20px !important;
+        width: 35px !important;
+        height: 70px !important;
+    }
+}
+
+/* --- QUITAR EL CUADRO GRIS DE LOS BOTONES DEL LIBRO --- */
+.book-controls {
+    background: transparent !important; /* Quita el fondo gris */
+    border-top: none !important;        /* Quita la raya de arriba */
+    box-shadow: none !important;        /* Por si acaso */
+    padding-top: 10px !important;       /* Un poco de aire arriba */
+}
+
+/* --- 2. TÍTULO: LLEGADA Y LATIDO (SISTEMA PADRE-HIJO) --- */
+
+/* EL PADRE (H1): Se encarga de la entrada */
+.entrada-titulo {
+    /* Estado inicial: Invisible para que no parpadee al cargar */
+    opacity: 0; 
+    
+    /* Animación: Dura 1.5s, suavizado suave, y SE QUEDA visible al final (forwards) */
+    animation: aparecer-bajar 1.5s ease-out forwards;
+}
+
+/* EL HIJO (SPAN): Se encarga del latido */
+.latido-corazon {
+    display: inline-block; /* OBLIGATORIO para que pueda cambiar de tamaño */
+    
+    /* Animación:
+       - Dura 2s por latido.
+       - Es infinita.
+       - TIENE DELAY de 1.5s (Espera exactamente a que termine la entrada del padre) */
+    animation: latido-amor 2s ease-in-out infinite 1.5s;
+}
+
+/* --- DEFINICIÓN DE MOVIMIENTOS --- */
+
+/* 1. Movimiento de Llegada */
+@keyframes aparecer-bajar {
+    0% {
+        opacity: 0;
+        transform: translateY(-40px); /* Empieza arriba */
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);     /* Aterriza en su sitio */
+    }
+}
+
+/* 2. Movimiento de Latido */
+@keyframes latido-amor {
+    0% { transform: scale(1); }
+    50% { 
+        transform: scale(1.1); /* Crece un 10% */
+        text-shadow: 0 0 15px rgba(255, 71, 87, 0.5); /* Brillo rojo */
+    }
+    100% { transform: scale(1); }
+}
     </style>
 </head>
 <body>
+
+    <div id="welcomeScreen" class="welcome-overlay">
+    <div class="welcome-content">
+        <div class="heart-beat-icon">❤️</div>
+        <h1 class="romantic-font text-white display-3 mb-4">Hola Ximena...</h1>
+        <p class="text-white lead mb-5">Tengo algo especial para ti.</p>
+        <button class="btn btn-light rounded-pill px-5 py-3 fw-bold shadow pulse-btn" onclick="enterSite()">
+            Ver Sorpresa ✨
+        </button>
+    </div>
+</div>
 
     <audio id="bgMusic"><source src="/media/cancion.mp3" type="audio/mpeg"></audio>
     <audio id="birthdayAudio"><source src="/media/cumpleaños.mp3" type="audio/mpeg"></audio>
@@ -480,7 +664,9 @@
     <button id="scrollTopBtn" class="btn-scroll-top" onclick="scrollToTop()"><i class="bi bi-arrow-up-short"></i></button>
 
     <div class="container text-center py-5">
-        <h1 class="display-1 text-danger romantic-font mb-2 title-pulse" data-aos="fade-down">Josue & Ximena</h1>
+        <h1 class="display-1 text-danger romantic-font mb-2 entrada-titulo">
+        <span class="latido-corazon">Josue & Ximena</span>
+    </h1>
         <p class="text-muted mb-4 ls-2" style="letter-spacing: 3px;">31 DE DICIEMBRE DE 2020</p>
         
         <div class="d-flex justify-content-center gap-3 mb-5 flex-wrap" data-aos="fade-up">
@@ -537,39 +723,44 @@
 
     <div class="container pb-5">
         <h2 class="text-center romantic-font mb-5 display-5 text-danger">Nuestra Historia</h2>
-        <div class="row g-4">
-            {% for momento in momentos %}
-            <div class="col-6 col-lg-4" data-aos="fade-up">
-                <div class="glass-card h-100" 
-                    data-id="{{ momento.id }}" data-titulo="{{ momento.titulo }}" 
-                    data-fecha="{{ momento.fecha|date:'Y-m-d' }}" data-desc="{{ momento.descripcion }}" 
-                    data-video="{% if momento.video %}{{ momento.video.url }}{% endif %}" 
-                    data-foto="{% if momento.foto %}{{ momento.foto.url }}{% endif %}">
-                    <div class="card-actions">
-                        <button class="action-btn" onclick="prepararEdicion(this)" title="Editar"><i class="bi bi-pencil-fill"></i></button>
-                        <a href="{% url 'eliminar' momento.id %}" class="action-btn btn-delete" onclick="confirmarBorrado(event, this.href)" title="Borrar"><i class="bi bi-trash-fill text-danger"></i></a>
-                    </div>
-                    <div onclick="prepararDetalle(this)">
-                        <div class="media-thumbnail-container">
-                            {% if momento.video %}
-                                <video muted loop preload="metadata"><source src="{{ momento.video.url }}" type="video/mp4"></video>
-                                <div class="position-absolute top-0 end-0 m-2"><span class="badge bg-dark bg-opacity-75">Video</span></div>
-                            {% elif momento.foto %}
-                                <img src="{{ momento.foto.url }}">
-                            {% endif %}
-                        </div>
-                        <div class="card-footer-custom">
-                            <h3 class="romantic-font text-dark mb-1">{{ momento.titulo }}</h3>
-                            <small class="text-muted d-block mb-2">{{ momento.fecha }}</small>
-                            <div class="read-more-btn">Ver historia <i class="bi bi-arrow-right-short"></i></div>
-                        </div>
-                    </div>
+        <div class="row g-5 px-3">
+    {% for momento in momentos %}
+    <div class="col-6 col-lg-4" data-aos="fade-up">
+        
+        <div class="polaroid-card h-100" 
+            data-id="{{ momento.id }}" data-titulo="{{ momento.titulo }}" 
+            data-fecha="{{ momento.fecha|date:'Y-m-d' }}" data-desc="{{ momento.descripcion }}" 
+            data-video="{% if momento.video %}{{ momento.video.url }}{% endif %}" 
+            data-foto="{% if momento.foto %}{{ momento.foto.url }}{% endif %}">
+            
+            <div class="polaroid-actions">
+                <button class="action-btn" onclick="prepararEdicion(this)" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+                <a href="{% url 'eliminar' momento.id %}" class="action-btn btn-delete" onclick="confirmarBorrado(event, this.href)" title="Borrar"><i class="bi bi-trash-fill text-danger"></i></a>
+            </div>
+
+            <div onclick="prepararDetalle(this)">
+                <div class="polaroid-img-container">
+                    {% if momento.video %}
+                        <video muted loop preload="metadata"><source src="{{ momento.video.url }}" type="video/mp4"></video>
+                        <div class="position-absolute top-0 end-0 m-2"><span class="badge bg-light text-dark opacity-75">Video</span></div>
+                    {% elif momento.foto %}
+                        <img src="{{ momento.foto.url }}">
+                    {% endif %}
+                </div>
+                
+                <div class="polaroid-caption">
+                    {{ momento.titulo }}
+                    <br>
+                    <small style="font-family: 'Montserrat'; font-size: 0.7rem; color: #999;">{{ momento.fecha }}</small>
                 </div>
             </div>
-            {% empty %}
-            <div class="col-12 text-center text-muted py-5"><i class="bi bi-images fs-1 mb-3 d-block opacity-50"></i><p>Aún no hay recuerdos. Usa el botón + para comenzar.</p></div>
-            {% endfor %}
         </div>
+
+    </div>
+    {% empty %}
+    <div class="col-12 text-center text-muted py-5"><i class="bi bi-images fs-1 mb-3 d-block opacity-50"></i><p>Aún no hay recuerdos. Usa el botón + para comenzar.</p></div>
+    {% endfor %}
+</div>
     </div>
 
     <div class="container mb-5" data-aos="zoom-in">
@@ -1063,7 +1254,7 @@ function toggleAutoBook() {
         btn.innerHTML = "<i class='bi bi-pause-fill'></i> Pausar";
         btn.classList.remove('btn-outline-danger');
         btn.classList.add('btn-danger');
-        bookInterval = setInterval(() => { nextPage(); }, 4000);
+        bookInterval = setInterval(() => { nextPage(); }, 2000);
     }
 }
 
@@ -1278,8 +1469,21 @@ document.getElementById('bookModal').addEventListener('hide.bs.modal', stopAutoB
             new bootstrap.Modal(document.getElementById('momentModal')).show();
         }
 
-        function prepararEdicion(btn) { const c = btn.closest('.glass-card'); document.getElementById('editForm').action = '/editar/' + c.dataset.id + '/'; document.getElementById('editTitle').value = c.dataset.titulo; document.getElementById('editDate').value = c.dataset.fecha; document.getElementById('editDesc').value = c.dataset.desc; new bootstrap.Modal(document.getElementById('editModal')).show(); }
-        function prepararDetalle(e) { const c = e.closest('.glass-card'); abrirDetalle(c.dataset.titulo, c.dataset.fecha, c.dataset.desc, c.dataset.video, c.dataset.foto); }
+        // --- FUNCIONES CORREGIDAS PARA LAS POLAROIDS ---
+
+        function prepararEdicion(btn) { 
+            const c = btn.closest('.polaroid-card'); // <--- AHORA BUSCA LA POLAROID
+            document.getElementById('editForm').action = '/editar/' + c.dataset.id + '/'; 
+            document.getElementById('editTitle').value = c.dataset.titulo; 
+            document.getElementById('editDate').value = c.dataset.fecha; 
+            document.getElementById('editDesc').value = c.dataset.desc; 
+            new bootstrap.Modal(document.getElementById('editModal')).show(); 
+        }
+
+        function prepararDetalle(e) { 
+            const c = e.closest('.polaroid-card'); // <--- AHORA BUSCA LA POLAROID
+            abrirDetalle(c.dataset.titulo, c.dataset.fecha, c.dataset.desc, c.dataset.video, c.dataset.foto); 
+        }
 
         function confirmarBorrado(e, url) {
             e.preventDefault();
@@ -1533,6 +1737,31 @@ document.getElementById('bookModal').addEventListener('hide.bs.modal', stopAutoB
         window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; installBtn.style.display = 'inline-block'; installBtn.classList.add('animate__animated', 'animate__pulse', 'animate__infinite'); });
         installBtn.addEventListener('click', async () => { if (!deferredPrompt) return; deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; deferredPrompt = null; if(outcome === 'accepted'){ installBtn.style.display = 'none'; } });
         window.addEventListener('appinstalled', () => { installBtn.style.display = 'none'; });
+
+        // --- LÓGICA DE BIENVENIDA ---
+        document.body.classList.add('no-scroll');
+
+        function enterSite() {
+            // 1. Reproducir música
+            const audio = document.getElementById('bgMusic');
+            audio.volume = 0.5; 
+            audio.play().then(() => {
+                // Si tienes el código del vinilo, esto lo hace girar
+                const btn = document.getElementById('mainMusicBtn');
+                if(btn) btn.classList.add('playing');
+            }).catch(e => console.log("Audio prevent", e));
+
+            // 2. Ocultar pantalla
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            welcomeScreen.classList.add('welcome-hidden');
+
+            // 3. Permitir scroll
+            document.body.classList.remove('no-scroll');
+
+            // 4. Confeti y animaciones
+            if(typeof lanzarConfetiSuave === 'function') lanzarConfetiSuave();
+            
+        }
 
     </script>
 </body>

@@ -12,12 +12,7 @@ body {
 h1, h2, .romantic-font { font-family: 'Dancing Script', cursive; }
 .book-font { font-family: 'Playfair Display', serif; }
 
-/* --- 2. TÍTULO CON LATIDO --- */
-.title-pulse { animation: heartbeat 3s infinite; display: inline-block; }
-@keyframes heartbeat {
-    0% { transform: scale(1); } 5% { transform: scale(1.05); } 10% { transform: scale(1); }
-    15% { transform: scale(1.05); } 20% { transform: scale(1); } 100% { transform: scale(1); }
-}
+
 
 /* --- 3. GLASSMORPHISM PRO --- */
 .glass-card {
@@ -351,8 +346,132 @@ audio::-webkit-media-controls { position: relative; z-index: 1055; }
     font-size: 1.5rem;
 }
 
-/* ⬆⬆⬆ FIN DE LAS MEJORAS ⬆⬆⬆ */
+/* --- 9. ESTILO POLAROID SCRAPBOOK (CORREGIDO) --- */
 
+.polaroid-card {
+    background-color: #fff;
+    /* Quitamos el padding bottom fijo y dejamos que el contenido mande */
+    padding: 15px 15px 15px 15px; 
+    box-shadow: 5px 10px 20px rgba(0,0,0,0.15);
+    border-radius: 2px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    transform-origin: center top;
+    cursor: pointer;
+    
+    /* ESTO ARREGLA EL AMONTONAMIENTO: */
+    margin-bottom: 50px; /* Mucho espacio abajo */
+    display: flex;       /* Usamos Flexbox para ordenar verticalmente */
+    flex-direction: column;
+    height: auto;        /* La altura se adapta al contenido */
+}
+
+/* Efecto de Cinta Adhesiva */
+.polaroid-card::before {
+    content: '';
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-2deg);
+    width: 100px;
+    height: 30px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-left: 1px dotted rgba(0,0,0,0.2);
+    border-right: 1px dotted rgba(0,0,0,0.2);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    z-index: 10;
+}
+
+/* Rotaciones (Un poco más sutiles para que no choquen tanto) */
+.col-lg-4:nth-child(odd) .polaroid-card { transform: rotate(-2deg); }
+.col-lg-4:nth-child(even) .polaroid-card { transform: rotate(2deg); margin-top: 20px; }
+
+/* Hover: Se endereza y crece */
+.polaroid-card:hover {
+    transform: scale(1.08) rotate(0deg) !important;
+    z-index: 50; /* Z-index muy alto para que tape a las otras al pasar el mouse */
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+/* Contenedor de la imagen */
+.polaroid-img-container {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Cuadrado perfecto */
+    overflow: hidden;
+    background: #000;
+    border: 1px solid #eee;
+    margin-bottom: 15px; /* Espacio entre la foto y el texto (SOLUCIÓN AL TRASLAPE) */
+}
+
+.polaroid-img-container img, 
+.polaroid-img-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.polaroid-card:hover .polaroid-img-container img {
+    transform: scale(1.1);
+}
+
+/* Texto (Caption) */
+.polaroid-caption {
+    /* Quitamos absolute para que no flote encima */
+    position: relative; 
+    width: 100%;
+    text-align: center;
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.6rem;
+    color: #2d3436;
+    line-height: 1.2;
+}
+
+.polaroid-caption small {
+    display: block;
+    margin-top: 5px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    color: #b2bec3;
+    letter-spacing: 1px;
+}
+
+.polaroid-actions {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    display: flex;
+    gap: 5px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 60;
+}
+.polaroid-card:hover .polaroid-actions { opacity: 1; }
+
+/* --- 11. TOQUES FINALES DE DISEÑADOR (Scroll y Selección) --- */
+
+/* 1. Barra de Scroll Personalizada */
+::-webkit-scrollbar {
+    width: 12px;
+}
+::-webkit-scrollbar-track {
+    background: #fff0f3; 
+}
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #ff6b81, #ff4757);
+    border-radius: 6px;
+    border: 3px solid #fff0f3;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #ff4757;
+}
+
+/* 2. Color de Selección de Texto */
+::selection {
+    background-color: #ff6b81;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
 
 /* --- AJUSTES RESPONSIVOS PARA CELULAR (MEDIA QUERIES) --- */
 @media (max-width: 768px) {
