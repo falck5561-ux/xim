@@ -129,11 +129,309 @@
         .text-frame-neon::before { content: '❤'; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); background: #212529; padding: 0 15px; color: #ff4757; font-size: 1.5rem; }
         .neon-text-enhanced { font-family: 'Montserrat', sans-serif; font-weight: 500; color: #fff; text-shadow: 0 0 5px rgba(255, 107, 129, 0.8); text-align: justify; line-height: 1.8; font-size: 1.15rem; }
 
-        /* 5. Capsule */
-        .capsule-card { background: linear-gradient(135deg, #2d3436, #000000); border: 2px solid #fdcb6e; color: #fdcb6e; border-radius: 20px; padding: 3rem; text-align: center; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; position: relative; overflow: hidden; }
-        .capsule-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(253, 203, 110, 0.3); }
-        .capsule-icon { font-size: 4rem; margin-bottom: 1rem; animation: float 3s ease-in-out infinite; }
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        /* 5. Capsule (Cápsula del Tiempo Mejorada) */
+        .capsule-card {
+        background: linear-gradient(135deg, #2d3436 0%, #000000 100%);
+        border: 2px solid #fdcb6e;
+        color: #fdcb6e;
+        border-radius: 25px;
+        padding: 3.5rem 2rem;
+        text-align: center;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(253, 203, 110, 0.1);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efecto rebote suave */
+        z-index: 1;
+        }
+
+        /* Efecto de brillo rotativo de fondo */
+        .capsule-card::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(253, 203, 110, 0.15) 0%, transparent 60%);
+    animation: rotateShimmer 20s linear infinite;
+    z-index: -1;
+}
+@keyframes rotateShimmer { from { transform: rotate(0deg); } to { transform: rotate(360deg); }}
+
+/* Hover mejorado: se eleva y brilla más */
+.capsule-card:hover {
+    transform: translateY(-15px) scale(1.03);
+    box-shadow: 0 25px 50px rgba(253, 203, 110, 0.3), inset 0 0 30px rgba(253, 203, 110, 0.4);
+    border-color: #ffeaa7;
+}
+
+/* Icono flotante con brillo */
+.capsule-icon {
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    animation: floatEnhanced 4s ease-in-out infinite;
+    text-shadow: 0 0 20px rgba(253, 203, 110, 0.8);
+}
+
+@keyframes floatEnhanced {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(5deg); }
+}
+
+/* 6. Trivia Game Show & Unboxing */
+.trivia-progress-container {
+    width: 100%;
+    background-color: #f1f2f6;
+    border-radius: 50px;
+    height: 10px;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+.trivia-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #ff9a9e 0%, #ff6b81 100%);
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
+.trivia-btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 12px;
+    border: 2px solid #fab1a0;
+    background: white;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    color: #2d3436;
+    transition: all 0.2s;
+    font-family: 'Montserrat', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+.trivia-btn:hover {
+    background: #fff0f3;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 129, 0.2);
+}
+.trivia-btn.correct { background: #55efc4 !important; border-color: #00b894 !important; color: white !important; transform: scale(1.02); }
+.trivia-btn.wrong { background: #ff7675 !important; border-color: #d63031 !important; color: white !important; animation: shake 0.5s; }
+
+/* Animación Caja de Regalo */
+.gift-box-wrapper {
+    cursor: pointer;
+    display: inline-block;
+    transition: transform 0.3s;
+}
+.gift-box-wrapper:hover { transform: scale(1.1) rotate(5deg); }
+.gift-emoji { font-size: 6rem; display: block; animation: bounce 2s infinite; }
+.tap-to-open { font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; color: #ff6b81; margin-top: 10px; animation: pulse 1.5s infinite; }
+
+/* Grid de Regalos (DISEÑO ESTÉTICO Y UNIFORME) */
+.gift-grid {
+    display: grid;
+    /* Esto crea columnas automáticas de mínimo 100px */
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); 
+    gap: 15px; /* Espacio entre fotos */
+    margin-top: 20px;
+    margin-bottom: 20px;
+    opacity: 0; 
+    transform: translateY(20px);
+    transition: all 0.8s ease;
+}
+
+.gift-grid.revealed { 
+    opacity: 1; 
+    transform: translateY(0); 
+}
+
+.mini-gift {
+    width: 100%;        /* Ocupa todo el ancho de su celda */
+    height: 100px;      /* ALTURA FIJA OBLIGATORIA */
+    object-fit: contain; /* Ajusta la imagen dentro sin cortarla ni estirarla */
+    background-color: #fff; /* Fondo blanco limpio */
+    border: 1px solid #ffeaa7;
+    border-radius: 12px; /* Bordes redondeados suaves */
+    padding: 5px;        /* Un poco de aire dentro del cuadro */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Sombra sutil */
+    transition: all 0.3s ease;
+}
+
+/* Efecto al pasar el mouse */
+.mini-gift:hover { 
+    transform: translateY(-5px); /* Flota un poco */
+    border-color: #ff6b81;       /* Borde rosa */
+    box-shadow: 0 10px 15px rgba(255, 107, 129, 0.2); 
+    z-index: 2;
+}
+
+@keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-20px);} 60% {transform: translateY(-10px);} }
+
+/* 7. Libro Mágico Premium 3D */
+.book-modal-content {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    perspective: 1500px;
+    display: flex;
+    justify-content: center;
+}
+
+.book-wrapper {
+    background-color: #fffbf0; /* Color Papel Crema */
+    width: 90%;
+    max-width: 600px;
+    min-height: 550px;
+    border-radius: 5px 20px 20px 5px;
+    /* El truco del 3D: Sombras apiladas para simular grosor de páginas */
+    box-shadow: 
+        inset 40px 0 50px rgba(0,0,0,0.1), /* Curva del lomo */
+        inset -5px 0 10px rgba(0,0,0,0.05), /* Curva borde derecho */
+        1px 1px 0 #e0e0e0,
+        2px 2px 0 #e0e0e0,
+        3px 3px 0 #e0e0e0,
+        4px 4px 0 #e0e0e0,
+        5px 5px 0 #e0e0e0,
+        6px 6px 0 #e0e0e0, /* Bloque de páginas */
+        15px 15px 40px rgba(0,0,0,0.4); /* Sombra real contra la mesa */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border: 2px solid #fae1dd; /* Borde sutil */
+    /* Textura de papel opcional */
+    background-image: linear-gradient(#e6e6e6 1px, transparent 1px);
+    background-size: 100% 30px; /* Líneas de cuaderno sutiles (opcional) */
+}
+
+/* Decoración de esquinas (estilo vintage) */
+.book-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 20px; bottom: 20px; left: 20px; right: 20px;
+    border: 2px solid #ff6b81;
+    border-radius: 10px;
+    pointer-events: none;
+    opacity: 0.3;
+}
+
+.bookmark {
+    position: absolute;
+    top: -15px; right: 50px;
+    width: 50px; height: 100px;
+    background: linear-gradient(to bottom, #ff6b81, #ff4757);
+    border-radius: 0 0 50px 50px;
+    box-shadow: 2px 5px 10px rgba(0,0,0,0.3);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.8rem;
+    transition: transform 0.3s;
+}
+.book-wrapper:hover .bookmark { transform: translateY(-5px); }
+
+.book-page-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    text-align: center;
+}
+
+.reason-number {
+    font-family: 'Montserrat', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #ff6b81;
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #ff6b81;
+    padding-bottom: 10px;
+}
+
+.reason-text-display {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.8rem;
+    color: #2d3436;
+    line-height: 1.5;
+    text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+}
+
+/* Botones de navegación del libro (AJUSTADO) */
+.book-controls {
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0,0,0,0.02);
+    border-top: 1px solid rgba(0,0,0,0.05);
+    margin-top: auto; /* Empuja los controles al final */
+}
+
+.book-btn {
+    background: none;
+    border: 1px solid #fab1a0;
+    color: #fab1a0;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem; /* Texto un poco más pequeño */
+    transition: all 0.3s;
+}
+.book-btn:hover { background: #fab1a0; color: white; }
+
+/* Ajuste especial para el botón central */
+#btnAutoBook {
+    font-size: 0.8rem;
+    padding: 5px 15px;
+}
+/* --- 5. MÚSICA CON ONDAS --- (ESTO ES LO QUE TIENES QUE BORRAR) */
+.music-player { 
+    position: fixed; bottom: 30px; left: 30px; width: 55px; height: 55px; 
+    border-radius: 50%; background: #222; border: 2px solid rgba(255,255,255,0.8); 
+    display: flex; align-items: center; justify-content: center; cursor: pointer; 
+    z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: all 0.3s;
+}
+.music-player.playing {
+    animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    background: #ff4757; border-color: #ff4757;
+}
+@keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); transform: scale(0.95); }
+    70% { box-shadow: 0 0 0 15px rgba(255, 71, 87, 0); transform: scale(1); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); transform: scale(0.95); }
+}
+
+/* --- BOTÓN DE CERRAR LIBRO BONITO --- */
+.book-close-btn {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    right: auto;
+    width: 35px;
+    height: 35px;
+    background-color: rgba(255, 107, 129, 0.1); /* Fondo suavecito */
+    border: none;
+    border-radius: 50%;
+    color: #ff6b81; /* Color de la X */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.book-close-btn:hover {
+    background-color: #ff6b81; /* Se pone rojo al pasar el mouse */
+    color: white;
+    transform: rotate(90deg) scale(1.1); /* Gira un poco */
+    box-shadow: 0 4px 10px rgba(255, 107, 129, 0.3);
+}
     </style>
 </head>
 <body>
@@ -262,22 +560,37 @@
     <button class="btn-add" data-bs-toggle="modal" data-bs-target="#addModal" title="Agregar Recuerdo"><i class="bi bi-plus-lg"></i></button>
 
     <div class="modal fade" id="bookModal" tabindex="-1" data-bs-backdrop="static">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content book-modal-content border-0">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content book-modal-content">
+            
+            <div class="book-wrapper">
                 <div class="bookmark"></div>
-                <div class="modal-header border-0 pb-0 pe-4 pt-3 position-relative"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
-                <div class="modal-body d-flex flex-column justify-content-between" style="min-height: 450px;">
-                    <div id="bookContent" class="flex-grow-1 d-flex flex-column align-items-center justify-content-center p-4">
-                        <h4 class="romantic-font text-danger mb-3">200 Razones para Amarte...</h4>
-                        <p class="book-font display-6" id="reasonText">Cargando...</p>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center px-5 pb-4">
-                        <button class="book-nav-btn" onclick="prevPage()">Anterior</button>
-                        <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="toggleAutoBook()" id="btnAutoBook">▶️ Auto</button>
-                        <button class="book-nav-btn btn-danger" onclick="nextPage()">Siguiente</button>
-                    </div>
-                    <div class="page-number">Página <span id="pageNum">1</span> de 201</div>
+                
+                <button type="button" class="book-close-btn" data-bs-dismiss="modal" aria-label="Cerrar">
+                <i class="bi bi-x-lg"></i>
+                </button>
+
+                <div class="book-page-content" id="bookContent">
+                    <span class="reason-number">Razón #<span id="displayReasonNum">1</span></span>
+                    
+                    <p class="reason-text-display" id="displayReasonText">Cargando...</p>
                 </div>
+
+                <div class="book-controls">
+                    <button class="book-btn" onclick="prevPage()"><i class="bi bi-chevron-left"></i> Anterior</button>
+                    
+                    <button class="btn btn-sm btn-outline-danger rounded-pill px-4" onclick="toggleAutoBook()" id="btnAutoBook">
+                        <i class="bi bi-play-fill"></i> Leer Automático
+                    </button>
+                    
+                    <button class="book-btn" onclick="nextPage()">Siguiente <i class="bi bi-chevron-right"></i></button>
+                </div>
+                
+                <div class="text-center pb-2 text-muted small" style="font-size: 0.7rem;">
+                    Página <span id="pageNum">1</span> de 201
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -287,7 +600,57 @@
     <div class="modal fade" id="momentModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;"><div class="modal-header border-0 pb-0 bg-white position-relative"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body pt-0 px-4 pb-5 bg-white"><div class="text-center mb-3"><h2 id="detTitle" class="romantic-font text-danger display-5"></h2><span id="detDate" class="text-muted text-uppercase small ls-2"></span></div><div class="d-flex justify-content-center mb-4"><div id="detMedia" class="w-100 text-center"></div></div><div class="text-center mb-3"><i class="bi bi-suit-heart-fill text-danger opacity-25 fs-4"></i></div><div class="story-paper"><span class="quote-icon quote-start">“</span><p id="detDesc" class="story-text text-center mb-0"></p><span class="quote-icon quote-end">”</span></div></div></div></div></div>
     <div class="modal fade" id="addModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content p-4 border-0 shadow"><div class="modal-header border-0 position-relative"><h3 class="romantic-font text-danger text-center mb-0 w-100">Nuevo Recuerdo</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form method="POST" enctype="multipart/form-data">{% csrf_token %}<div class="mb-3"><label class="form-label fw-bold">Título</label>{{ form.titulo }}</div><div class="mb-3"><label class="form-label fw-bold">Fecha</label>{{ form.fecha }}</div><div class="mb-3"><label class="form-label fw-bold">Descripcion</label>{{ form.descripcion }}</div><div class="mb-3 border p-2 rounded bg-light"><label class="form-label text-danger fw-bold d-block mb-2"><i class="bi bi-camera-fill me-2"></i>Subir Foto (Opcional)</label>{{ form.foto }}</div><div class="mb-3 border p-2 rounded bg-light"><label class="form-label text-danger fw-bold d-block mb-2"><i class="bi bi-camera-reels-fill me-2"></i>Subir Video (Opcional)</label>{{ form.video }}</div><button class="btn btn-danger w-100 rounded-pill mt-2 shadow">Guardar Recuerdo</button></form></div></div></div></div>
     <div class="modal fade" id="editModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content p-4 border-0 shadow"><div class="modal-header border-0 position-relative"><h3 class="romantic-font text-primary text-center mb-0 w-100">Editar Recuerdo</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form method="POST" enctype="multipart/form-data" id="editForm">{% csrf_token %}<div class="mb-3"><label class="form-label fw-bold">Título</label><input type="text" name="titulo" id="editTitle" class="form-control"></div><div class="mb-3"><label class="form-label fw-bold">Fecha</label><input type="date" name="fecha" id="editDate" class="form-control"></div><div class="mb-3"><label class="form-label fw-bold">Descripcion</label><textarea name="descripcion" id="editDesc" class="form-control" rows="3"></textarea></div><div class="mb-3 border p-2 rounded bg-light"><label class="form-label text-danger fw-bold d-block mb-2"><i class="bi bi-camera-fill me-2"></i>Cambiar Foto</label><input type="file" name="foto" class="form-control"></div><div class="mb-3 border p-2 rounded bg-light"><label class="form-label text-danger fw-bold d-block mb-2"><i class="bi bi-camera-reels-fill me-2"></i>Cambiar Video</label><input type="file" name="video" class="form-control"></div><button class="btn btn-primary w-100 rounded-pill mt-2 shadow">Guardar Cambios</button></form></div></div></div></div>
-    <div class="modal fade" id="triviaModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content p-4 border-0 shadow-lg" style="border-radius: 20px;"><div class="modal-header border-0 pb-0 position-relative"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><h2 class="romantic-font text-danger mb-4 display-5">Trivia de Amor</h2><div id="question-container"><h4 id="triviaQuestion" class="mb-4 fw-bold text-dark"></h4><div id="triviaOptions" class="d-grid gap-2"></div></div><div id="win-container" style="display:none;" class="win-card"><div class="display-1 mb-2">🎉</div><h2 class="romantic-font text-danger display-6 win-text">¡Ganaste mi Amor!</h2><p class="text-muted">Has desbloqueado tus regalos especiales:</p><hr><h3 class="book-font fst-italic text-dark">¡Para que te veas hermosa! 🎁</h3><div class="gift-container"><img src="/media/regalo_bolsa.png" alt="Bolsa" class="gift-img"><img src="/media/regalo_sandalias.png" alt="Sandalias" class="gift-img"><img src="/media/bolsa.webp" alt="Bolsa Adicional" class="gift-img"><img src="/media/pijama.webp" alt="Pijama" class="gift-img"><img src="/media/pulsera.webp" alt="Pulsera" class="gift-img"><img src="/media/EZwear Pantalon.png" alt="Pulsera" class="gift-img"><img src="/media/INAWLY.png" alt="Pulsera" class="gift-img"><img src="/media/Elamini Vestido mini casual.png" alt="Pulsera" class="gift-img"><img src="/media/DAZY Chaqueta deportiva.png" alt="Pulsera" class="gift-img"><img src="/media/DAZY Camiseta.png" alt="Pulsera" class="gift-img"></div><small class="text-muted d-block mt-3">Espero que te encanten ❤️</small></div></div></div></div></div>
+    <div class="modal fade" id="triviaModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4 border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header border-0 pb-0 position-relative">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center pt-0">
+                
+                <div id="question-container">
+                    <h2 class="romantic-font text-danger mb-2 display-6">Trivia de Amor</h2>
+                    <div class="trivia-progress-container">
+                        <div id="triviaBar" class="trivia-progress-bar"></div>
+                    </div>
+                    
+                    <h4 id="triviaQuestion" class="mb-4 fw-bold text-dark mt-4"></h4>
+                    <div id="triviaOptions" class="d-grid gap-2"></div>
+                </div>
+
+                <div id="win-container" style="display:none;">
+                    <h2 class="romantic-font text-danger display-5 mb-3">¡Perfecto!</h2>
+                    <p class="text-muted">Te has ganado esto...</p>
+                    
+                    <div class="gift-box-wrapper" onclick="abrirRegaloFinal()">
+                        <div class="gift-emoji">🎁</div>
+                        <div class="tap-to-open">Toca para abrir</div>
+                    </div>
+                </div>
+
+                <div id="prizes-container" style="display:none;">
+                    <h3 class="romantic-font text-danger mb-3">¡Para que te veas hermosa! ❤️</h3>
+                    
+                    <div class="gift-grid revealed">
+                        <img src="/media/regalo_bolsa.png" class="mini-gift">
+                        <img src="/media/regalo_sandalias.png" class="mini-gift">
+                        <img src="/media/bolsa.webp" class="mini-gift">
+                        <img src="/media/pijama.webp" class="mini-gift">
+                        <img src="/media/pulsera.webp" class="mini-gift">
+                        <img src="/media/EZwear Pantalon.png" class="mini-gift">
+                        <img src="/media/INAWLY.png" class="mini-gift">
+                        <img src="/media/Elamini Vestido mini casual.png" class="mini-gift">
+                        <img src="/media/DAZY Chaqueta deportiva.png" class="mini-gift">
+                        <img src="/media/DAZY Camiseta.png" class="mini-gift">
+                    </div>
+                    <small class="text-muted d-block mt-4 fst-italic">Espero que te encanten mi amor.</small>
+                    <button class="btn btn-danger rounded-pill mt-3 px-4" data-bs-dismiss="modal">Gracias mi amor 😍</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
     <div class="modal fade" id="finalBookModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down"><div class="modal-content bg-dark text-white border-0 text-center p-4 position-relative overflow-hidden" style="border-radius: 20px;"><button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button><div class="modal-body position-relative" style="z-index: 2;"><h1 class="romantic-font text-info display-4 mb-2">Nunca podría dejarte...</h1><p class="text-muted fst-italic mb-4">La razón #201 es imposible, pero mira esto:</p><div class="video-cine-box"><video id="bookFinalVideo" controls loop playsinline><source src="/media/xim.mp4" type="video/mp4"></video></div><div class="text-frame-neon"><div class="neon-text-enhanced"><p>Sé que no siempre lo digo, pero admiro cómo enfrentas la vida con una sonrisa incluso en los momentos difíciles. Tu fuerza, tu bondad y tu manera única de ver el mundo me inspiran cada día. Gracias por estar, por quedarte, por dar lo mejor de ti sin rendirte. Eres alguien especial, con un corazón enorme que deja huellas llenas de cariño.</p><p class="text-center mb-0 mt-3 text-white"><strong>TE QUIERO Y QUIERO QUE NUNCA LO OLVIDES... 🌹</strong></p></div></div></div></div></div></div>
     <div class="modal fade" id="finalSurpriseModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down"><div class="modal-content bg-dark text-white border-0 text-center p-4 position-relative overflow-hidden" style="border-radius: 20px;"><button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button><div class="modal-body position-relative" style="z-index: 2;"><h1 class="romantic-font text-danger display-4 mb-2">Simplemente Contigo</h1><p class="text-muted fst-italic mb-4">Un recordatorio de lo mucho que te amo:</p><div class="video-cine-box"><video id="finalVideo" controls loop playsinline><source src="/media/lindo.mp4" type="video/mp4"></video></div><div class="text-frame-neon"><div class="neon-text-enhanced"><p>No te puedo bajar la luna, pero puedo acompañarte cada vez que quieras disfrutar de su belleza. No puedo evitar tus malos momentos o tristezas, pero puedo estar contigo siempre para ayudarte a afrontarlas. Tal vez no pueda darte lo mejor del mundo, pero sí lo mejor de mí.</p><p class="text-center mb-0 mt-3 text-white" style="text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);"><strong>QUIERO QUE SEPAS QUE ERES MI VIDA Y MI MAYOR ALEGRÍA. TE AMO. ❤️</strong></p></div></div></div></div></div></div>
     <div class="modal fade bg-dark" id="musicModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg bg-dark text-white text-center p-4" style="border-radius: 20px;"><div class="modal-header border-0 pb-0 position-relative"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><i class="bi bi-disc-fill display-1 text-danger mb-3 d-block" style="animation: spin 4s linear infinite;"></i><h3 class="romantic-font mb-3">Nuestra Canción Especial</h3><p class="text-white-50 mb-4">Para escuchar cuando me extrañes...</p><div style="position: relative; z-index: 9999;"><audio id="modalAudio" controls class="w-100" style="cursor: pointer;"><source src="/media/letra.mp3" type="audio/mpeg"></audio></div></div></div></div></div>
@@ -325,8 +688,7 @@
         for(let i=0; i<baseReasons.length; i++) { allPages.push(`<strong>Razón #${i+1}:</strong><br>${baseReasons[i]}`); }
         allPages.push("<strong>Razón #201:</strong><br>Una razón para dejarte...<br><button class='btn-reveal' onclick='verRazonFinalLibro()'>Ver Razón</button>");
 
-        const triviaQuestions = [{ q: "¿Dónde fue nuestro primer beso? 💋", opts: ["Escuela", "Parque", "Cine"], ans: 0 }, { q: "¿Cuánto me amas? 📈", opts: ["10", "100", "Infinito"], ans: 2 }, { q: "¿Qué me regalaste primero? 🎁", opts: ["Carta", "Lechuga 🥬", "Chocolate"], ans: 1 }];
-
+        
         // --- LÓGICA DE CARTAS CON NOTAS DE VOZ ---
         function leerCarta(tipo) {
             let t="", b="", i="", audioSrc="";
@@ -369,35 +731,97 @@
             });
         }
 
-        // --- LÓGICA DE CÁPSULA DEL TIEMPO (5 AÑOS) ---
-        function verificarCapsula() {
+        // --- LÓGICA DE CÁPSULA DEL TIEMPO MEJORADA (SECURE VERSION) ---
+
+        // 1. Función auxiliar para mostrar el contenido cuando se abre
+        function mostrarContenidoCapsulaExito() {
+            // Pausar música de fondo si suena
+            if(!bgMusic.paused){ bgMusic.pause(); musicPlayerBtn.classList.remove('playing'); isMusicPausedByVideo = true; }
+            
+            // Lanzar confeti dorado
+             confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, colors: ['#fdcb6e', '#ffeaa7', '#ffffff'] });
+
+            Swal.fire({
+                title: '<span class="romantic-font text-warning">¡Cápsula Abierta! ✨</span>',
+                html: `<p class="text-white lead">Hola mi amor del futuro. Si estás viendo esto, lo logramos. Aquí está nuestro mensaje guardado...</p>
+                       <div class="video-cine-box mt-3 shadow-lg" style="border-color: #fdcb6e;">
+                        <video controls autoplay class="w-100 rounded"><source src="/media/video_capsula.mp4" type="video/mp4"></video>
+                       </div>`,
+                width: 700,
+                background: 'linear-gradient(135deg, #2d3436 0%, #000000 100%)',
+                color: '#fdcb6e',
+                confirmButtonColor: '#fdcb6e',
+                confirmButtonText: '¡Qué hermoso! ❤️',
+                padding: '2em',
+                showClass: { popup: 'animate__animated animate__zoomInDown faster' },
+                hideClass: { popup: 'animate__animated animate__zoomOutUp faster' },
+                willClose: () => { if(isMusicPausedByVideo){ bgMusic.play(); musicPlayerBtn.classList.add('playing'); isMusicPausedByVideo = false; } }
+            });
+        }
+
+        // 2. Función principal segura
+        async function verificarCapsula() {
             const today = new Date();
             const targetDate = new Date('2030-12-31T00:00:00');
             
+            // AQUÍ ESTÁ EL CAMBIO: La contraseña "XIM04PEREZ" convertida a código (Base64)
+            // Así nadie puede leerla a simple vista en el código.
+            const HASH_SECRETO = "WElNMDRQRVJFWg=="; 
+
             if (today >= targetDate) {
-                 Swal.fire({
-                    title: '¡Es hora! 🔓',
-                    html: `<h3 class="romantic-font text-danger">Mensaje del Pasado</h3>
-                           <p>Hola mi amor del futuro. Si estás viendo esto, lo logramos. Pasaron 5 años y aquí seguimos...</p>
-                           <video controls class="w-100 rounded shadow mt-2"><source src="/media/video_capsula.mp4" type="video/mp4"></video>`,
-                    width: 600,
-                    confirmButtonColor: '#ff6b81'
-                });
+                mostrarContenidoCapsulaExito();
             } else {
                 const diffTime = Math.abs(targetDate - today);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-                Swal.fire({
-                    icon: 'lock',
-                    title: 'Cápsula Bloqueada 🔒',
-                    html: `Este mensaje es para nuestro futuro.<br>Faltan <b>${diffDays} días</b> para abrirlo.<br><br><i>"La paciencia es amarga, pero su fruto es dulce".</i>`,
-                    confirmButtonText: 'Esperaré',
-                    confirmButtonColor: '#2d3436',
-                    background: '#fff',
-                    backdrop: `rgba(0,0,0,0.8)`
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                const result = await Swal.fire({
+                    iconHtml: '<i class="bi bi-shield-lock-fill" style="font-size: 4rem; color: #fdcb6e;"></i>',
+                    title: '<span class="romantic-font text-warning">Cápsula Sellada</span>',
+                    html: `<p class="text-white">Esta cápsula está programada para el futuro.</p>
+                           <p class="text-muted mb-4">Faltan <b>${diffDays} días</b> para su apertura automática.</p>
+                           <p class="text-warning fst-italic small border-top border-warning pt-3">¿Tienes la llave secreta para abrirla ahora? 🔑</p>`,
+                    background: '#2d3436',
+                    showCancelButton: true,
+                    confirmButtonText: 'Usar Llave Secreta 🔐',
+                    cancelButtonText: 'Seguiré Esperando ⏳',
+                    confirmButtonColor: '#fdcb6e',
+                    cancelButtonColor: '#636e72',
+                    reverseButtons: true,
+                    showClass: { popup: 'animate__animated animate__tada' }
                 });
+
+                if (result.isConfirmed) {
+                    const { value: passwordInput } = await Swal.fire({
+                        title: '<span class="text-warning">Introduce la Llave 🔑</span>',
+                        input: 'password',
+                        inputLabel: 'Solo la dueña de mi corazón conoce la clave...',
+                        inputPlaceholder: 'Escribe aquí...',
+                        inputAttributes: { autocapitalize: 'off', autocorrect: 'off' },
+                        background: '#2d3436', color: '#fff',
+                        confirmButtonText: 'Intentar Abrir ✨',
+                        confirmButtonColor: '#fdcb6e',
+                        showClass: { popup: 'animate__animated animate__fadeInUp' }
+                    });
+
+                    if (passwordInput) {
+                        // AQUÍ VERIFICAMOS: Convertimos lo que ella escribe a código y comparamos
+                        // btoa() convierte texto a Base64
+                        if (btoa(passwordInput) === HASH_SECRETO) {
+                            mostrarContenidoCapsulaExito();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: '<span class="text-danger">Clave Incorrecta ❌</span>',
+                                text: 'La cápsula permanece sellada. Esa no es la llave.',
+                                background: '#2d3436', color: '#fff',
+                                confirmButtonColor: '#e74c3c',
+                                showClass: { popup: 'animate__animated animate__shakeX' }
+                            });
+                        }
+                    }
+                }
             }
         }
-
         // --- LÓGICA DE BUCKET LIST DINÁMICA (100% MEJORADA) ---
         const BUCKET_KEY = 'jx_bucketlist_dynamic';
 
@@ -505,54 +929,85 @@
 
         // --- FUNCIONES DEL LIBRO ---
         function abrirLibro() { 
-            currentPage = 0; updateBook(); 
-            new bootstrap.Modal(document.getElementById('bookModal')).show(); 
+    currentPage = 0; 
+    updateBook(); 
+    new bootstrap.Modal(document.getElementById('bookModal')).show(); 
+}
+function updateBook() { 
+        // Usamos baseReasons directamente
+        let content = "";
+        if(currentPage < baseReasons.length) {
+            content = baseReasons[currentPage];
+        } else {
+            // La última página especial
+            content = "Una razón para dejarte...<br><br><button class='btn btn-danger mt-2' onclick='verRazonFinalLibro()'>Ver Razón 💔</button>";
         }
 
-        function updateBook() { 
-            document.getElementById('reasonText').innerHTML = allPages[currentPage]; 
-            document.getElementById('pageNum').innerText = currentPage + 1; 
-            document.getElementById('bookContent').style.opacity = 0; 
-            setTimeout(() => document.getElementById('bookContent').style.opacity = 1, 200); 
-        }
+        // Actualizamos número
+        document.getElementById('displayReasonNum').innerText = currentPage + 1;
+        document.getElementById('pageNum').innerText = currentPage + 1;
+        
+        const textElement = document.getElementById('displayReasonText');
+        
+        // 1. Ocultamos el texto
+        textElement.style.opacity = 0;
+        
+        // 2. Esperamos un poquito y aplicamos la nueva animación
+        setTimeout(() => {
+            textElement.innerHTML = content;
+            textElement.style.opacity = 1;
+            
+            // Reiniciamos la animación quitando y poniendo la clase
+            textElement.classList.remove('animate__animated', 'animate__zoomIn');
+            void textElement.offsetWidth; // Truco para reiniciar el renderizado
+            textElement.classList.add('animate__animated', 'animate__zoomIn');
+            
+        }, 150);
+    }
+function nextPage() { 
+    // Ajustamos el límite al tamaño de tu lista de razones + 1 (la final)
+    if(currentPage < baseReasons.length) { 
+        currentPage++; 
+        updateBook(); 
+    } else {
+        stopAutoBook();
+    }
+}
 
-        function nextPage() { 
-            if(currentPage < allPages.length - 1) { 
-                currentPage++; updateBook(); 
-            } else {
-                stopAutoBook();
-            }
-        }
-        function prevPage() { 
-            if(currentPage > 0) { 
-                currentPage--; updateBook(); 
-            } 
-        }
+function prevPage() { 
+    if(currentPage > 0) { 
+        currentPage--; 
+        updateBook(); 
+    } 
+}
 
-        function toggleAutoBook() {
-            const btn = document.getElementById('btnAutoBook');
-            if(bookInterval) {
-                stopAutoBook();
-            } else {
-                btn.innerHTML = "⏸️ Pausar";
-                btn.classList.remove('btn-outline-danger');
-                btn.classList.add('btn-danger');
-                bookInterval = setInterval(() => { nextPage(); }, 5000);
-            }
-        }
+function toggleAutoBook() {
+    const btn = document.getElementById('btnAutoBook');
+    if(bookInterval) {
+        stopAutoBook();
+    } else {
+        btn.innerHTML = "<i class='bi bi-pause-fill'></i> Pausar";
+        btn.classList.remove('btn-outline-danger');
+        btn.classList.add('btn-danger');
+        bookInterval = setInterval(() => { nextPage(); }, 4000);
+    }
+}
 
-        function stopAutoBook() {
-            const btn = document.getElementById('btnAutoBook');
-            if(btn) {
-                btn.innerHTML = "▶️ Auto";
-                btn.classList.add('btn-outline-danger');
-                btn.classList.remove('btn-danger');
-            }
-            if(bookInterval) {
-                clearInterval(bookInterval);
-                bookInterval = null;
-            }
-        }
+function stopAutoBook() {
+    const btn = document.getElementById('btnAutoBook');
+    if(btn) {
+        btn.innerHTML = "<i class='bi bi-play-fill'></i> Leer Auto";
+        btn.classList.add('btn-outline-danger');
+        btn.classList.remove('btn-danger');
+    }
+    if(bookInterval) {
+        clearInterval(bookInterval);
+        bookInterval = null;
+    }
+}
+
+// Detener al cerrar
+document.getElementById('bookModal').addEventListener('hide.bs.modal', stopAutoBook);
 
         document.getElementById('bookModal').addEventListener('hide.bs.modal', stopAutoBook);
 
@@ -568,37 +1023,89 @@
             lanzarConfetiSuave(); 
         }
 
-        function iniciarJuego() { 
-            qIdx = 0; 
-            document.getElementById('question-container').style.display = 'block'; 
-            document.getElementById('win-container').style.display = 'none'; 
-            showQ(); 
-            new bootstrap.Modal(document.getElementById('triviaModal')).show(); 
-        }
+        // ... código anterior del libro ...
 
-        function showQ() { 
-            const q = triviaQuestions[qIdx]; 
-            document.getElementById('triviaQuestion').innerText = q.q; 
-            const div = document.getElementById('triviaOptions'); div.innerHTML = ''; 
-            q.opts.forEach((o, i) => { 
-                const b = document.createElement('button'); b.className = 'trivia-option'; b.innerText = o; 
-                b.onclick = () => { 
-                    if(i === q.ans) { 
-                        b.style.background='#d4edda'; b.style.borderColor='#198754'; 
-                        setTimeout(()=>{ qIdx++; if(qIdx < triviaQuestions.length) showQ(); else showWin(); }, 500); 
-                    } else { 
-                        b.classList.add('shake'); setTimeout(()=>b.classList.remove('shake'), 500); 
-                    } 
-                }; 
-                div.appendChild(b); 
-            }); 
-        }
+    // 1. DEFINIR LAS PREGUNTAS (Asegúrate de que esto esté antes de las funciones)
+    const triviaQuestions = [
+        { q: "¿Dónde fue nuestro primer beso? 💋", opts: ["Escuela", "Parque", "Cine"], ans: 0 }, 
+        { q: "¿Cuánto me amas? 📈", opts: ["10", "100", "Infinito"], ans: 2 }, 
+        { q: "¿Qué me regalaste primero? 🎁", opts: ["Carta", "Lechuga 🥬", "Chocolate"], ans: 1 }
+    ];
 
-        function showWin() { 
-            document.getElementById('question-container').style.display = 'none'; 
-            document.getElementById('win-container').style.display = 'block'; 
-            lanzarConfetiSuave(); 
+    // --- LÓGICA TRIVIA MEJORADA (PEGAR ESTO AQUÍ ABAJO) ---
+    function iniciarJuego() { 
+        qIdx = 0; 
+        document.getElementById('question-container').style.display = 'block'; 
+        document.getElementById('win-container').style.display = 'none'; 
+        document.getElementById('prizes-container').style.display = 'none';
+        showQ(); 
+        new bootstrap.Modal(document.getElementById('triviaModal')).show(); 
+    }
+
+    function showQ() { 
+        const q = triviaQuestions[qIdx]; 
+        // Actualizar barra de progreso
+        const progress = (qIdx / triviaQuestions.length) * 100;
+        document.getElementById('triviaBar').style.width = `${progress}%`;
+
+        document.getElementById('triviaQuestion').innerText = q.q; 
+        const div = document.getElementById('triviaOptions'); 
+        div.innerHTML = ''; 
+        
+        q.opts.forEach((o, i) => { 
+            const b = document.createElement('button'); 
+            b.className = 'trivia-btn'; 
+            b.innerText = o; 
+            b.onclick = () => checkAnswer(i, q.ans, b);
+            div.appendChild(b); 
+        }); 
+    }
+
+    function checkAnswer(selected, correct, btnElement) {
+        const allBtns = document.querySelectorAll('.trivia-btn');
+        allBtns.forEach(btn => btn.disabled = true);
+
+        if(selected === correct) {
+            btnElement.classList.add('correct'); 
+            confetti({ particleCount: 30, spread: 50, origin: { y: 0.7 }, colors: ['#55efc4', '#ffffff'] }); 
+            
+            setTimeout(() => {
+                qIdx++; 
+                if(qIdx < triviaQuestions.length) {
+                    showQ(); 
+                } else { 
+                    document.getElementById('triviaBar').style.width = '100%';
+                    showWinBox(); 
+                }
+            }, 1000);
+        } else {
+            btnElement.classList.add('wrong'); 
+            setTimeout(() => {
+                allBtns.forEach(btn => btn.disabled = false); 
+                btnElement.classList.remove('wrong');
+            }, 800);
         }
+    }
+
+    function showWinBox() { 
+        document.getElementById('question-container').style.display = 'none'; 
+        document.getElementById('win-container').style.display = 'block'; 
+    }
+
+    function abrirRegaloFinal() {
+        var duration = 2000;
+        var end = Date.now() + duration;
+        (function frame() {
+            confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff6b81', '#fdcb6e'] });
+            confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff6b81', '#fdcb6e'] });
+            if (Date.now() < end) requestAnimationFrame(frame);
+        }());
+
+        document.getElementById('win-container').style.display = 'none';
+        document.getElementById('prizes-container').style.display = 'block';
+    }
+
+    // ... resto del código (música, cumpleaños, etc) ...
 
         function abrirModalMusica() { 
             bgMusic.pause(); 
