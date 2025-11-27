@@ -415,22 +415,61 @@ body {
     font-size: 0.8rem;
     padding: 5px 15px;
 }
-/* --- 5. MÚSICA CON ONDAS --- (ESTO ES LO QUE TIENES QUE BORRAR) */
-.music-player { 
-    position: fixed; bottom: 30px; left: 30px; width: 55px; height: 55px; 
-    border-radius: 50%; background: #222; border: 2px solid rgba(255,255,255,0.8); 
-    display: flex; align-items: center; justify-content: center; cursor: pointer; 
-    z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: all 0.3s;
-}
-.music-player.playing {
-    animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-    background: #ff4757; border-color: #ff4757;
-}
-@keyframes pulse-ring {
-    0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); transform: scale(0.95); }
-    70% { box-shadow: 0 0 0 15px rgba(255, 71, 87, 0); transform: scale(1); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); transform: scale(0.95); }
-}
+/* --- 5. BOTONES FLOTANTES GEMELOS (Música y Agregar) --- */
+        
+        /* Estilos compartidos para que sean IDÉNTICOS */
+        .music-player, .btn-add { 
+            position: fixed; 
+            bottom: 30px; 
+            width: 60px;  /* Tamaño aumentado para mejor toque */
+            height: 60px; /* Tamaño aumentado para mejor toque */
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            z-index: 1000; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
+            transition: all 0.3s;
+            border: 2px solid rgba(255,255,255,0.8); /* Borde blanco bonito */
+        }
+
+        /* 1. Botón de Música (Izquierda) */
+        .music-player {
+            left: 30px;
+            background: #2d3436; /* Color oscuro disco */
+            color: white;
+        }
+
+        /* Animación del disco al sonar */
+        .music-player.playing {
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite, spin 4s linear infinite;
+            background: #ff4757; 
+            border-color: #ff4757;
+        }
+
+        /* 2. Botón de Agregar (Derecha) */
+        .btn-add {
+            right: 30px;
+            background: #ff4757; /* Color rojo amor */
+            color: white;
+            font-size: 1.8rem; /* Icono + grande */
+            border: none; /* Quitamos borde default del button */
+        }
+
+        /* Efectos al pasar el mouse */
+        .music-player:hover, .btn-add:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 71, 87, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); }
+        }
+        
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
 /* --- BOTÓN DE CERRAR LIBRO BONITO --- */
 .book-close-btn {
