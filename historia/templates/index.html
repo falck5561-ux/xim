@@ -19,6 +19,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
 
@@ -851,6 +853,47 @@ body.no-scroll {
     transition: opacity 0.3s;
     pointer-events: none;
 }
+/* --- ESTILO BOTONES ROMÁNTICOS (CORREGIDO FINAL) --- */
+.btn-romantico {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    border: 2px solid #ff9a9e !important;
+    color: #ff4757 !important;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 1rem; /* Tamaño de letra fijo */
+    padding: 10px 24px; /* Relleno equilibrado */
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(255, 107, 129, 0.1);
+    
+    /* FLEXBOX PARA CENTRAR PERFECTAMENTE */
+    display: inline-flex !important; 
+    align-items: center !important; 
+    justify-content: center !important;
+    
+    /* Espacio entre botones para que no se peguen si bajan de línea */
+    margin: 5px !important; 
+    
+    /* Para que todos tengan la misma altura mínima */
+    min-height: 50px; 
+}
+
+/* Ajuste del ícono dentro del botón */
+.btn-romantico span {
+    font-size: 1.4rem; /* Emoji un poco más grande */
+    line-height: 1;    /* Elimina espacios extra arriba/abajo del emoji */
+    margin-right: 10px; /* Espacio entre icono y texto */
+    display: block;    /* Ayuda a la alineación */
+    padding-bottom: 2px; /* Pequeño ajuste visual para levantar el emoji */
+}
+
+.btn-romantico:hover {
+    background: linear-gradient(45deg, #ff9a9e, #ff6b81) !important;
+    color: white !important;
+    border-color: transparent !important;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(255, 107, 129, 0.4);
+}
     </style>
 </head>
 <body>
@@ -900,13 +943,33 @@ body.no-scroll {
     </h1>
         <p class="text-muted mb-4 ls-2" style="letter-spacing: 3px;">31 DE DICIEMBRE DE 2020</p>
         
-        <div class="d-flex justify-content-center gap-3 mb-5 flex-wrap" data-aos="fade-up">
-            <button class="btn btn-danger rounded-pill px-4 py-2 shadow-sm" onclick="abrirLibro()">📖 200 Razones...</button>
-            <button class="btn btn-outline-dark rounded-pill px-4 py-2 shadow-sm" onclick="iniciarJuego()">🎮 Trivia de Amor</button>
-            <button class="btn btn-outline-info rounded-pill px-4 py-2 shadow-sm" onclick="abrirModalMusica()">🎶 Nuestra Canción</button>
-            <button class="btn btn-warning rounded-pill px-4 py-2 shadow-sm" onclick="abrirCumpleanos()">🎂 ¡Feliz Cumpleaños!</button>
-            <button id="installBtn" class="btn btn-success rounded-pill px-4 py-2 shadow-sm" style="display: none;">📲 Instalar App</button>
-        </div>
+        <div class="d-flex justify-content-center gap-2 mb-5 flex-wrap" data-aos="fade-up">
+    
+    <button class="btn btn-romantico" onclick="abrirLibro()">
+        <span>📖</span> 200 Razones...
+    </button>
+    
+    <button class="btn btn-romantico" onclick="iniciarJuego()">
+        <span>🎮</span> Trivia de Amor
+    </button>
+    
+    <button class="btn btn-romantico" onclick="abrirModalMusica()">
+        <span>🎶</span> Nuestra Canción
+    </button>
+    
+    <button class="btn btn-romantico" onclick="abrirCumpleanos()">
+        <span>🎂</span> ¡Feliz Cumpleaños!
+    </button>
+    
+    <button class="btn btn-romantico" onclick="mensajeDelDia()">
+        <span>🥠</span> Galleta de Amor
+    </button>
+
+    <button id="installBtn" class="btn btn-romantico" style="display: none;">
+        <span>📲</span> Instalar App
+    </button>
+
+</div>
 
         <div class="love-timer-container mb-5" data-aos="zoom-in">
             <div class="timer-box"><span class="timer-number" id="years">0</span><span class="timer-label">Años</span></div>
@@ -949,6 +1012,12 @@ body.no-scroll {
     <h2 class="text-center romantic-font mb-4 text-danger display-5">Nuestra Lista de Deseos </h2>
         <div class="bucket-container">
             <p class="text-center text-muted mb-4 small">Escriban aquí sus sueños y márquenlos al cumplirlos.</p>
+            <div class="progress mb-4" style="height: 25px; border-radius: 15px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);">
+    <div id="bucketProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" 
+         role="progressbar" style="width: 0%; transition: width 0.6s ease; font-weight: bold;">
+         0%
+    </div>
+</div>
             
             <div class="bucket-input-group">
                 <input type="text" id="bucketInput" class="bucket-input" placeholder="Ej: Viajar a ver auroras boreales ✨" onkeypress="handleBucketEnter(event)">
@@ -1012,6 +1081,22 @@ body.no-scroll {
     {% endfor %}
 </div>
     </div>
+
+    <div class="container mb-5" data-aos="fade-up">
+    <h2 class="text-center romantic-font mb-4 text-danger display-5">Nuestros Lugares 🌎</h2>
+    
+    <div class="card border-0 shadow-lg overflow-hidden position-relative" style="border-radius: 20px; border: 2px solid #ff9a9e;">
+        <div id="map" style="height: 450px; width: 100%; z-index: 1;"></div>
+        
+        <div style="position: absolute; top: 10px; right: 10px; z-index: 1000; background: rgba(255,255,255,0.9); padding: 5px 10px; border-radius: 20px; font-size: 0.8rem;">
+            🗺️ Minatitlán
+        </div>
+    </div>
+    
+    <p class="text-center text-muted mt-3 small fst-italic">
+        <i class="bi bi-geo-alt-fill text-danger"></i> Toca los corazones para ver nuestros recuerdos.
+    </p>
+</div>
 
     <div class="container mb-5" data-aos="zoom-in">
         <div class="capsule-card" onclick="verificarCapsula()">
@@ -1407,40 +1492,65 @@ body.no-scroll {
         function handleBucketEnter(e) {
             if(e.key === 'Enter') addBucketItem();
         }
-
-        function renderBucketList() {
-            const list = loadBucketList();
-            const container = document.getElementById('bucketListContainer');
-            container.innerHTML = '';
-            
-            if (list.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-4 text-muted">
-                        <i class="bi bi-stars fs-1 mb-2 d-block" style="color: #fab1a0;"></i>
-                        <p>¡Aún no hay deseos!<br>Empiecen a soñar juntos agregando uno arriba 👆</p>
-                    </div>
-                `;
-                return;
-            }
-
-            // Ordenar: primero los pendientes, luego los completados
-            list.sort((a, b) => a.done - b.done);
-
-            list.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'bucket-item animate__animated animate__fadeIn';
-                div.innerHTML = `
-                    <input type="checkbox" class="bucket-checkbox" ${item.done ? 'checked' : ''} onchange="toggleBucketItem(${item.id})">
-                    <span class="bucket-text ${item.done ? 'completed' : ''}">${item.text}</span>
-                    <button class="bucket-delete-btn" onclick="deleteBucketItem(${item.id})"><i class="bi bi-trash"></i></button>
-                `;
-                container.appendChild(div);
-            });
-        }
         
-        // Cargar lista al inicio
-        renderBucketList();
+        // --- LÓGICA DE BUCKET LIST (CON BARRA DE PROGRESO) ---
+function renderBucketList() {
+    const list = loadBucketList();
+    const container = document.getElementById('bucketListContainer');
+    const progressBar = document.getElementById('bucketProgressBar'); // <--- Nueva referencia
+    container.innerHTML = '';
 
+    // 1. CÁLCULO DE PROGRESO
+    if (list.length > 0) {
+        const completados = list.filter(i => i.done).length;
+        const porcentaje = Math.round((completados / list.length) * 100);
+        
+        if(progressBar) { // Verificación de seguridad
+            progressBar.style.width = `${porcentaje}%`;
+            progressBar.innerText = `${porcentaje}% Cumplido`;
+            
+            // Si llegan al 100%, la barra se pone verde
+            if(porcentaje === 100) {
+                progressBar.classList.remove('bg-danger');
+                progressBar.classList.add('bg-success');
+            } else {
+                progressBar.classList.add('bg-danger');
+                progressBar.classList.remove('bg-success');
+            }
+        }
+    } else {
+        // Si no hay items, barra en 0
+        if(progressBar) {
+            progressBar.style.width = '0%';
+            progressBar.innerText = '0%';
+        }
+    }
+
+    // 2. MOSTRAR LISTA (Igual que antes)
+    if (list.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-4 text-muted">
+                <i class="bi bi-stars fs-1 mb-2 d-block" style="color: #fab1a0;"></i>
+                <p>¡Aún no hay deseos!<br>Empiecen a soñar juntos agregando uno arriba 👆</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Ordenar: primero los pendientes, luego los completados
+    list.sort((a, b) => a.done - b.done);
+
+    list.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'bucket-item animate__animated animate__fadeIn';
+        div.innerHTML = `
+            <input type="checkbox" class="bucket-checkbox" ${item.done ? 'checked' : ''} onchange="toggleBucketItem(${item.id})">
+            <span class="bucket-text ${item.done ? 'completed' : ''}">${item.text}</span>
+            <button class="bucket-delete-btn" onclick="deleteBucketItem(${item.id})"><i class="bi bi-trash"></i></button>
+        `;
+        container.appendChild(div);
+    });
+}
 
         // --- FUNCIONES DEL LIBRO ---
         function abrirLibro() { 
@@ -2082,7 +2192,7 @@ tSlider.addEventListener('input', (e) => {
 
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/static/sw.js'); }
         let deferredPrompt; 
-        window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; installBtn.style.display = 'inline-block'; installBtn.classList.add('animate__animated', 'animate__pulse', 'animate__infinite'); });
+        window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; installBtn.style.display = 'inline-flex';});
         installBtn.addEventListener('click', async () => { if (!deferredPrompt) return; deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; deferredPrompt = null; if(outcome === 'accepted'){ installBtn.style.display = 'none'; } });
         window.addEventListener('appinstalled', () => { installBtn.style.display = 'none'; });
 
@@ -2132,6 +2242,114 @@ tSlider.addEventListener('input', (e) => {
             if(typeof AOS !== 'undefined') AOS.refresh();
         }, 1200);
     }
+
+    // --- 3. LÓGICA DEL MAPA DE AMOR (Con FOTOS) ---
+
+const map = L.map('map', {
+    scrollWheelZoom: false 
+}).setView([19.8350, -90.5300], 13); 
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '© Historia de J&X',
+    maxZoom: 20
+}).addTo(map);
+
+const heartIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/210/210545.png', 
+    iconSize: [35, 35],
+    iconAnchor: [17, 35],
+    popupAnchor: [0, -30]
+});
+
+// Estilo para las fotos del mapa (Para que no salgan gigantes)
+const imgStyle = "width: 100%; height: 120px; object-fit: cover; border-radius: 10px; margin-bottom: 8px;";
+
+// --- LUGARES CON FOTO ---
+
+// 1. El Inicio (Concordia)
+// IMPORTANTE: Cambia '/media/lugar_beso.jpg' por el nombre real de tu foto
+L.marker([19.8285, -90.4945], {icon: heartIcon}).addTo(map)
+    .bindPopup(`
+        <div class="text-center" style="width: 200px;">
+            <img src="/media/lugar_beso.jpg" style="${imgStyle}" alt="Primer Beso">
+            <b style="color:#ff4757;">El Inicio de Todo 💋</b>
+            <p class="mb-0 mt-1 small text-muted">Aquí nos dimos nuestro primer beso y pasamos tardes enteras...</p>
+        </div>
+    `);
+
+// 2. Escapes (Escénica)
+L.marker([19.8258, -90.5580], {icon: heartIcon}).addTo(map)
+    .bindPopup(`
+        <div class="text-center" style="width: 200px;">
+            <img src="/media/lugar_mar.jpg" style="${imgStyle}" alt="El Mar">
+            <b style="color:#ff4757;">Nuestro Refugio 🌊</b>
+            <p class="mb-0 mt-1 small text-muted">Cuando nos escapábamos para estar solos en el parque.</p>
+        </div>
+    `);
+
+// 3. Gericultura (Av López Portillo)
+L.marker([19.8270, -90.5190], {icon: heartIcon}).addTo(map)
+    .bindPopup(`
+        <div class="text-center" style="width: 200px;">
+            <img src="/media/lugar_prepa.jpg" style="${imgStyle}" alt="Gericultura">
+            <b style="color:#ff4757;">Creciendo Juntos 👵👴</b>
+            <p class="mb-0 mt-1 small text-muted">Horas cuidando abuelitos en la residencia. Ahí aprendimos a cuidar el uno del otro.</p>
+        </div>
+    `);
+
+// 4. La Feria (Pedro Sainz)
+L.marker([19.8540, -90.5350], {icon: heartIcon}).addTo(map)
+    .bindPopup(`
+        <div class="text-center" style="width: 200px;">
+            <img src="/media/lugar_feria.jpg" style="${imgStyle}" alt="Feria">
+            <b style="color:#ff4757;">12 de Diciembre Mágico 🎡</b>
+            <p class="mb-0 mt-1 small text-muted">Tu cumple, el permiso oficial y nuestra primera cita real.</p>
+        </div>
+    `);
+
+setTimeout(() => { map.invalidateSize(); }, 1000);
+
+// --- 4. MENSAJE DEL DÍA (GALLETA DE LA FORTUNA) ---
+const mensajesAmor = [
+    "Hoy te amo más que ayer, pero menos que mañana. 📈",
+    "Tu sonrisa es mi combustible para este día. 😊",
+    "Recuerda: Eres mi casualidad favorita. ✨",
+    "No importa qué pase hoy, estoy orgulloso de ti. 💪",
+    "Te ves hermosa hoy (bueno, te ves hermosa siempre). 😍",
+    "Gracias por existir y estar en mi vida 6 años. ❤️",
+    "Hoy es un buen día para darnos un beso. 💋",
+    "Eres el '31 de Diciembre' más bonito de mi vida. 🎆",
+    "Mi paz mental tiene tu nombre. 🧘‍♂️",
+    "Si tuviera que elegirte otra vez, lo haría mil veces. 💍"
+];
+
+function mensajeDelDia() {
+    // Usa la fecha para elegir siempre el mismo mensaje por 24 horas
+    const hoy = new Date();
+    const diaDelAno = Math.floor((hoy - new Date(hoy.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+    const indice = diaDelAno % mensajesAmor.length; 
+    
+    Swal.fire({
+        title: '<span class="romantic-font" style="color:#fdcb6e">Mensaje del Universo</span>',
+        text: mensajesAmor[indice],
+        iconHtml: '🥠',
+        confirmButtonText: 'Me encanta 😍',
+        confirmButtonColor: '#fdcb6e',
+        background: '#fffbf0',
+        backdrop: `rgba(0,0,0,0.4)`
+    });
+}
+
+// --- 5. TÍTULO DINÁMICO (CELOSO) ---
+let tituloOriginal = document.title;
+
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        document.title = "¡No te vayas! Te extraño 😢💔";
+    } else {
+        document.title = tituloOriginal;
+    }
+});
 
     </script>
 </body>
