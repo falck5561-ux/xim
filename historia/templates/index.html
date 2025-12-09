@@ -2862,6 +2862,12 @@ document.addEventListener('visibilitychange', function() {
     }
 });
 
+// --- CARGAR LISTA AL INICIAR ---
+// Esto hace que los deseos guardados aparezcan al recargar la página
+document.addEventListener('DOMContentLoaded', () => {
+    renderBucketList(); 
+});
+
     </script>
 </body>
 </html>
