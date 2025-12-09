@@ -40,3 +40,12 @@ class Cancion(models.Model):
 
     def __str__(self):
         return self.titulo
+
+# --- NUEVO MODELO PARA LA LISTA DE DESEOS (AGREGADO) ---
+class Deseo(models.Model):
+    texto = models.CharField(max_length=255)
+    cumplido = models.BooleanField(default=False)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.texto

@@ -1475,134 +1475,140 @@ body.no-scroll {
                 }
             }
         }
-        // --- LÓGICA DE BUCKET LIST DINÁMICA (100% MEJORADA) ---
-        const BUCKET_KEY = 'jx_bucketlist_dynamic';
 
-        function loadBucketList() {
-            const stored = localStorage.getItem(BUCKET_KEY);
-            return stored ? JSON.parse(stored) : [];
+// --- LÓGICA DE BUCKET LIST (MODO DATABASE) ---
+// ==========================================
+
+// 1. Obtener Token de Seguridad de Django
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
         }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
 
-        function saveBucketList(list) {
-            localStorage.setItem(BUCKET_KEY, JSON.stringify(list));
-        }
+// 2. Cargar Lista desde el Servidor
+function renderBucketList() {
+    fetch('/api/deseos/')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('bucketListContainer');
+            const progressBar = document.getElementById('bucketProgressBar');
+            container.innerHTML = '';
 
-        function addBucketItem() {
-            const input = document.getElementById('bucketInput');
-            const text = input.value.trim();
-            
-            if (!text) {
-                Swal.fire({ title: '¡Ups!', text: 'Escribe un deseo primero 😅', icon: 'info', confirmButtonColor: '#ff6b81' });
+            // Cálculo de Progreso
+            if (data.length > 0) {
+                const completados = data.filter(i => i.done).length;
+                const porcentaje = Math.round((completados / data.length) * 100);
+                
+                if(progressBar) {
+                    progressBar.style.width = `${porcentaje}%`;
+                    progressBar.innerText = `${porcentaje}% Cumplido`;
+                    if(porcentaje === 100) {
+                        progressBar.classList.remove('bg-danger'); progressBar.classList.add('bg-success');
+                    } else {
+                        progressBar.classList.add('bg-danger'); progressBar.classList.remove('bg-success');
+                    }
+                }
+            } else {
+                if(progressBar) { progressBar.style.width = '0%'; progressBar.innerText = '0%'; }
+                container.innerHTML = `<div class="text-center py-4 text-muted"><i class="bi bi-stars fs-1 mb-2 d-block" style="color: #fab1a0;"></i><p>¡Aún no hay deseos!<br>Empiecen a soñar juntos agregando uno arriba 👆</p></div>`;
                 return;
             }
 
-            const list = loadBucketList();
-            // Creamos un ID único usando la fecha actual
-            const newItem = { id: Date.now(), text: text, done: false };
-            list.push(newItem);
-            
-            saveBucketList(list);
-            renderBucketList();
-            input.value = '';
-            
-            // Recompensa visual
-            lanzarConfetiSuave();
-        }
-
-        function toggleBucketItem(id) {
-            let list = loadBucketList();
-            list = list.map(item => {
-                if(item.id === id) item.done = !item.done;
-                return item;
+            // Renderizar items
+            data.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'bucket-item animate__animated animate__fadeIn';
+                div.innerHTML = `
+                    <input type="checkbox" class="bucket-checkbox" ${item.done ? 'checked' : ''} onchange="toggleBucketItem(${item.id})">
+                    <span class="bucket-text ${item.done ? 'completed' : ''}">${item.texto}</span>
+                    <button class="bucket-delete-btn" onclick="deleteBucketItem(${item.id})"><i class="bi bi-trash"></i></button>
+                `;
+                container.appendChild(div);
             });
-            saveBucketList(list);
-            renderBucketList();
-            
-            // Si se marcó como hecho, lanzar confeti
-            const item = list.find(i => i.id === id);
-            if(item && item.done) lanzarConfetiSuave();
-        }
+        })
+        .catch(error => console.error('Error cargando deseos:', error));
+}
 
-        function deleteBucketItem(id) {
-            Swal.fire({
-                title: '¿Eliminar?',
-                text: "Se borrará este deseo de la lista",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#ff6b81',
-                confirmButtonText: 'Sí, borrar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    let list = loadBucketList();
-                    list = list.filter(item => item.id !== id);
-                    saveBucketList(list);
-                    renderBucketList();
-                }
-            });
-        }
-
-        function handleBucketEnter(e) {
-            if(e.key === 'Enter') addBucketItem();
-        }
-        
-        // --- LÓGICA DE BUCKET LIST (CON BARRA DE PROGRESO) ---
-function renderBucketList() {
-    const list = loadBucketList();
-    const container = document.getElementById('bucketListContainer');
-    const progressBar = document.getElementById('bucketProgressBar'); // <--- Nueva referencia
-    container.innerHTML = '';
-
-    // 1. CÁLCULO DE PROGRESO
-    if (list.length > 0) {
-        const completados = list.filter(i => i.done).length;
-        const porcentaje = Math.round((completados / list.length) * 100);
-        
-        if(progressBar) { // Verificación de seguridad
-            progressBar.style.width = `${porcentaje}%`;
-            progressBar.innerText = `${porcentaje}% Cumplido`;
-            
-            // Si llegan al 100%, la barra se pone verde
-            if(porcentaje === 100) {
-                progressBar.classList.remove('bg-danger');
-                progressBar.classList.add('bg-success');
-            } else {
-                progressBar.classList.add('bg-danger');
-                progressBar.classList.remove('bg-success');
-            }
-        }
-    } else {
-        // Si no hay items, barra en 0
-        if(progressBar) {
-            progressBar.style.width = '0%';
-            progressBar.innerText = '0%';
-        }
-    }
-
-    // 2. MOSTRAR LISTA (Igual que antes)
-    if (list.length === 0) {
-        container.innerHTML = `
-            <div class="text-center py-4 text-muted">
-                <i class="bi bi-stars fs-1 mb-2 d-block" style="color: #fab1a0;"></i>
-                <p>¡Aún no hay deseos!<br>Empiecen a soñar juntos agregando uno arriba 👆</p>
-            </div>
-        `;
+// 3. Agregar Deseo
+function addBucketItem() {
+    const input = document.getElementById('bucketInput');
+    const text = input.value.trim();
+    
+    if (!text) {
+        Swal.fire({ title: '¡Ups!', text: 'Escribe un deseo primero 😅', icon: 'info', confirmButtonColor: '#ff6b81' });
         return;
     }
 
-    // Ordenar: primero los pendientes, luego los completados
-    list.sort((a, b) => a.done - b.done);
-
-    list.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'bucket-item animate__animated animate__fadeIn';
-        div.innerHTML = `
-            <input type="checkbox" class="bucket-checkbox" ${item.done ? 'checked' : ''} onchange="toggleBucketItem(${item.id})">
-            <span class="bucket-text ${item.done ? 'completed' : ''}">${item.text}</span>
-            <button class="bucket-delete-btn" onclick="deleteBucketItem(${item.id})"><i class="bi bi-trash"></i></button>
-        `;
-        container.appendChild(div);
+    fetch('/api/deseos/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify({ texto: text })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === 'ok') {
+            input.value = '';
+            renderBucketList(); // Recargar lista
+            lanzarConfetiSuave();
+        }
     });
+}
+
+// 4. Alternar Estado (Done/Not Done)
+function toggleBucketItem(id) {
+    fetch(`/api/deseos/alternar/${id}/`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrftoken }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === 'ok') {
+            renderBucketList();
+            if(data.done) lanzarConfetiSuave();
+        }
+    });
+}
+
+// 5. Eliminar Deseo
+function deleteBucketItem(id) {
+    Swal.fire({
+        title: '¿Eliminar?',
+        text: "Se borrará este deseo de la lista de ambos.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#ff6b81',
+        confirmButtonText: 'Sí, borrar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/api/deseos/eliminar/${id}/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 'ok') renderBucketList();
+            });
+        }
+    });
+}
+
+function handleBucketEnter(e) {
+    if(e.key === 'Enter') addBucketItem();
 }
 
         // --- FUNCIONES DEL LIBRO ---
