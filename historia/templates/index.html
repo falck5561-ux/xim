@@ -1729,25 +1729,51 @@ document.getElementById('bookModal').addEventListener('hide.bs.modal', stopAutoB
 
         // ... código anterior del libro ...
 
-    // 1. DEFINIR LAS PREGUNTAS (Asegúrate de que esto esté antes de las funciones)
+    // ==========================================
+    // --- LÓGICA DE TRIVIA (MEJORADA NIVEL DIOS) ---
+    // ==========================================
+
+    // 1. DEFINIR LAS 10 PREGUNTAS
     const triviaQuestions = [
-        { q: "¿Dónde fue nuestro primer beso? 💋", opts: ["Escuela", "Parque", "Cine"], ans: 0 }, 
-        { q: "¿Cuánto me amas? 📈", opts: ["10", "100", "Infinito"], ans: 2 }, 
-        { q: "¿Qué me regalaste primero? 🎁", opts: ["Carta", "Lechuga 🥬", "Chocolate"], ans: 1 }
+        // Preguntas Clásicas
+        { q: "¿Dónde fue nuestro primer beso? 💋", opts: ["En la Escuela", "En el Parque", "En el Cine"], ans: 0 }, 
+        { q: "¿Qué me regalaste primero? 🎁", opts: ["Una Carta", "Una Lechuga 🥬", "Un Chocolate"], ans: 1 },
+        
+        // Preguntas Nuevas y Específicas
+        { q: "¿Cuál es mi virus favorito? 🦠", opts: ["Coronavirus", "Bacteriófago", "Influenza"], ans: 1 },
+        { q: "¿Qué parte de tu cuerpo es mi favorita? 🍑", opts: ["Tus ojos", "Tu sonrisa", "Tu colota"], ans: 2 },
+        { q: "¿Cuál fue el apodo de cuando éramos ligues? 😏", opts: ["Niña", "Mamoncita", "Xim"], ans: 1 },
+        { q: "¿Dónde nos caímos de la moto? 🏍️", opts: ["Cerca de la casa", "Cerca de la iglesia", "Cerca del asilo"], ans: 2 },
+        { q: "¿Cuál es mi canción favorita de Romeo Santos? 🎶", opts: ["Propuesta Indecente", "Eres Mía", "Imitadora"], ans: 2 },
+        
+        // Preguntas de Relleno para llegar a 10
+        { q: "¿Cuántos años de relación cumplimos? ❤️", opts: ["4 años", "5 años", "6 años"], ans: 1 },
+        { q: "¿Cuándo es nuestro aniversario? 📅", opts: ["14 de Febrero", "31 de Diciembre", "12 de Diciembre"], ans: 1 },
+        { q: "¿Quién es el amor de mi vida? 🤨", opts: ["Yo merengues (Ximena)", "La vecina", "Nadie"], ans: 0 }
     ];
 
-    // --- LÓGICA TRIVIA MEJORADA (PEGAR ESTO AQUÍ ABAJO) ---
+    let score = 0; // Variable para guardar la calificación
+
     function iniciarJuego() { 
-        qIdx = 0; 
+        score = 0; // Reiniciar puntos
+        qIdx = 0;  // Reiniciar preguntas
+        
+        // Resetear vistas
         document.getElementById('question-container').style.display = 'block'; 
         document.getElementById('win-container').style.display = 'none'; 
         document.getElementById('prizes-container').style.display = 'none';
+        
+        // Limpiar cualquier mensaje de error previo si existe
+        const existingError = document.getElementById('error-msg-container');
+        if(existingError) existingError.remove();
+
         showQ(); 
         new bootstrap.Modal(document.getElementById('triviaModal')).show(); 
     }
 
     function showQ() { 
         const q = triviaQuestions[qIdx]; 
+        
         // Actualizar barra de progreso
         const progress = (qIdx / triviaQuestions.length) * 100;
         document.getElementById('triviaBar').style.width = `${progress}%`;
@@ -1767,33 +1793,86 @@ document.getElementById('bookModal').addEventListener('hide.bs.modal', stopAutoB
 
     function checkAnswer(selected, correct, btnElement) {
         const allBtns = document.querySelectorAll('.trivia-btn');
-        allBtns.forEach(btn => btn.disabled = true);
+        allBtns.forEach(btn => btn.disabled = true); // Evitar doble click
 
         if(selected === correct) {
+            score++; // Sumar punto
             btnElement.classList.add('correct'); 
-            confetti({ particleCount: 30, spread: 50, origin: { y: 0.7 }, colors: ['#55efc4', '#ffffff'] }); 
-            
-            setTimeout(() => {
-                qIdx++; 
-                if(qIdx < triviaQuestions.length) {
-                    showQ(); 
-                } else { 
-                    document.getElementById('triviaBar').style.width = '100%';
-                    showWinBox(); 
-                }
-            }, 1000);
+            confetti({ particleCount: 20, spread: 40, origin: { y: 0.7 }, colors: ['#55efc4', '#ffffff'] }); 
         } else {
             btnElement.classList.add('wrong'); 
-            setTimeout(() => {
-                allBtns.forEach(btn => btn.disabled = false); 
-                btnElement.classList.remove('wrong');
-            }, 800);
+            // Vibrar el celular si es posible
+            if(navigator.vibrate) navigator.vibrate(200);
         }
+
+        // Pasar a la siguiente pregunta automáticamente
+        setTimeout(() => {
+            qIdx++; 
+            if(qIdx < triviaQuestions.length) {
+                showQ(); 
+            } else { 
+                document.getElementById('triviaBar').style.width = '100%';
+                evaluarResultado(); // Función nueva para calificar
+            }
+        }, 1000);
     }
 
-    function showWinBox() { 
-        document.getElementById('question-container').style.display = 'none'; 
-        document.getElementById('win-container').style.display = 'block'; 
+    function evaluarResultado() {
+        const modalBody = document.querySelector('#triviaModal .modal-body');
+        
+        // Ocultar preguntas
+        document.getElementById('question-container').style.display = 'none';
+
+        if (score >= 9) {
+            // --- GANÓ (9 o 10 aciertos) ---
+            document.getElementById('win-container').style.display = 'block';
+            
+            // Actualizar texto de victoria
+            const title = document.querySelector('#win-container h2');
+            const text = document.querySelector('#win-container p');
+            title.innerText = `¡Calificación: ${score}/10! 🌟`;
+            text.innerText = "Eres la mejor novia del mundo. ¡Te ganaste esto!";
+            
+            lanzarConfetiSuave();
+
+        } else {
+            // --- PERDIÓ (Menos de 9) ---
+            // Crear contenedor de error temporalmente
+            const errorDiv = document.createElement('div');
+            errorDiv.id = 'error-msg-container';
+            errorDiv.innerHTML = `
+                <h2 class="romantic-font text-danger display-1 mb-3">😱</h2>
+                <h3 class="fw-bold text-dark">Calificación: ${score}/10</h3>
+                <p class="text-muted mb-4">Mmm... te falta estudiar más sobre nosotros. <br>Necesitas mínimo 9 para el regalo.</p>
+                <button id="retryBtn" class="btn btn-secondary rounded-pill px-4" disabled>
+                    Inténtalo de nuevo en 10s
+                </button>
+            `;
+            modalBody.appendChild(errorDiv);
+
+            // LÓGICA DEL BLOQUEO DE 10 SEGUNDOS
+            let timeLeft = 10;
+            const btn = document.getElementById('retryBtn');
+            
+            const timer = setInterval(() => {
+                timeLeft--;
+                btn.innerText = `Inténtalo de nuevo en ${timeLeft}s`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    btn.innerText = "🔄 Intentar de Nuevo";
+                    btn.classList.remove('btn-secondary');
+                    btn.classList.add('btn-danger');
+                    btn.disabled = false;
+                    
+                    // Al hacer click, reinicia el juego
+                    btn.onclick = () => {
+                        errorDiv.remove();
+                        iniciarJuego();
+                    };
+                }
+            }, 1000);
+        }
     }
 
     function abrirRegaloFinal() {
@@ -1802,27 +1881,8 @@ document.getElementById('bookModal').addEventListener('hide.bs.modal', stopAutoB
         var end = Date.now() + duration;
 
         (function frame() {
-            // Cañón de la izquierda
-            confetti({ 
-                particleCount: 5, 
-                angle: 60, 
-                spread: 55, 
-                origin: { x: 0 }, 
-                shapes: ['heart'],              /* <--- ¡AQUÍ ESTÁ LA MAGIA! */
-                colors: ['#ff6b81', '#fdcb6e', '#ff4757'], /* Rosa y Dorado */
-                scalar: 2                       /* Tamaño doble para que se vean bien */
-            });
-            
-            // Cañón de la derecha
-            confetti({ 
-                particleCount: 5, 
-                angle: 120, 
-                spread: 55, 
-                origin: { x: 1 }, 
-                shapes: ['heart'],              /* <--- ¡AQUÍ TAMBIÉN! */
-                colors: ['#ff6b81', '#fdcb6e', '#ff4757'],
-                scalar: 2
-            });
+            confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, shapes: ['heart'], colors: ['#ff6b81', '#fdcb6e', '#ff4757'], scalar: 2 });
+            confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, shapes: ['heart'], colors: ['#ff6b81', '#fdcb6e', '#ff4757'], scalar: 2 });
 
             if (Date.now() < end) requestAnimationFrame(frame);
         }());
