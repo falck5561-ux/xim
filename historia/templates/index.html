@@ -2818,30 +2818,32 @@ const mensajesAmor = [
 ];
 
 function mensajeDelDia() {
-    // 1. Obtener fecha actual
     const hoy = new Date();
-    
-    // 2. Obtener el inicio del año actual (1 de Enero)
-    const inicio = new Date(hoy.getFullYear(), 0, 0);
-    
-    // 3. Calcular la diferencia en milisegundos y convertir a días
+    const anio = hoy.getFullYear();
+    const inicio = new Date(anio, 0, 0);
     const diff = hoy - inicio;
     const unDia = 1000 * 60 * 60 * 24;
-    const diaDelAno = Math.floor(diff / unDia);
+    let diaDelAno = Math.floor(diff / unDia);
     
-    // 4. Obtener el índice (restamos 1 porque el array empieza en 0)
-    // El día 1 (1 Ene) será índice 0.
-    const indice = diaDelAno - 1; 
+    // Cálculo base del índice (0 a 365)
+    let indice = diaDelAno - 1;
 
-    // Validación extra por si es bisiesto o hay error de cálculo
-    let mensajeDeHoy = "Te amo hoy y siempre. ❤️";
-    if (mensajesAmor[indice]) {
-        mensajeDeHoy = mensajesAmor[indice];
+    // --- CORRECCIÓN INTELIGENTE ---
+    // Verificamos si este año es bisiesto
+    const esBisiesto = (anio % 4 === 0 && anio % 100 !== 0) || (anio % 400 === 0);
+
+    // Si NO es bisiesto y ya pasamos febrero (día 59), saltamos el mensaje del "29 Feb"
+    // para que las fechas coincidan perfectamente.
+    if (!esBisiesto && diaDelAno >= 60) {
+        indice += 1;
     }
+    
+    // Protección por si acaso el índice se sale del rango
+    if (indice >= mensajesAmor.length) indice = mensajesAmor.length - 1;
 
     Swal.fire({
         title: '<span class="romantic-font" style="color:#fdcb6e">Mensaje del Universo</span>',
-        html: `<p style="font-size: 1.1em;">${mensajeDeHoy}</p><br><small style="color:#999">Día ${diaDelAno} del año</small>`,
+        html: `<p style="font-size: 1.1em;">${mensajesAmor[indice]}</p><br><small style="color:#999">Día ${diaDelAno} del año</small>`,
         iconHtml: '🥠',
         confirmButtonText: 'Lo guardaré en mi corazón 😍',
         confirmButtonColor: '#fdcb6e',
