@@ -142,7 +142,7 @@ def api_eliminar_deseo(request, id):
     return JsonResponse({'status': 'ok'})
 
 # ==========================================
-# --- VISTA DE LA MASCOTA (CORREGIDA) ---
+# --- VISTA DE LA MASCOTA (OPTIMIZADA) ---
 # ==========================================
 
 @csrf_exempt
@@ -150,11 +150,13 @@ def api_mascota(request):
     """
     Maneja el estado de la mascota compartida.
     """
-    # Usamos ID=1 para la mascota compartida
     pet, created = Mascota.objects.get_or_create(id=1)
 
+    # PASO 1 CRÍTICO: SIEMPRE actualizamos el desgaste por tiempo primero.
+    # Esto asegura que si pasaron 5 horas, se le resten antes de darle de comer.
+    pet.calcular_estado_actual() 
+
     if request.method == 'GET':
-        pet.calcular_estado_actual()
         return JsonResponse({
             "nombre": pet.nombre,
             "hambre": pet.hambre,
@@ -169,8 +171,9 @@ def api_mascota(request):
             accion = data.get('accion')
 
             # --- LÓGICA DEL JUEGO ---
-
+            
             if accion == 'comer':
+                # Validamos que no supere 100
                 pet.hambre = min(100, pet.hambre + 20) 
                 pet.energia = min(100, pet.energia + 5) 
                 pet.higiene = max(0, pet.higiene - 5) 
@@ -184,12 +187,16 @@ def api_mascota(request):
                 pet.energia = 100 
                 pet.hambre = max(0, pet.hambre - 15)
 
-            # --- CORRECCIÓN AQUÍ ---
-            # Antes decía 'limpiar', ahora debe decir 'banar' para coincidir con el JS
             elif accion == 'banar': 
-                pet.higiene = 100 # ¡Baño completo!
-                pet.felicidad = min(100, pet.felicidad + 10) # Se pone feliz
-            # -----------------------
+                pet.higiene = 100 
+                pet.felicidad = min(100, pet.felicidad + 10)
+            
+            # BLINDAJE FINAL: Aseguramos que los números no se rompan (menores a 0 o mayores a 100)
+            # Aunque usamos min/max arriba, esto es una doble seguridad antes de guardar.
+            pet.hambre = max(0, min(100, pet.hambre))
+            pet.felicidad = max(0, min(100, pet.felicidad))
+            pet.energia = max(0, min(100, pet.energia))
+            pet.higiene = max(0, min(100, pet.higiene))
 
             pet.save()
             
