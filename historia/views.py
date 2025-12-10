@@ -141,22 +141,16 @@ def api_eliminar_deseo(request, id):
     deseo.delete()
     return JsonResponse({'status': 'ok'})
 
-# EN TU ARCHIVO views.py
+# EN views.py
 
 @csrf_exempt
 def api_mascota(request):
-    """
-    Controla a Pochita. Versión optimizada para Ximena.
-    """
-    # 1. Obtenemos a Pochita (ID=1)
     pet, created = Mascota.objects.get_or_create(id=1)
 
-    # 2. Primero calculamos el desgaste por tiempo (si pasó una hora, que tenga hambre)
-    # IMPORTANTE: Esto debe ir antes de procesar botones.
+    # 1. Calculamos desgaste por tiempo
     pet.calcular_estado_actual()
 
     if request.method == 'GET':
-        # Devolvemos los datos asegurando que estén entre 0 y 100
         return JsonResponse({
             "nombre": pet.nombre,
             "hambre": max(0, min(100, pet.hambre)),
@@ -170,39 +164,30 @@ def api_mascota(request):
             data = json.loads(request.body)
             accion = data.get('accion')
 
-            # --- LÓGICA DE AMOR Y CUIDADOS ---
+            # --- LÓGICA BLINDADA ---
 
             if accion == 'comer':
-                pet.hambre = min(100, pet.hambre + 25) # Come bien
+                pet.hambre = min(100, pet.hambre + 25)
                 pet.energia = min(100, pet.energia + 5)
-                pet.higiene = max(0, pet.higiene - 5) # Se ensucia un poquito
+                pet.higiene = max(0, pet.higiene - 5)
 
             elif accion == 'jugar':
-                pet.felicidad = min(100, pet.felicidad + 20) # Se pone muy feliz
-                pet.energia = max(0, pet.energia - 15) # Se cansa
-                pet.higiene = max(0, pet.higiene - 10) # Suda al jugar
+                pet.felicidad = min(100, pet.felicidad + 20)
+                pet.energia = max(0, pet.energia - 15)
+                pet.higiene = max(0, pet.higiene - 10)
 
             elif accion == 'dormir':
-                pet.energia = 100 # Recarga total
-                pet.hambre = max(0, pet.hambre - 20) # Despierta con hambre
+                pet.energia = 100
+                pet.hambre = max(0, pet.hambre - 20)
 
-            elif accion == 'banar': 
-                # AQUÍ ESTÁ EL ARREGLO DE LA HIGIENE
-                # Forzamos a 100 directo. Es un baño completo.
-                pet.higiene = 100 
-                pet.felicidad = min(100, pet.felicidad + 10) # Le gusta estar limpia para Ximena
-
-            # --- BLINDAJE DE DATOS ---
-            # Aseguramos matemáticamente que nada rompa los límites
-            pet.hambre = max(0, min(100, pet.hambre))
-            pet.felicidad = max(0, min(100, pet.felicidad))
-            pet.energia = max(0, min(100, pet.energia))
-            pet.higiene = max(0, min(100, pet.higiene))
-
-            # Guardamos en la base de datos INMEDIATAMENTE
+            # --- AQUÍ ESTÁ EL CAMBIO CLAVE ---
+            elif accion == 'limpieza':  # Usamos una palabra nueva y clara
+                pet.higiene = 100       # Lo forzamos al máximo
+                pet.felicidad = min(100, pet.felicidad + 10) 
+            
+            # GUARDADO INMEDIATO
             pet.save()
             
-            # Devolvemos los datos NUEVOS (no los viejos)
             return JsonResponse({
                 "status": "ok", 
                 "hambre": pet.hambre,
@@ -212,7 +197,7 @@ def api_mascota(request):
             })
 
         except Exception as e:
-            print(f"Error cuidando a Pochita: {e}")
+            print(f"Error: {e}")
             return JsonResponse({'status': 'error'}, status=400)
             
     return JsonResponse({'status': 'error'}, status=405)

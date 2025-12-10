@@ -46,10 +46,9 @@ class Deseo(models.Model):
     def __str__(self):
         return self.texto
 
-
-# --- NUEVO MODELO: MASCOTA COMPARTIDA (TIPO POU) ---
+# --- MODELO MEJORADO: MASCOTA COMPARTIDA ---
 class Mascota(models.Model):
-    nombre = models.CharField(max_length=50, default="Pochita") # Pueden cambiarle el nombre
+    nombre = models.CharField(max_length=50, default="Pochita") 
     
     # Estadísticas del 0 al 100
     hambre = models.IntegerField(default=100)      # 100 = Llenito
@@ -57,7 +56,7 @@ class Mascota(models.Model):
     energia = models.IntegerField(default=100)     # 100 = Con mucha energía
     higiene = models.IntegerField(default=100)     # 100 = Limpio
     
-    # Campo clave: Guarda cuándo fue la última vez que interactuaron
+    # Campo clave: Guarda cuándo fue la última vez que se guardó algo
     ultima_actualizacion = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -66,30 +65,40 @@ class Mascota(models.Model):
 
     def calcular_estado_actual(self):
         """
-        Calcula cuánto han bajado las estadísticas basándose en el tiempo
-        que ha pasado desde 'ultima_actualizacion' hasta 'ahora'.
+        Calcula el desgaste por tiempo.
+        Se ejecuta cada vez que alguien abre la página o toca un botón.
         """
         ahora = timezone.now()
         diferencia = ahora - self.ultima_actualizacion
-        # Convertimos la diferencia a horas (pueden ser decimales, ej: 1.5 horas)
         horas_pasadas = diferencia.total_seconds() / 3600
 
-        # CONFIGURACIÓN DE DIFICULTAD (Puntos que pierde por hora)
-        # Puedes ajustar estos números si quieres que el juego sea más difícil o fácil
-        desgaste_hambre = 5    # Pierde 5 de hambre por hora
-        desgaste_energia = 4   # Pierde 4 de energía por hora
-        desgaste_higiene = 3   # Se ensucia 3 puntos por hora
-        desgaste_felicidad = 2 # Se pone triste 2 puntos por hora
+        # --- CONFIGURACIÓN DE DIFICULTAD (Balanceada) ---
+        # Antes perdía 5/hora (20 horas para morir). 
+        # Ahora lo haremos un poco más dinámico:
+        desgaste_hambre = 8     # Se vacía en ~12 horas
+        desgaste_energia = 6    # Se cansa en ~16 horas
+        desgaste_higiene = 5    # Se ensucia en ~20 horas
+        desgaste_felicidad = 4  # Se pone triste en ~24 horas
 
-        if horas_pasadas > 0.05: # Solo actualiza si han pasado al menos 3 minutos
+        # Solo actualizamos si ha pasado más de 1 minuto (0.016 horas)
+        # para que se sienta "vivo" más rápido.
+        if horas_pasadas > 0.01: 
             self.hambre = max(0, self.hambre - int(horas_pasadas * desgaste_hambre))
             self.energia = max(0, self.energia - int(horas_pasadas * desgaste_energia))
             self.higiene = max(0, self.higiene - int(horas_pasadas * desgaste_higiene))
             self.felicidad = max(0, self.felicidad - int(horas_pasadas * desgaste_felicidad))
             
-            # Guardamos los nuevos valores. 
-            # OJO: save() actualiza 'ultima_actualizacion' automáticamente por el auto_now=True
+            # Guardamos para actualizar la hora y los nuevos valores
             self.save()
 
+    @property
+    def estado_animo(self):
+        """Devuelve un texto sobre cómo se siente (Útil para depurar o mostrar)"""
+        if self.hambre < 20: return "Hambriento"
+        if self.energia < 20: return "Exhausto"
+        if self.higiene < 20: return "Sucio"
+        if self.felicidad < 20: return "Deprimido"
+        return "Feliz"
+
     def __str__(self):
-        return f"{self.nombre} (Hambre: {self.hambre}%)"
+        return f"{self.nombre} - {self.estado_animo} (H: {self.hambre}%)"
