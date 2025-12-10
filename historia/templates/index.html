@@ -1345,10 +1345,10 @@ body.no-scroll {
 
 <script>
   /* =========================================
-     JAVASCRIPT MEJORADO (CEREBRO 2.0)
+     JAVASCRIPT: CEREBRO 3.0 (ULTIMATE)
      ========================================= */
 
-  // 1. CONFIGURACIÓN E IMÁGENES
+  // 1. CONFIGURACIÓN
   const hamsterLink = "https://lottie.host/b62e382f-850b-418d-8177-fb83008d9e9c/N8jkBm9r7B.lottie";
   
   const anims = {
@@ -1362,41 +1362,47 @@ body.no-scroll {
   const player = document.getElementById('petLottie');
   const speechBubble = document.getElementById('pochitaSpeech');
   let bubbleTimeout; 
-  let isInteracting = false; // Para evitar que el estado automático interrumpa una acción manual
+  let isInteracting = false; 
+  let clickCount = 0; // Para detectar si le das muchos clicks
 
-  // 2. DICCIONARIO DE FRASES (PERSONALIDAD)
-  
-  // A) Frases cuando TÚ interactúas (Click en botones)
-  const frasesAccion = {
+  // 2. FRASES (DICCIONARIO AMPLIADO)
+  const frases = {
     comer: [
         "¡Qué rico! 😋", "¡Gracias mami! ❤️", "¡Tengo la panza llena!", 
-        "¡Ñam ñam ñam! 🍔", "¡Estaba delicioso!", "¡Me encantas!"
+        "¡Ñam ñam! 🍔", "¡Sabe a gloria!", "¡Me encantas!", "¡Barriga llena, corazón contento!"
     ],
     jugar: [
-        "¡Qué divertido! 🎮", "¡Te quiero Ximena! ✨", "¡Vamos a correr!", 
-        "¡Yujuuu!", "¡Eres la mejor dueña!", "¡Más rápido!"
+        "¡Qué divertido! 🎮", "¡Te quiero Ximena! ✨", "¡Corre corre!", 
+        "¡Yujuuu!", "¡Eres la mejor dueña!", "¡Otra vez, otra vez!", "¡Soy muy rápido!"
     ],
-    banar: [ // AQUÍ MEJORÉ LO DEL BAÑO
+    banar: [ 
         "¡Agüita fresca! 🚿", "¡Quedé limpiecito! ✨", "¡Glu glu glu! 🛁", 
-        "¡Ya no huelo a feo!", "¡Mira como brillo! ✨", "¡Patito de hule! 🦆"
+        "¡Ya no huelo a feo!", "¡Mira como brillo! ✨", "¡Patito de hule! 🦆",
+        "¡Uf, lo necesitaba!", "¡Ahora huelo a flores 🌸!"
     ],
     dormir: [
         "Buenas noches... 💤", "Zzz... te amo...", "A mimir 🌙", 
-        "Soñaré contigo...", "Hasta mañana..."
+        "Hasta mañana...", "Qué sueñito...", "Apaga la luz mami..."
+    ],
+    mareado: [
+        "¡Para, me mareo! 😵", "¡Muchos clicks!", "¡Ay ay ay!", "¡Tranquila!"
+    ],
+    saludo: [
+        "¡Hola mami! ❤️", "¿Cómo estás?", "¡Te extrañé!", "¡Llegaste! ✨"
     ]
   };
 
-  // B) Frases Automáticas (QUEJAS cuando las barras están bajas)
-  const frasesNecesidad = {
+  // Quejas automáticas según necesidad
+  const quejas = {
     hambre: ["Tengo hambre mami 🥺", "¡Mi pancita ruge!", "¿Me das comida? 🍔", "Me siento débil..."],
-    sucio: ["Iugh, huelo feo 💩", "¡Necesito un baño mami!", "Me pica el cuerpito 🚿"],
-    aburrido: ["Juega conmigo por favor 😭", "Estoy muy aburrido...", "¿Ya no me quieres? 💔"],
-    cansado: ["Tengo mucho sueñito... 😴", "¡Mis ojitos se cierran!", "Quiero mi camita 🌙"]
+    sucio: ["Iugh, huelo feo 💩", "¡Necesito un baño!", "Me pica el cuerpito 🚿", "¡Límpiame porfa!"],
+    aburrido: ["Juega conmigo 😭", "Estoy muy aburrido...", "¿Ya no me quieres? 💔", "¡Hazme caso!"],
+    cansado: ["Tengo mucho sueñito... 😴", "¡Mis ojitos se cierran!", "Quiero mi camita 🌙"],
+    enfermo: ["Me siento muy mal... 🤒", "Ayudame mami...", "Todo está rojo..."]
   };
 
   // 3. FUNCIONES VISUALES
   player.addEventListener('error', () => {
-      console.warn("Lottie error, restaurando...");
       if (player.src !== anims.normal) player.src = anims.normal;
   });
 
@@ -1405,102 +1411,71 @@ body.no-scroll {
     player.src = url;
   }
 
-  // Función maestra para hablar
-  function decirFrase(texto, duracion = 3000) {
+  function decirFrase(texto) {
+    // Si ya está hablando, actualizamos el texto pero reiniciamos el tiempo
     speechBubble.innerText = texto;
     speechBubble.classList.add('show');
 
     clearTimeout(bubbleTimeout);
     bubbleTimeout = setTimeout(() => {
         speechBubble.classList.remove('show');
-    }, duracion);
-  }
-
-  // Reacción manual (Click)
-  function mostrarReaccionManual(accion) {
-    const lista = frasesAccion[accion] || ["¡Hola! ❤️"];
-    const frase = lista[Math.floor(Math.random() * lista.length)];
-    decirFrase(frase);
-
-    // Emojis
-    let emoji = '✨';
-    if(accion === 'comer') emoji = '🍔';
-    if(accion === 'jugar') emoji = '💖';
-    if(accion === 'banar') emoji = '🫧';
-    if(accion === 'dormir') emoji = '💤';
-    crearEmojiFlotante(emoji);
+    }, 3500); // Duran un poco más (3.5s)
   }
 
   function crearEmojiFlotante(char) {
       const zone = document.getElementById('lottieZone');
-      for(let i=0; i<3; i++) {
-          const span = document.createElement('span');
-          span.innerText = char;
-          span.className = 'floating-emoji';
-          const randomX = Math.random() * 100 - 50; 
-          span.style.left = `calc(50% + ${randomX}px)`;
-          span.style.top = '50%';
-          span.style.animationDelay = (i * 0.1) + 's'; 
-          zone.appendChild(span);
-          setTimeout(() => span.remove(), 1500);
-      }
-  }
-
-  // 4. LÓGICA DEL SERVIDOR Y ESTADO "INTELIGENTE"
-  async function cargarMascota() {
-    try {
-      const response = await fetch('/api/mascota/');
-      if (response.ok) { 
-          const data = await response.json();
-          actualizarUI(data);
-          verificarEstadoGeneral(data); // <--- NUEVO CEREBRO AQUÍ
-      }
-    } catch (error) { console.error("Error cargando:", error); }
-  }
-
-  // Esta función decide si la mascota se queja sola
-  function verificarEstadoGeneral(data) {
-      // Si el usuario acaba de interactuar (hace menos de 3 seg), no nos quejamos
-      if (isInteracting) return; 
-
-      // Umbral de queja (cuando la barra está roja/baja)
-      const umbralCritico = 30; 
+      const span = document.createElement('span');
+      span.innerText = char;
+      span.className = 'floating-emoji';
       
-      // Verificamos en orden de prioridad (Hambre > Energía > Higiene > Diversión)
-      let queja = null;
-
-      if (data.hambre < umbralCritico) {
-          const lista = frasesNecesidad.hambre;
-          queja = lista[Math.floor(Math.random() * lista.length)];
-      } else if (data.energia < umbralCritico) {
-           const lista = frasesNecesidad.cansado;
-           queja = lista[Math.floor(Math.random() * lista.length)];
-      } else if (data.higiene < umbralCritico) {
-           const lista = frasesNecesidad.sucio;
-           queja = lista[Math.floor(Math.random() * lista.length)];
-      } else if (data.felicidad < umbralCritico) {
-           const lista = frasesNecesidad.aburrido;
-           queja = lista[Math.floor(Math.random() * lista.length)];
-      }
-
-      // Si hay algo de qué quejarse, lo dice
-      if (queja) {
-          // Un pequeño random para que no sea tan pesado (50% de probabilidad de hablar cada ciclo)
-          if(Math.random() > 0.5) decirFrase(queja);
-      }
+      // Posición aleatoria cerca del centro
+      const randomX = Math.random() * 80 - 40; 
+      span.style.left = `calc(50% + ${randomX}px)`;
+      span.style.top = '60%'; // Empiezan un poco más abajo
+      
+      zone.appendChild(span);
+      setTimeout(() => span.remove(), 1500);
   }
 
-  // 5. INTERACCIÓN (CLICK)
+  // 4. CEREBRO INTELIGENTE (LÓGICA)
+  
+  // A. Reacción cuando TÚ le das click
   async function interactuar(accion) {
-    isInteracting = true; // Bloqueamos quejas automáticas un momento
-    mostrarReaccionManual(accion);
-
-    if(accion === 'dormir') triggerAnim(anims.sleep);
-    if(accion === 'jugar') triggerAnim(anims.playing);
+    // **CORRECCIÓN MAESTRA**: Mapeamos cualquier nombre raro al correcto
+    if (accion === 'higiene' || accion === 'bañar' || accion === 'limpiar') accion = 'banar';
     
-    // Desbloqueamos después de 3 segundos
-    setTimeout(() => { isInteracting = false; }, 3000);
+    isInteracting = true; 
+    
+    // Detector de Spam (Si das más de 5 clicks rápido)
+    clickCount++;
+    setTimeout(() => clickCount--, 2000); // Resetea contador cada 2s
+    
+    if (clickCount > 4) {
+        const lista = frases.mareado;
+        decirFrase(lista[Math.floor(Math.random() * lista.length)]);
+        triggerAnim(anims.sad); // Pone cara triste/mareada
+        return; // No hace la petición al server para no saturar
+    }
 
+    // Selección de frase
+    const lista = frases[accion] || frases.saludo;
+    decirFrase(lista[Math.floor(Math.random() * lista.length)]);
+
+    // Emojis y Animaciones
+    let emoji = '✨';
+    if(accion === 'comer') { emoji = '🍔'; }
+    if(accion === 'jugar') { emoji = '🎮'; triggerAnim(anims.playing); }
+    if(accion === 'banar') { emoji = '🫧'; }
+    if(accion === 'dormir') { emoji = '💤'; triggerAnim(anims.sleep); }
+
+    // Lanzar varios emojis
+    crearEmojiFlotante(emoji);
+    setTimeout(() => crearEmojiFlotante(emoji), 200);
+
+    // Bloqueo temporal del "piloto automático"
+    setTimeout(() => { isInteracting = false; }, 4000);
+
+    // Petición al Backend
     try {
       const response = await fetch('/api/mascota/', {
         method: 'POST',
@@ -1510,31 +1485,67 @@ body.no-scroll {
         },
         body: JSON.stringify({ accion: accion })
       });
-      if (response.ok) { 
-          const data = await response.json();
-          actualizarUI(data); 
-      }
+      if (response.ok) actualizarUI(await response.json());
     } catch (error) { console.error("Error API:", error); }
   }
 
-  // 6. ACTUALIZAR BARRAS Y ANIMACIÓN BASE
+  // B. Piloto Automático (Se ejecuta cada 10 seg)
+  function verificarEstadoGeneral(data) {
+      if (isInteracting) return; // Si estás jugando, no molesta
+
+      // Lógica de Prioridades
+      // 1. Si todo está MUY mal (Promedio bajo)
+      const promedio = (data.hambre + data.higiene + data.felicidad + data.energia) / 4;
+      if (promedio < 20) {
+          decirFrase("Me siento muy mal mami... 🤕");
+          triggerAnim(anims.sad);
+          return;
+      }
+
+      // 2. Necesidades Específicas (Umbral 30%)
+      let necesidad = null;
+      if (data.hambre < 30) necesidad = quejas.hambre;
+      else if (data.energia < 30) necesidad = quejas.cansado;
+      else if (data.higiene < 30) necesidad = quejas.sucio;
+      else if (data.felicidad < 30) necesidad = quejas.aburrido;
+
+      if (necesidad) {
+          // 60% de probabilidad de quejarse (para no ser insoportable)
+          if(Math.random() > 0.4) {
+             decirFrase(necesidad[Math.floor(Math.random() * necesidad.length)]);
+          }
+      } else {
+          // Si todo está bien, a veces dice algo lindo
+          if(Math.random() > 0.8) {
+              decirFrase("¡Soy muy feliz contigo! ❤️");
+          }
+      }
+  }
+
+  // 5. CARGA Y UI
+  async function cargarMascota() {
+    try {
+      const response = await fetch('/api/mascota/');
+      if (response.ok) { 
+          const data = await response.json();
+          actualizarUI(data);
+          verificarEstadoGeneral(data);
+      }
+    } catch (error) { console.error("Error cargando:", error); }
+  }
+
   function actualizarUI(data) {
-    if(data.nombre) document.getElementById('petNameDisplay').innerText = data.nombre + " 🧡";
+    document.getElementById('petNameDisplay').innerText = (data.nombre || "Pochita") + " 🧡";
     
     setBar('barHambre', 'valHambre', data.hambre);
     setBar('barFelicidad', 'valFelicidad', data.felicidad);
     setBar('barEnergia', 'valEnergia', data.energia);
     setBar('barHigiene', 'valHigiene', data.higiene);
 
-    // Solo cambiamos la animación base si NO estamos interactuando manualmente
     if (!isInteracting) {
-        if (data.energia < 10) { 
-            triggerAnim(anims.sleep); 
-        } else if (data.felicidad < 30) {
-            triggerAnim(anims.sad);
-        } else { 
-            triggerAnim(anims.normal); 
-        }
+        if (data.energia < 10) triggerAnim(anims.sleep);
+        else if (data.felicidad < 25) triggerAnim(anims.sad);
+        else triggerAnim(anims.normal);
     }
   }
 
@@ -1542,7 +1553,6 @@ body.no-scroll {
     const bar = document.getElementById(idBar);
     const txt = document.getElementById(idText);
     
-    // Cambiar color de barra según estado (Verde, Amarillo, Rojo)
     let color = '#4CAF50'; // Verde
     if(val < 50) color = '#FFC107'; // Amarillo
     if(val < 30) color = '#FF5252'; // Rojo
@@ -1551,7 +1561,7 @@ body.no-scroll {
         bar.style.width = val + "%";
         bar.style.backgroundColor = color;
     }
-    if(txt) txt.innerText = val + "%";
+    if(txt) txt.innerText = Math.round(val) + "%";
   }
 
   function getCookie(name) {
@@ -1569,12 +1579,20 @@ body.no-scroll {
     return cookieValue;
   }
 
+  // 6. INICIO CON SALUDO SEGÚN LA HORA
   document.addEventListener('DOMContentLoaded', () => {
     cargarMascota(); 
     setInterval(cargarMascota, 10000); 
+
+    // Saludo inicial inteligente
+    const hora = new Date().getHours();
+    setTimeout(() => {
+        if (hora < 12) decirFrase("¡Buenos días Ximena! ☀️");
+        else if (hora < 19) decirFrase("¡Buenas tardes! 🌤️");
+        else decirFrase("¡Buenas noches! 🌙");
+    }, 1000); // Espera 1 seg para saludar
   });
 </script>
-
 
     <div class="container mb-5">
     <div class="timeline-card text-center glass-card" data-aos="fade-up">
