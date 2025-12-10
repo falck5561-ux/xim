@@ -141,22 +141,8 @@ def api_eliminar_deseo(request, id):
     deseo.delete()
     return JsonResponse({'status': 'ok'})
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_exempt 
-import json
-
-# Tus modelos
-from .models import Momento, Cancion, Deseo, Mascota 
-from .forms import MomentoForm, CancionForm
-
-# --- (AQUÍ VAN TUS VISTAS DE MOMENTOS, MÚSICA Y DESEOS IGUAL QUE ANTES) ---
-# ... (He omitido esa parte para no hacer esto larguísimo, déjala como estaba) ...
-
-
 # ==========================================
-# --- VISTA DE LA MASCOTA (ACTUALIZADA) ---
+# --- VISTA DE LA MASCOTA (CORREGIDA) ---
 # ==========================================
 
 @csrf_exempt
@@ -187,22 +173,23 @@ def api_mascota(request):
             if accion == 'comer':
                 pet.hambre = min(100, pet.hambre + 20) 
                 pet.energia = min(100, pet.energia + 5) 
-                pet.higiene = max(0, pet.higiene - 5) # Comer ensucia un poquito
+                pet.higiene = max(0, pet.higiene - 5) 
 
             elif accion == 'jugar':
                 pet.felicidad = min(100, pet.felicidad + 15)
                 pet.energia = max(0, pet.energia - 10) 
-                pet.higiene = max(0, pet.higiene - 10) # Jugar ensucia más
+                pet.higiene = max(0, pet.higiene - 10) 
 
             elif accion == 'dormir':
-                pet.energia = 100 # Recarga total
-                pet.hambre = max(0, pet.hambre - 15) # Despierta con hambre
+                pet.energia = 100 
+                pet.hambre = max(0, pet.hambre - 15)
 
-            # --- AQUÍ ESTÁ EL CAMBIO IMPORTANTE ---
-            elif accion == 'limpiar': 
-                pet.higiene = 100 # ¡Queda brillante!
-                pet.felicidad = min(100, pet.felicidad + 10) # Le gusta estar limpia
-            # --------------------------------------
+            # --- CORRECCIÓN AQUÍ ---
+            # Antes decía 'limpiar', ahora debe decir 'banar' para coincidir con el JS
+            elif accion == 'banar': 
+                pet.higiene = 100 # ¡Baño completo!
+                pet.felicidad = min(100, pet.felicidad + 10) # Se pone feliz
+            # -----------------------
 
             pet.save()
             
