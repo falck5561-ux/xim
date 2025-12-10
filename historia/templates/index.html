@@ -1033,29 +1033,29 @@ body.no-scroll {
         </div>
     </div>
 
-    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
-
-<style>
-  /* FIX DE MAQUETACIÓN: Separa a la mascota del contador de arriba */
+    <style>
+  /* --- ESTILOS RESPONSIVOS MEJORADOS --- */
+  
+  /* Contenedor principal */
   .pet-section-wrapper {
-    clear: both;
     width: 100%;
-    margin-top: 40px;
+    margin-top: 30px;
     display: flex;
     justify-content: center;
     position: relative;
     z-index: 10;
+    padding-bottom: 20px;
   }
 
-  /* Tarjeta Glassmorphism (Efecto Cristal) */
+  /* Tarjeta Glassmorphism */
   .pet-card-pro {
-    background: rgba(255, 255, 255, 0.75);
+    background: rgba(255, 255, 255, 0.85); /* Un poco más opaco para leer mejor */
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     border-radius: 30px;
     padding: 25px;
     width: 90%;
-    max-width: 380px;
+    max-width: 380px; /* Límite en PC */
     box-shadow: 
       0 15px 35px rgba(255, 107, 129, 0.15),
       inset 0 0 0 1px rgba(255, 255, 255, 0.6);
@@ -1063,14 +1063,12 @@ body.no-scroll {
     text-align: center;
     transition: transform 0.3s ease;
   }
-  
-  .pet-card-pro:hover { transform: translateY(-5px); }
 
   .pet-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
   }
 
   .pet-name-badge {
@@ -1086,19 +1084,21 @@ body.no-scroll {
 
   /* Contenedor de la animación */
   .lottie-container {
-    width: 200px; /* Un poco más grande para el hámster */
+    width: 200px;
     height: 200px;
     margin: 0 auto;
     cursor: pointer;
-    filter: drop-shadow(0 10px 20px rgba(255, 154, 158, 0.3));
+    /* Importante: evita que clicks accidentales seleccionen texto */
+    user-select: none; 
+    -webkit-tap-highlight-color: transparent;
   }
 
   /* Barras de estado */
   .stats-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin: 15px 0;
+    grid-template-columns: 1fr 1fr; /* Dos columnas */
+    gap: 12px 20px; /* Espacio horizontal y vertical */
+    margin: 10px 0;
   }
 
   .stat-mini { text-align: left; }
@@ -1106,7 +1106,7 @@ body.no-scroll {
   .stat-label {
     font-size: 0.75rem;
     color: #636e72;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     display: flex;
     justify-content: space-between;
     font-weight: 600;
@@ -1117,7 +1117,7 @@ body.no-scroll {
     height: 10px;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.05);
   }
   
   .progress-pill-fill {
@@ -1129,16 +1129,17 @@ body.no-scroll {
   /* Botonera */
   .controls-dock {
     background: white;
-    padding: 12px;
+    padding: 10px;
     border-radius: 25px;
     display: flex;
-    justify-content: space-around;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    justify-content: space-between; /* Distribuye mejor el espacio */
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
     margin-top: 15px;
+    gap: 5px;
   }
 
   .btn-icon {
-    width: 50px;
+    flex: 1; /* Todos los botones del mismo ancho */
     height: 50px;
     border: none;
     border-radius: 18px;
@@ -1152,11 +1153,40 @@ body.no-scroll {
     justify-content: center;
   }
 
-  .btn-icon:hover { transform: scale(1.15) translateY(-3px); }
-  .btn-eat:hover { color: #ff6b6b; background: #fff0f3; }
-  .btn-play:hover { color: #feca57; background: #fffbf0; }
-  .btn-bath:hover { color: #54a0ff; background: #f0f8ff; }
-  .btn-sleep:hover { color: #a29bfe; background: #f3f0ff; }
+  .btn-icon:active { transform: scale(0.95); }
+  .btn-eat:active, .btn-eat:hover { color: #ff6b6b; background: #fff0f3; }
+  .btn-play:active, .btn-play:hover { color: #feca57; background: #fffbf0; }
+  .btn-bath:active, .btn-bath:hover { color: #54a0ff; background: #f0f8ff; }
+  .btn-sleep:active, .btn-sleep:hover { color: #a29bfe; background: #f3f0ff; }
+
+  /* --- AJUSTES PARA CELULAR (Evita que se vea apretado) --- */
+  @media (max-width: 480px) {
+    .pet-card-pro {
+      width: 94% !important; /* Aprovecha más el ancho de pantalla */
+      padding: 15px !important; /* Menos padding interno */
+    }
+    
+    .lottie-container {
+      /* Reducimos un poco la animación para dar aire a los controles */
+      width: 160px !important; 
+      height: 160px !important;
+    }
+
+    .stats-grid {
+      gap: 8px 15px !important; /* Menos espacio entre barras */
+      margin-bottom: 5px;
+    }
+    
+    .btn-icon {
+      height: 45px !important; /* Botones un poco más compactos */
+      font-size: 1.2rem !important;
+    }
+    
+    .pet-name-badge {
+      font-size: 0.9rem !important;
+      padding: 5px 15px !important;
+    }
+  }
 </style>
 
 <div class="pet-section-wrapper">
@@ -1187,60 +1217,75 @@ body.no-scroll {
     </div>
 
     <div class="controls-dock">
-      <button class="btn-icon btn-eat" onclick="interactuar('comer')"><i class="bi bi-egg-fried"></i></button>
-      <button class="btn-icon btn-play" onclick="interactuar('jugar')"><i class="bi bi-controller"></i></button>
-      <button class="btn-icon btn-bath" onclick="interactuar('bañar')"><i class="bi bi-droplet"></i></button>
-      <button class="btn-icon btn-sleep" onclick="interactuar('dormir')"><i class="bi bi-moon-stars"></i></button>
+      <button class="btn-icon btn-eat" onclick="interactuar('comer')" title="Comer"><i class="bi bi-egg-fried"></i></button>
+      <button class="btn-icon btn-play" onclick="interactuar('jugar')" title="Jugar"><i class="bi bi-controller"></i></button>
+      <button class="btn-icon btn-bath" onclick="interactuar('bañar')" title="Bañar"><i class="bi bi-droplet"></i></button>
+      <button class="btn-icon btn-sleep" onclick="interactuar('dormir')" title="Dormir"><i class="bi bi-moon-stars"></i></button>
     </div>
 
   </div>
 </div>
 
 <script>
-  // AQUI YA PUSE TU LINK DEL HÁMSTER
+  // === URLS CORREGIDAS ===
+  // El link anterior de "sleep" daba error 403.
+  // He puesto el mismo link del hamster normal temporalmente para evitar que la app crashee.
+  // Si encuentras otro lottie de "dormir" público, cámbialo aquí.
   const hamsterLink = "https://lottie.host/b62e382f-850b-418d-8177-fb83008d9e9c/N8jkBm9r7B.lottie";
 
   const anims = {
-    normal: hamsterLink,  // El hámster corriendo
-    playing: hamsterLink, // El mismo hámster
+    normal: hamsterLink,  
+    playing: hamsterLink, 
     
-    // Animaciones extra (puedes cambiarlas luego si encuentras más)
-    sleep: "https://lottie.host/50a63162-8e7c-4740-9669-7e28945625c5/z5W6XQz9pD.lottie", 
+    // CORRECCIÓN: Usamos el hamster normal (o uno nuevo si tienes) para evitar el error 403
+    // Si quieres uno durmiendo específico, asegúrate que sea público.
+    sleep: hamsterLink, 
+    
     sad: "https://lottie.host/98f8b896-1896-4876-8802-18776823528b/r4Xy4F6F4E.json",
-    eating: hamsterLink // Por ahora usa el mismo hámster al comer
+    eating: hamsterLink 
   };
 
   const player = document.getElementById('petLottie');
+
+  // PROTECCIÓN CONTRA ERRORES DE CARGA
+  // Si alguna animación falla, regresamos a la normal para que no desaparezca la mascota
+  player.addEventListener('error', () => {
+      console.warn("Falló la carga de una animación, regresando a estado base.");
+      if (player.src !== anims.normal) {
+          player.load(anims.normal);
+      }
+  });
 
   async function cargarMascota() {
     try {
       const response = await fetch('/api/mascota/');
       if (response.ok) { actualizarUI(await response.json()); }
-    } catch (error) { console.error("Error:", error); }
+    } catch (error) { console.error("Error cargando mascota:", error); }
   }
 
   async function interactuar(accion) {
+    // Feedback visual inmediato
     if(accion === 'dormir') triggerAnim(anims.sleep);
     
     try {
       const response = await fetch('/api/mascota/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken') // Aseguramos el token CSRF si es Django
+        },
         body: JSON.stringify({ accion: accion })
       });
+      
       if (response.ok) { 
           const data = await response.json();
           actualizarUI(data);
-          // Efecto temporal al interactuar
-          if(accion === 'comer' || accion === 'jugar') { 
-             // Si quieres que haga algo especial, aquí va. 
-             // Por ahora recarga los datos visuales.
-          }
       }
-    } catch (error) { console.error("Error:", error); }
+    } catch (error) { console.error("Error interacción:", error); }
   }
 
   function triggerAnim(url) {
+    // Solo recargamos si la URL es diferente para evitar parpadeos
     if(player.src === url) return; 
     player.load(url);
   }
@@ -1253,7 +1298,9 @@ body.no-scroll {
     setBar('barEnergia', 'valEnergia', data.energia);
     setBar('barHigiene', 'valHigiene', data.higiene);
 
-    // Lógica de estados
+    // Lógica de estados automática
+    // Nota: Solo cambia el estado si NO estamos interactuando manualmente en este instante
+    // (Por simplicidad, aquí dejamos que el estado del backend mande)
     if (data.energia < 10) { 
         triggerAnim(anims.sleep); 
     } else if (data.felicidad < 30) {
@@ -1264,12 +1311,32 @@ body.no-scroll {
   }
 
   function setBar(idBar, idText, val) {
-    document.getElementById(idBar).style.width = val + "%";
-    document.getElementById(idText).innerText = val + "%";
+    const bar = document.getElementById(idBar);
+    if(bar) bar.style.width = val + "%";
+    
+    const txt = document.getElementById(idText);
+    if(txt) txt.innerText = val + "%";
+  }
+
+  // Función auxiliar para obtener cookies (necesaria para Django POST)
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
   }
 
   document.addEventListener('DOMContentLoaded', () => {
     cargarMascota();
+    // Actualiza cada 10 segundos
     setInterval(cargarMascota, 10000);
   });
 </script>
