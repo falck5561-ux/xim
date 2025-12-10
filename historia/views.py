@@ -141,28 +141,28 @@ def api_eliminar_deseo(request, id):
     deseo.delete()
     return JsonResponse({'status': 'ok'})
 
-# ==========================================
-# --- VISTA DE LA MASCOTA (OPTIMIZADA) ---
-# ==========================================
+# EN TU ARCHIVO views.py
 
 @csrf_exempt
 def api_mascota(request):
     """
-    Maneja el estado de la mascota compartida.
+    Controla a Pochita. Versión optimizada para Ximena.
     """
+    # 1. Obtenemos a Pochita (ID=1)
     pet, created = Mascota.objects.get_or_create(id=1)
 
-    # PASO 1 CRÍTICO: SIEMPRE actualizamos el desgaste por tiempo primero.
-    # Esto asegura que si pasaron 5 horas, se le resten antes de darle de comer.
-    pet.calcular_estado_actual() 
+    # 2. Primero calculamos el desgaste por tiempo (si pasó una hora, que tenga hambre)
+    # IMPORTANTE: Esto debe ir antes de procesar botones.
+    pet.calcular_estado_actual()
 
     if request.method == 'GET':
+        # Devolvemos los datos asegurando que estén entre 0 y 100
         return JsonResponse({
             "nombre": pet.nombre,
-            "hambre": pet.hambre,
-            "felicidad": pet.felicidad,
-            "energia": pet.energia,
-            "higiene": pet.higiene
+            "hambre": max(0, min(100, pet.hambre)),
+            "felicidad": max(0, min(100, pet.felicidad)),
+            "energia": max(0, min(100, pet.energia)),
+            "higiene": max(0, min(100, pet.higiene))
         })
 
     if request.method == 'POST':
@@ -170,36 +170,39 @@ def api_mascota(request):
             data = json.loads(request.body)
             accion = data.get('accion')
 
-            # --- LÓGICA DEL JUEGO ---
-            
+            # --- LÓGICA DE AMOR Y CUIDADOS ---
+
             if accion == 'comer':
-                # Validamos que no supere 100
-                pet.hambre = min(100, pet.hambre + 20) 
-                pet.energia = min(100, pet.energia + 5) 
-                pet.higiene = max(0, pet.higiene - 5) 
+                pet.hambre = min(100, pet.hambre + 25) # Come bien
+                pet.energia = min(100, pet.energia + 5)
+                pet.higiene = max(0, pet.higiene - 5) # Se ensucia un poquito
 
             elif accion == 'jugar':
-                pet.felicidad = min(100, pet.felicidad + 15)
-                pet.energia = max(0, pet.energia - 10) 
-                pet.higiene = max(0, pet.higiene - 10) 
+                pet.felicidad = min(100, pet.felicidad + 20) # Se pone muy feliz
+                pet.energia = max(0, pet.energia - 15) # Se cansa
+                pet.higiene = max(0, pet.higiene - 10) # Suda al jugar
 
             elif accion == 'dormir':
-                pet.energia = 100 
-                pet.hambre = max(0, pet.hambre - 15)
+                pet.energia = 100 # Recarga total
+                pet.hambre = max(0, pet.hambre - 20) # Despierta con hambre
 
             elif accion == 'banar': 
+                # AQUÍ ESTÁ EL ARREGLO DE LA HIGIENE
+                # Forzamos a 100 directo. Es un baño completo.
                 pet.higiene = 100 
-                pet.felicidad = min(100, pet.felicidad + 10)
-            
-            # BLINDAJE FINAL: Aseguramos que los números no se rompan (menores a 0 o mayores a 100)
-            # Aunque usamos min/max arriba, esto es una doble seguridad antes de guardar.
+                pet.felicidad = min(100, pet.felicidad + 10) # Le gusta estar limpia para Ximena
+
+            # --- BLINDAJE DE DATOS ---
+            # Aseguramos matemáticamente que nada rompa los límites
             pet.hambre = max(0, min(100, pet.hambre))
             pet.felicidad = max(0, min(100, pet.felicidad))
             pet.energia = max(0, min(100, pet.energia))
             pet.higiene = max(0, min(100, pet.higiene))
 
+            # Guardamos en la base de datos INMEDIATAMENTE
             pet.save()
             
+            # Devolvemos los datos NUEVOS (no los viejos)
             return JsonResponse({
                 "status": "ok", 
                 "hambre": pet.hambre,
@@ -207,8 +210,9 @@ def api_mascota(request):
                 "energia": pet.energia,
                 "higiene": pet.higiene
             })
+
         except Exception as e:
-            print(f"Error en mascota: {e}")
+            print(f"Error cuidando a Pochita: {e}")
             return JsonResponse({'status': 'error'}, status=400)
             
     return JsonResponse({'status': 'error'}, status=405)
