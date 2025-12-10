@@ -1033,30 +1033,30 @@ body.no-scroll {
         </div>
     </div>
 
-    <style>
-  /* Contenedor principal */
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+
+<style>
+  /* --- ESTILOS GENERALES --- */
   .pet-section-wrapper {
     width: 100%;
-    margin-top: 40px;
+    margin-top: 40px; /* Separación del contador */
     display: flex;
     justify-content: center;
     position: relative;
     z-index: 10;
-    padding-bottom: 20px;
+    padding-bottom: 30px;
   }
 
-  /* Tarjeta Glassmorphism */
+  /* Tarjeta Efecto Cristal */
   .pet-card-pro {
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.90); /* Más sólido para que se lea bien */
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     border-radius: 30px;
     padding: 25px;
     width: 90%;
     max-width: 380px;
-    box-shadow: 
-      0 15px 35px rgba(255, 107, 129, 0.15),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+    box-shadow: 0 15px 35px rgba(255, 107, 129, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.6);
     border: 1px solid rgba(255,255,255,0.8);
     text-align: center;
     transition: transform 0.3s ease;
@@ -1066,7 +1066,7 @@ body.no-scroll {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
   }
 
   .pet-name-badge {
@@ -1080,20 +1080,22 @@ body.no-scroll {
     box-shadow: 0 4px 10px rgba(255, 107, 129, 0.4);
   }
 
+  /* Animación */
   .lottie-container {
     width: 200px;
     height: 200px;
     margin: 0 auto;
     cursor: pointer;
-    user-select: none; 
+    user-select: none;
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Barras de estado */
   .stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px 20px;
-    margin: 10px 0;
+    gap: 15px;
+    margin: 15px 0;
   }
 
   .stat-mini { text-align: left; }
@@ -1101,7 +1103,7 @@ body.no-scroll {
   .stat-label {
     font-size: 0.75rem;
     color: #636e72;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
     display: flex;
     justify-content: space-between;
     font-weight: 600;
@@ -1121,15 +1123,16 @@ body.no-scroll {
     transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
+  /* Botones de acción */
   .controls-dock {
     background: white;
     padding: 10px;
     border-radius: 25px;
     display: flex;
     justify-content: space-between;
+    gap: 10px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    margin-top: 15px;
-    gap: 5px;
+    margin-top: 20px;
   }
 
   .btn-icon {
@@ -1139,12 +1142,12 @@ body.no-scroll {
     border-radius: 18px;
     font-size: 1.4rem;
     cursor: pointer;
-    transition: all 0.2s;
     background: #f8f9fa;
     color: #b2bec3;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.2s;
   }
 
   .btn-icon:active { transform: scale(0.95); }
@@ -1153,18 +1156,34 @@ body.no-scroll {
   .btn-bath:active, .btn-bath:hover { color: #54a0ff; background: #f0f8ff; }
   .btn-sleep:active, .btn-sleep:hover { color: #a29bfe; background: #f3f0ff; }
 
-  /* --- AJUSTES MÓVIL --- */
+  /* --- AJUSTES PARA CELULAR (Evita que se vea apretado) --- */
   @media (max-width: 480px) {
-    .pet-card-pro { width: 94% !important; padding: 15px !important; }
-    .lottie-container { width: 160px !important; height: 160px !important; }
-    .stats-grid { gap: 8px 15px !important; margin-bottom: 5px; }
-    .btn-icon { height: 45px !important; font-size: 1.2rem !important; }
-    .pet-name-badge { font-size: 0.9rem !important; padding: 5px 15px !important; }
+    .pet-card-pro {
+      width: 94% !important; /* Aprovecha más ancho */
+      padding: 15px !important;
+    }
+    .lottie-container {
+      width: 150px !important; /* Mascota un poco más pequeña */
+      height: 150px !important;
+    }
+    .stats-grid {
+      gap: 10px !important; /* Menos espacio entre barras */
+      margin: 10px 0 !important;
+    }
+    .controls-dock {
+      padding: 8px !important;
+      margin-top: 10px !important;
+    }
+    .btn-icon {
+      height: 45px !important;
+      font-size: 1.2rem !important;
+    }
   }
 </style>
 
 <div class="pet-section-wrapper">
   <div class="pet-card-pro" data-aos="fade-up">
+    
     <div class="pet-header">
       <div class="pet-name-badge" id="petNameDisplay">Pochita 🧡</div>
       <div style="font-size: 1.2rem;">✨</div>
@@ -1195,32 +1214,32 @@ body.no-scroll {
       <button class="btn-icon btn-bath" onclick="interactuar('bañar')"><i class="bi bi-droplet"></i></button>
       <button class="btn-icon btn-sleep" onclick="interactuar('dormir')"><i class="bi bi-moon-stars"></i></button>
     </div>
+
   </div>
 </div>
 
 <script>
-  // Enlace base seguro
+  // Enlaces seguros (públicos)
   const hamsterLink = "https://lottie.host/b62e382f-850b-418d-8177-fb83008d9e9c/N8jkBm9r7B.lottie";
 
   const anims = {
     normal: hamsterLink,  
     playing: hamsterLink, 
-    sleep: hamsterLink, // Usamos el normal para evitar error 403
+    sleep: hamsterLink, // Usamos el normal para evitar errores 403
     sad: "https://lottie.host/98f8b896-1896-4876-8802-18776823528b/r4Xy4F6F4E.json",
     eating: hamsterLink 
   };
 
   const player = document.getElementById('petLottie');
 
-  // Protección anti-crash
+  // Si algo falla, se restaura solo
   player.addEventListener('error', () => {
-      console.warn("Error en lottie, restaurando...");
-      if (player.src !== anims.normal) {
-          player.src = anims.normal;
-      }
+      console.warn("Lottie error, restaurando...");
+      if (player.src !== anims.normal) player.src = anims.normal;
   });
 
-  // FUNCIÓN CORREGIDA (.src en vez de .load)
+  // --- SOLUCIÓN AL ERROR DE CONSOLA ---
+  // Cambiamos .src directamente en lugar de usar .load()
   function triggerAnim(url) {
     if(player.src === url) return; 
     player.src = url;
@@ -1230,10 +1249,11 @@ body.no-scroll {
     try {
       const response = await fetch('/api/mascota/');
       if (response.ok) { actualizarUI(await response.json()); }
-    } catch (error) { console.error("Error datos:", error); }
+    } catch (error) { console.error("Error:", error); }
   }
 
   async function interactuar(accion) {
+    // Reacción inmediata
     if(accion === 'dormir') triggerAnim(anims.sleep);
     if(accion === 'jugar') triggerAnim(anims.playing);
     
@@ -1250,7 +1270,7 @@ body.no-scroll {
           const data = await response.json();
           actualizarUI(data);
       }
-    } catch (error) { console.error("Error interacción:", error); }
+    } catch (error) { console.error("Error:", error); }
   }
 
   function actualizarUI(data) {
@@ -1261,6 +1281,7 @@ body.no-scroll {
     setBar('barEnergia', 'valEnergia', data.energia);
     setBar('barHigiene', 'valHigiene', data.higiene);
 
+    // Estados automáticos
     if (data.energia < 10) { 
         triggerAnim(anims.sleep); 
     } else if (data.felicidad < 30) {
@@ -1294,119 +1315,6 @@ body.no-scroll {
 
   document.addEventListener('DOMContentLoaded', () => {
     cargarMascota();
-    setInterval(cargarMascota, 10000);
-  });
-</script>
-  // === URLS CORREGIDAS ===
-  // El link anterior de "sleep" daba error 403.
-  // He puesto el mismo link del hamster normal temporalmente para evitar que la app crashee.
-  // Si encuentras otro lottie de "dormir" público, cámbialo aquí.
-  const hamsterLink = "https://lottie.host/b62e382f-850b-418d-8177-fb83008d9e9c/N8jkBm9r7B.lottie";
-
-  const anims = {
-    normal: hamsterLink,  
-    playing: hamsterLink, 
-    
-    // CORRECCIÓN: Usamos el hamster normal (o uno nuevo si tienes) para evitar el error 403
-    // Si quieres uno durmiendo específico, asegúrate que sea público.
-    sleep: hamsterLink, 
-    
-    sad: "https://lottie.host/98f8b896-1896-4876-8802-18776823528b/r4Xy4F6F4E.json",
-    eating: hamsterLink 
-  };
-
-  const player = document.getElementById('petLottie');
-
-  // PROTECCIÓN CONTRA ERRORES DE CARGA
-  // Si alguna animación falla, regresamos a la normal para que no desaparezca la mascota
-  player.addEventListener('error', () => {
-      console.warn("Falló la carga de una animación, regresando a estado base.");
-      if (player.src !== anims.normal) {
-          player.load(anims.normal);
-      }
-  });
-
-  async function cargarMascota() {
-    try {
-      const response = await fetch('/api/mascota/');
-      if (response.ok) { actualizarUI(await response.json()); }
-    } catch (error) { console.error("Error cargando mascota:", error); }
-  }
-
-  async function interactuar(accion) {
-    // Feedback visual inmediato
-    if(accion === 'dormir') triggerAnim(anims.sleep);
-    
-    try {
-      const response = await fetch('/api/mascota/', {
-        method: 'POST',
-        headers: { 
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken') // Aseguramos el token CSRF si es Django
-        },
-        body: JSON.stringify({ accion: accion })
-      });
-      
-      if (response.ok) { 
-          const data = await response.json();
-          actualizarUI(data);
-      }
-    } catch (error) { console.error("Error interacción:", error); }
-  }
-
-  function triggerAnim(url) {
-    // Solo recargamos si la URL es diferente para evitar parpadeos
-    if(player.src === url) return; 
-    player.load(url);
-  }
-
-  function actualizarUI(data) {
-    if(data.nombre) document.getElementById('petNameDisplay').innerText = data.nombre + " 🧡";
-    
-    setBar('barHambre', 'valHambre', data.hambre);
-    setBar('barFelicidad', 'valFelicidad', data.felicidad);
-    setBar('barEnergia', 'valEnergia', data.energia);
-    setBar('barHigiene', 'valHigiene', data.higiene);
-
-    // Lógica de estados automática
-    // Nota: Solo cambia el estado si NO estamos interactuando manualmente en este instante
-    // (Por simplicidad, aquí dejamos que el estado del backend mande)
-    if (data.energia < 10) { 
-        triggerAnim(anims.sleep); 
-    } else if (data.felicidad < 30) {
-        triggerAnim(anims.sad);
-    } else { 
-        triggerAnim(anims.normal); 
-    }
-  }
-
-  function setBar(idBar, idText, val) {
-    const bar = document.getElementById(idBar);
-    if(bar) bar.style.width = val + "%";
-    
-    const txt = document.getElementById(idText);
-    if(txt) txt.innerText = val + "%";
-  }
-
-  // Función auxiliar para obtener cookies (necesaria para Django POST)
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    cargarMascota();
-    // Actualiza cada 10 segundos
     setInterval(cargarMascota, 10000);
   });
 </script>
