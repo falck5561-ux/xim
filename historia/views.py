@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt # <--- IMPORTANTE: Necesario para el juego
 import json
-# IMPORTANTE: Aquí agregamos 'Deseo' a la lista de importaciones
-from .models import Momento, Cancion, Deseo 
+
+# IMPORTANTE: Agregamos 'Mascota' a la lista
+from .models import Momento, Cancion, Deseo, Mascota 
 from .forms import MomentoForm, CancionForm
 
 # --- VISTAS DE LA HISTORIA (MOMENTOS) ---
@@ -41,7 +43,7 @@ def editar_momento(request, momento_id):
     return redirect('home')
 
 
-# --- VISTAS DEL GESTOR DE MÚSICA (COMPLETAS) ---
+# --- VISTAS DEL GESTOR DE MÚSICA ---
 
 def lista_canciones(request):
     """Devuelve la lista de canciones, incluyendo la predeterminada manualmente"""
@@ -102,22 +104,17 @@ def renombrar_cancion(request, cancion_id):
     return JsonResponse({'status': 'error'}, status=400)
 
 
-# ==========================================
-# --- NUEVAS VISTAS PARA LA LISTA DE DESEOS ---
-# ==========================================
+# --- VISTAS PARA LA LISTA DE DESEOS ---
 
 def api_deseos(request):
     """Obtiene todos los deseos o crea uno nuevo"""
     if request.method == 'GET':
-        # Ordenamos: primero los NO cumplidos (False), luego por fecha (más nuevos arriba)
+        # Ordenamos: primero los NO cumplidos (False), luego por fecha
         deseos = Deseo.objects.all().order_by('cumplido', '-fecha_creacion')
-        
-        # Convertimos los objetos de Python a una lista simple (JSON)
         data = [{"id": d.id, "texto": d.texto, "done": d.cumplido} for d in deseos]
         return JsonResponse(data, safe=False)
     
     if request.method == 'POST':
-        # Crear un nuevo deseo
         try:
             data = json.loads(request.body)
             texto = data.get('texto')
@@ -133,7 +130,7 @@ def api_deseos(request):
 def api_alternar_deseo(request, id):
     """Marca un deseo como cumplido o pendiente"""
     deseo = get_object_or_404(Deseo, id=id)
-    deseo.cumplido = not deseo.cumplido # Invierte el valor (True <-> False)
+    deseo.cumplido = not deseo.cumplido 
     deseo.save()
     return JsonResponse({'status': 'ok', 'done': deseo.cumplido})
 
@@ -143,3 +140,72 @@ def api_eliminar_deseo(request, id):
     deseo = get_object_or_404(Deseo, id=id)
     deseo.delete()
     return JsonResponse({'status': 'ok'})
+
+
+# ==========================================
+# --- NUEVAS VISTAS PARA LA MASCOTA (POU) ---
+# ==========================================
+
+@csrf_exempt
+def api_mascota(request):
+    """
+    Maneja el estado de la mascota compartida.
+    GET: Calcula desgaste por tiempo y devuelve estado.
+    POST: Recibe acción (comer, jugar) y actualiza estado.
+    """
+    # Siempre usamos el ID=1 porque es una mascota compartida
+    pet, created = Mascota.objects.get_or_create(id=1)
+
+    if request.method == 'GET':
+        # 1. Calculamos cuánto bajaron las stats desde la última visita
+        pet.calcular_estado_actual()
+        
+        # 2. Devolvemos los datos actualizados
+        return JsonResponse({
+            "nombre": pet.nombre,
+            "hambre": pet.hambre,
+            "felicidad": pet.felicidad,
+            "energia": pet.energia,
+            "higiene": pet.higiene
+        })
+
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            accion = data.get('accion')
+
+            # Lógica del juego
+            if accion == 'comer':
+                pet.hambre = min(100, pet.hambre + 20) # Sube 20, tope 100
+                # Comer da un poquito de energía también
+                pet.energia = min(100, pet.energia + 5) 
+
+            elif accion == 'jugar':
+                pet.felicidad = min(100, pet.felicidad + 15)
+                pet.energia = max(0, pet.energia - 10) # Jugar cansa
+                pet.higiene = max(0, pet.higiene - 5)  # Jugar ensucia un poco
+
+            elif accion == 'dormir':
+                pet.energia = 100
+                # Dormir da un poco de hambre
+                pet.hambre = max(0, pet.hambre - 10)
+
+            elif accion == 'bañar':
+                pet.higiene = 100
+                pet.felicidad = min(100, pet.felicidad + 5) # Estar limpio da gusto
+            
+            # Guardar cambios (esto actualiza 'ultima_actualizacion' automáticamente)
+            pet.save()
+            
+            return JsonResponse({
+                "status": "ok", 
+                "hambre": pet.hambre,
+                "felicidad": pet.felicidad,
+                "energia": pet.energia,
+                "higiene": pet.higiene
+            })
+        except Exception as e:
+            print(f"Error en mascota: {e}")
+            return JsonResponse({'status': 'error'}, status=400)
+            
+    return JsonResponse({'status': 'error'}, status=405)

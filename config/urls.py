@@ -18,10 +18,13 @@ urlpatterns = [
     path('api/eliminar-cancion/<int:cancion_id>/', views.eliminar_cancion, name='eliminar_cancion'),
     path('api/renombrar-cancion/<int:cancion_id>/', views.renombrar_cancion, name='renombrar_cancion'),
 
-    # --- NUEVAS RUTAS PARA LISTA DE DESEOS (OBLIGATORIO PARA QUE GUARDE) ---
+    # --- RUTAS PARA LISTA DE DESEOS ---
     path('api/deseos/', views.api_deseos, name='api_deseos'),
     path('api/deseos/alternar/<int:id>/', views.api_alternar_deseo, name='api_alternar_deseo'),
     path('api/deseos/eliminar/<int:id>/', views.api_eliminar_deseo, name='api_eliminar_deseo'),
+
+    # --- NUEVA RUTA PARA LA MASCOTA (POU) ---
+    path('api/mascota/', views.api_mascota, name='api_mascota'),
 ]
 
 if settings.DEBUG:

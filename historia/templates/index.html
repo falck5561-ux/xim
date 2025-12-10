@@ -1033,6 +1033,91 @@ body.no-scroll {
         </div>
     </div>
 
+    <div class="timer-box"><span class="timer-number" id="seconds">0</span><span class="timer-label">Seg</span></div>
+        </div>
+
+        <style>
+          .pet-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 350px;
+            margin: 30px auto;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 4px solid #ff9ff3;
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          }
+          .pet-name { color: #ff6b81; margin: 0 0 10px 0; font-family: 'Comic Sans MS', cursive; font-size: 24px; }
+          .pet-avatar {
+            font-size: 100px; margin: 10px 0; cursor: pointer; user-select: none;
+            animation: bounce 2s infinite ease-in-out; filter: drop-shadow(0 10px 5px rgba(0,0,0,0.1)); transition: transform 0.1s;
+          }
+          .pet-avatar:active { transform: scale(0.9); }
+          @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+          .stat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 14px; font-weight: bold; color: #555; }
+          .progress-bg { flex: 1; background: #dfe6e9; border-radius: 10px; height: 14px; overflow: hidden; }
+          .progress-fill { height: 100%; border-radius: 10px; transition: width 0.5s ease-out; }
+          .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+          .btn-pet { border: none; padding: 12px; border-radius: 12px; color: white; font-weight: 800; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+          .btn-pet:hover { transform: translateY(-2px); }
+          .btn-pet:active { transform: scale(0.95); }
+        </style>
+
+        <div class="pet-card" data-aos="zoom-in">
+          <h2 id="petName" class="pet-name">Cargando...</h2>
+          <div id="petAvatar" class="pet-avatar" onclick="interactuar('jugar')">🥚</div>
+          <div class="stats-area">
+            <div class="stat-row"><span>🍔</span><div class="progress-bg"><div id="barHambre" class="progress-fill" style="width: 0%; background: #ff6b6b;"></div></div></div>
+            <div class="stat-row"><span>💖</span><div class="progress-bg"><div id="barFelicidad" class="progress-fill" style="width: 0%; background: #feca57;"></div></div></div>
+            <div class="stat-row"><span>⚡</span><div class="progress-bg"><div id="barEnergia" class="progress-fill" style="width: 0%; background: #54a0ff;"></div></div></div>
+            <div class="stat-row"><span>🚿</span><div class="progress-bg"><div id="barHigiene" class="progress-fill" style="width: 0%; background: #1dd1a1;"></div></div></div>
+          </div>
+          <div class="actions-grid">
+            <button class="btn-pet" style="background: #ff7675;" onclick="interactuar('comer')">Comer</button>
+            <button class="btn-pet" style="background: #fab1a0;" onclick="interactuar('jugar')">Jugar</button>
+            <button class="btn-pet" style="background: #74b9ff;" onclick="interactuar('bañar')">Bañar</button>
+            <button class="btn-pet" style="background: #a29bfe;" onclick="interactuar('dormir')">Dormir</button>
+          </div>
+        </div>
+
+        <script>
+          async function cargarMascota() {
+            try {
+              const response = await fetch('/api/mascota/');
+              if (response.ok) { actualizarUI(await response.json()); }
+            } catch (error) { console.error("Error conectando con Pochita:", error); }
+          }
+          async function interactuar(accion) {
+            try {
+              const response = await fetch('/api/mascota/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ accion: accion })
+              });
+              if (response.ok) { actualizarUI(await response.json()); }
+            } catch (error) { console.error("Error en la acción:", error); }
+          }
+          function actualizarUI(data) {
+            if(data.nombre) document.getElementById('petName').innerText = data.nombre + " 🧡";
+            document.getElementById('barHambre').style.width = data.hambre + "%";
+            document.getElementById('barFelicidad').style.width = data.felicidad + "%";
+            document.getElementById('barEnergia').style.width = data.energia + "%";
+            document.getElementById('barHigiene').style.width = data.higiene + "%";
+            let emoji = '🥰'; 
+            if (data.felicidad < 40) emoji = '😢';
+            if (data.hambre < 30) emoji = '🤤';
+            if (data.higiene < 30) emoji = '💩'; 
+            if (data.energia < 20) emoji = '😴';
+            document.getElementById('petAvatar').innerText = emoji;
+          }
+          document.addEventListener('DOMContentLoaded', () => {
+            cargarMascota();
+            setInterval(cargarMascota, 10000);
+          });
+        </script>
+        </div> ```
+
 
     <div class="container mb-5">
     <div class="timeline-card text-center glass-card" data-aos="fade-up">
