@@ -1034,12 +1034,10 @@ body.no-scroll {
     </div>
 
     <style>
-  /* --- ESTILOS RESPONSIVOS MEJORADOS --- */
-  
   /* Contenedor principal */
   .pet-section-wrapper {
     width: 100%;
-    margin-top: 30px;
+    margin-top: 40px;
     display: flex;
     justify-content: center;
     position: relative;
@@ -1049,13 +1047,13 @@ body.no-scroll {
 
   /* Tarjeta Glassmorphism */
   .pet-card-pro {
-    background: rgba(255, 255, 255, 0.85); /* Un poco más opaco para leer mejor */
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     border-radius: 30px;
     padding: 25px;
     width: 90%;
-    max-width: 380px; /* Límite en PC */
+    max-width: 380px;
     box-shadow: 
       0 15px 35px rgba(255, 107, 129, 0.15),
       inset 0 0 0 1px rgba(255, 255, 255, 0.6);
@@ -1082,22 +1080,19 @@ body.no-scroll {
     box-shadow: 0 4px 10px rgba(255, 107, 129, 0.4);
   }
 
-  /* Contenedor de la animación */
   .lottie-container {
     width: 200px;
     height: 200px;
     margin: 0 auto;
     cursor: pointer;
-    /* Importante: evita que clicks accidentales seleccionen texto */
     user-select: none; 
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Barras de estado */
   .stats-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Dos columnas */
-    gap: 12px 20px; /* Espacio horizontal y vertical */
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 20px;
     margin: 10px 0;
   }
 
@@ -1126,20 +1121,19 @@ body.no-scroll {
     transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
-  /* Botonera */
   .controls-dock {
     background: white;
     padding: 10px;
     border-radius: 25px;
     display: flex;
-    justify-content: space-between; /* Distribuye mejor el espacio */
+    justify-content: space-between;
     box-shadow: 0 5px 20px rgba(0,0,0,0.05);
     margin-top: 15px;
     gap: 5px;
   }
 
   .btn-icon {
-    flex: 1; /* Todos los botones del mismo ancho */
+    flex: 1;
     height: 50px;
     border: none;
     border-radius: 18px;
@@ -1159,39 +1153,18 @@ body.no-scroll {
   .btn-bath:active, .btn-bath:hover { color: #54a0ff; background: #f0f8ff; }
   .btn-sleep:active, .btn-sleep:hover { color: #a29bfe; background: #f3f0ff; }
 
-  /* --- AJUSTES PARA CELULAR (Evita que se vea apretado) --- */
+  /* --- AJUSTES MÓVIL --- */
   @media (max-width: 480px) {
-    .pet-card-pro {
-      width: 94% !important; /* Aprovecha más el ancho de pantalla */
-      padding: 15px !important; /* Menos padding interno */
-    }
-    
-    .lottie-container {
-      /* Reducimos un poco la animación para dar aire a los controles */
-      width: 160px !important; 
-      height: 160px !important;
-    }
-
-    .stats-grid {
-      gap: 8px 15px !important; /* Menos espacio entre barras */
-      margin-bottom: 5px;
-    }
-    
-    .btn-icon {
-      height: 45px !important; /* Botones un poco más compactos */
-      font-size: 1.2rem !important;
-    }
-    
-    .pet-name-badge {
-      font-size: 0.9rem !important;
-      padding: 5px 15px !important;
-    }
+    .pet-card-pro { width: 94% !important; padding: 15px !important; }
+    .lottie-container { width: 160px !important; height: 160px !important; }
+    .stats-grid { gap: 8px 15px !important; margin-bottom: 5px; }
+    .btn-icon { height: 45px !important; font-size: 1.2rem !important; }
+    .pet-name-badge { font-size: 0.9rem !important; padding: 5px 15px !important; }
   }
 </style>
 
 <div class="pet-section-wrapper">
   <div class="pet-card-pro" data-aos="fade-up">
-    
     <div class="pet-header">
       <div class="pet-name-badge" id="petNameDisplay">Pochita 🧡</div>
       <div style="font-size: 1.2rem;">✨</div>
@@ -1217,16 +1190,113 @@ body.no-scroll {
     </div>
 
     <div class="controls-dock">
-      <button class="btn-icon btn-eat" onclick="interactuar('comer')" title="Comer"><i class="bi bi-egg-fried"></i></button>
-      <button class="btn-icon btn-play" onclick="interactuar('jugar')" title="Jugar"><i class="bi bi-controller"></i></button>
-      <button class="btn-icon btn-bath" onclick="interactuar('bañar')" title="Bañar"><i class="bi bi-droplet"></i></button>
-      <button class="btn-icon btn-sleep" onclick="interactuar('dormir')" title="Dormir"><i class="bi bi-moon-stars"></i></button>
+      <button class="btn-icon btn-eat" onclick="interactuar('comer')"><i class="bi bi-egg-fried"></i></button>
+      <button class="btn-icon btn-play" onclick="interactuar('jugar')"><i class="bi bi-controller"></i></button>
+      <button class="btn-icon btn-bath" onclick="interactuar('bañar')"><i class="bi bi-droplet"></i></button>
+      <button class="btn-icon btn-sleep" onclick="interactuar('dormir')"><i class="bi bi-moon-stars"></i></button>
     </div>
-
   </div>
 </div>
 
 <script>
+  // Enlace base seguro
+  const hamsterLink = "https://lottie.host/b62e382f-850b-418d-8177-fb83008d9e9c/N8jkBm9r7B.lottie";
+
+  const anims = {
+    normal: hamsterLink,  
+    playing: hamsterLink, 
+    sleep: hamsterLink, // Usamos el normal para evitar error 403
+    sad: "https://lottie.host/98f8b896-1896-4876-8802-18776823528b/r4Xy4F6F4E.json",
+    eating: hamsterLink 
+  };
+
+  const player = document.getElementById('petLottie');
+
+  // Protección anti-crash
+  player.addEventListener('error', () => {
+      console.warn("Error en lottie, restaurando...");
+      if (player.src !== anims.normal) {
+          player.src = anims.normal;
+      }
+  });
+
+  // FUNCIÓN CORREGIDA (.src en vez de .load)
+  function triggerAnim(url) {
+    if(player.src === url) return; 
+    player.src = url;
+  }
+
+  async function cargarMascota() {
+    try {
+      const response = await fetch('/api/mascota/');
+      if (response.ok) { actualizarUI(await response.json()); }
+    } catch (error) { console.error("Error datos:", error); }
+  }
+
+  async function interactuar(accion) {
+    if(accion === 'dormir') triggerAnim(anims.sleep);
+    if(accion === 'jugar') triggerAnim(anims.playing);
+    
+    try {
+      const response = await fetch('/api/mascota/', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken') 
+        },
+        body: JSON.stringify({ accion: accion })
+      });
+      if (response.ok) { 
+          const data = await response.json();
+          actualizarUI(data);
+      }
+    } catch (error) { console.error("Error interacción:", error); }
+  }
+
+  function actualizarUI(data) {
+    if(data.nombre) document.getElementById('petNameDisplay').innerText = data.nombre + " 🧡";
+    
+    setBar('barHambre', 'valHambre', data.hambre);
+    setBar('barFelicidad', 'valFelicidad', data.felicidad);
+    setBar('barEnergia', 'valEnergia', data.energia);
+    setBar('barHigiene', 'valHigiene', data.higiene);
+
+    if (data.energia < 10) { 
+        triggerAnim(anims.sleep); 
+    } else if (data.felicidad < 30) {
+        triggerAnim(anims.sad);
+    } else { 
+        triggerAnim(anims.normal); 
+    }
+  }
+
+  function setBar(idBar, idText, val) {
+    const bar = document.getElementById(idBar);
+    const txt = document.getElementById(idText);
+    if(bar) bar.style.width = val + "%";
+    if(txt) txt.innerText = val + "%";
+  }
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    cargarMascota();
+    setInterval(cargarMascota, 10000);
+  });
+</script>
   // === URLS CORREGIDAS ===
   // El link anterior de "sleep" daba error 403.
   // He puesto el mismo link del hamster normal temporalmente para evitar que la app crashee.
