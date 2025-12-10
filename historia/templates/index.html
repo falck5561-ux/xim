@@ -1345,116 +1345,162 @@ body.no-scroll {
 
 <script>
   /* =========================================
-     JAVASCRIPT (CEREBRO DE LA MASCOTA)
+     JAVASCRIPT MEJORADO (CEREBRO 2.0)
      ========================================= */
 
-  // 1. CONFIGURACIÓN INICIAL
-  // Enlace del hámster corriendo (funciona 100%)
+  // 1. CONFIGURACIÓN E IMÁGENES
   const hamsterLink = "https://lottie.host/b62e382f-850b-418d-8177-fb83008d9e9c/N8jkBm9r7B.lottie";
   
-  // Diccionario de animaciones
   const anims = {
     normal: hamsterLink,  
     playing: hamsterLink, 
-    // Usamos el mismo link para 'sleep' por seguridad (para evitar error 403)
-    // Si encuentras uno nuevo, cámbialo aquí.
     sleep: hamsterLink, 
     sad: "https://lottie.host/98f8b896-1896-4876-8802-18776823528b/r4Xy4F6F4E.json",
     eating: hamsterLink 
   };
 
-  // Referencias a elementos del DOM
   const player = document.getElementById('petLottie');
   const speechBubble = document.getElementById('pochitaSpeech');
-  let bubbleTimeout; // Variable para controlar el tiempo de la burbuja
+  let bubbleTimeout; 
+  let isInteracting = false; // Para evitar que el estado automático interrumpa una acción manual
 
-  // 2. FRASES ALEATORIAS (Personalidad)
-  // Aquí puedes agregar más frases si quieres
-  const frases = {
-    comer: ["¡Qué rico! 😋", "¡Ñam ñam! 🍔", "¡Gracias mami! ❤️", "¡Tengo la panza llena!", "¡Delicioso!"],
-    jugar: ["¡Qué divertido! 🎮", "¡Te quiero Ximena! ✨", "¡Vamos a correr!", "¡Yujuuu!", "¡Eres la mejor!"],
-    banar: ["¡Agüita fresca! 🚿", "¡Quedé limpiecito! ✨", "¡Glu glu glu! 🛁", "¡Huelo a flores!"],
-    dormir: ["Buenas noches... 💤", "Zzz... te amo...", "A mimir 🌙", "Soñaré contigo..."]
+  // 2. DICCIONARIO DE FRASES (PERSONALIDAD)
+  
+  // A) Frases cuando TÚ interactúas (Click en botones)
+  const frasesAccion = {
+    comer: [
+        "¡Qué rico! 😋", "¡Gracias mami! ❤️", "¡Tengo la panza llena!", 
+        "¡Ñam ñam ñam! 🍔", "¡Estaba delicioso!", "¡Me encantas!"
+    ],
+    jugar: [
+        "¡Qué divertido! 🎮", "¡Te quiero Ximena! ✨", "¡Vamos a correr!", 
+        "¡Yujuuu!", "¡Eres la mejor dueña!", "¡Más rápido!"
+    ],
+    banar: [ // AQUÍ MEJORÉ LO DEL BAÑO
+        "¡Agüita fresca! 🚿", "¡Quedé limpiecito! ✨", "¡Glu glu glu! 🛁", 
+        "¡Ya no huelo a feo!", "¡Mira como brillo! ✨", "¡Patito de hule! 🦆"
+    ],
+    dormir: [
+        "Buenas noches... 💤", "Zzz... te amo...", "A mimir 🌙", 
+        "Soñaré contigo...", "Hasta mañana..."
+    ]
   };
 
-  // 3. PROTECCIÓN CONTRA ERRORES
-  // Si una animación falla al cargar, vuelve a la normal para que no desaparezca
+  // B) Frases Automáticas (QUEJAS cuando las barras están bajas)
+  const frasesNecesidad = {
+    hambre: ["Tengo hambre mami 🥺", "¡Mi pancita ruge!", "¿Me das comida? 🍔", "Me siento débil..."],
+    sucio: ["Iugh, huelo feo 💩", "¡Necesito un baño mami!", "Me pica el cuerpito 🚿"],
+    aburrido: ["Juega conmigo por favor 😭", "Estoy muy aburrido...", "¿Ya no me quieres? 💔"],
+    cansado: ["Tengo mucho sueñito... 😴", "¡Mis ojitos se cierran!", "Quiero mi camita 🌙"]
+  };
+
+  // 3. FUNCIONES VISUALES
   player.addEventListener('error', () => {
       console.warn("Lottie error, restaurando...");
       if (player.src !== anims.normal) player.src = anims.normal;
   });
 
-  // Función para cambiar animación (Usa .src para evitar errores de librería)
   function triggerAnim(url) {
     if(player.src === url) return; 
     player.src = url;
   }
 
-  // 4. NUEVA FUNCIÓN: EFECTOS VISUALES (MAGIA ✨)
-  function mostrarReaccion(accion) {
-    // A) Mostrar Frase Aleatoria
-    const lista = frases[accion] || ["¡Hola! ❤️"];
-    const frase = lista[Math.floor(Math.random() * lista.length)]; // Elige una al azar
-    speechBubble.innerText = frase;
-    speechBubble.classList.add('show'); // Muestra la burbuja
+  // Función maestra para hablar
+  function decirFrase(texto, duracion = 3000) {
+    speechBubble.innerText = texto;
+    speechBubble.classList.add('show');
 
-    // Ocultar burbuja después de 2.5 segundos
     clearTimeout(bubbleTimeout);
     bubbleTimeout = setTimeout(() => {
         speechBubble.classList.remove('show');
-    }, 2500);
+    }, duracion);
+  }
 
-    // B) Lluvia de Emojis según la acción
+  // Reacción manual (Click)
+  function mostrarReaccionManual(accion) {
+    const lista = frasesAccion[accion] || ["¡Hola! ❤️"];
+    const frase = lista[Math.floor(Math.random() * lista.length)];
+    decirFrase(frase);
+
+    // Emojis
     let emoji = '✨';
     if(accion === 'comer') emoji = '🍔';
     if(accion === 'jugar') emoji = '💖';
     if(accion === 'banar') emoji = '🫧';
     if(accion === 'dormir') emoji = '💤';
-
     crearEmojiFlotante(emoji);
   }
 
-  // Crea los emojis que flotan hacia arriba
   function crearEmojiFlotante(char) {
       const zone = document.getElementById('lottieZone');
-      
-      // Crear 3 emojis con tiempos distintos
       for(let i=0; i<3; i++) {
           const span = document.createElement('span');
           span.innerText = char;
           span.className = 'floating-emoji';
-          
-          // Posición horizontal aleatoria
           const randomX = Math.random() * 100 - 50; 
           span.style.left = `calc(50% + ${randomX}px)`;
           span.style.top = '50%';
-          span.style.animationDelay = (i * 0.1) + 's'; // Retraso escalonado
-          
+          span.style.animationDelay = (i * 0.1) + 's'; 
           zone.appendChild(span);
-          
-          // Eliminar del HTML al terminar animación (limpieza de memoria)
           setTimeout(() => span.remove(), 1500);
       }
   }
 
-  // 5. CARGA DE DATOS DEL BACKEND
+  // 4. LÓGICA DEL SERVIDOR Y ESTADO "INTELIGENTE"
   async function cargarMascota() {
     try {
       const response = await fetch('/api/mascota/');
-      if (response.ok) { actualizarUI(await response.json()); }
+      if (response.ok) { 
+          const data = await response.json();
+          actualizarUI(data);
+          verificarEstadoGeneral(data); // <--- NUEVO CEREBRO AQUÍ
+      }
     } catch (error) { console.error("Error cargando:", error); }
   }
 
-  // 6. INTERACCIÓN (CLICK EN BOTÓN)
-  async function interactuar(accion) {
-    // --- EFECTO VISUAL INMEDIATO ---
-    mostrarReaccion(accion);
+  // Esta función decide si la mascota se queja sola
+  function verificarEstadoGeneral(data) {
+      // Si el usuario acaba de interactuar (hace menos de 3 seg), no nos quejamos
+      if (isInteracting) return; 
 
-    // Cambio de animación inmediato
+      // Umbral de queja (cuando la barra está roja/baja)
+      const umbralCritico = 30; 
+      
+      // Verificamos en orden de prioridad (Hambre > Energía > Higiene > Diversión)
+      let queja = null;
+
+      if (data.hambre < umbralCritico) {
+          const lista = frasesNecesidad.hambre;
+          queja = lista[Math.floor(Math.random() * lista.length)];
+      } else if (data.energia < umbralCritico) {
+           const lista = frasesNecesidad.cansado;
+           queja = lista[Math.floor(Math.random() * lista.length)];
+      } else if (data.higiene < umbralCritico) {
+           const lista = frasesNecesidad.sucio;
+           queja = lista[Math.floor(Math.random() * lista.length)];
+      } else if (data.felicidad < umbralCritico) {
+           const lista = frasesNecesidad.aburrido;
+           queja = lista[Math.floor(Math.random() * lista.length)];
+      }
+
+      // Si hay algo de qué quejarse, lo dice
+      if (queja) {
+          // Un pequeño random para que no sea tan pesado (50% de probabilidad de hablar cada ciclo)
+          if(Math.random() > 0.5) decirFrase(queja);
+      }
+  }
+
+  // 5. INTERACCIÓN (CLICK)
+  async function interactuar(accion) {
+    isInteracting = true; // Bloqueamos quejas automáticas un momento
+    mostrarReaccionManual(accion);
+
     if(accion === 'dormir') triggerAnim(anims.sleep);
     if(accion === 'jugar') triggerAnim(anims.playing);
     
-    // --- PETICIÓN AL SERVIDOR (DJANGO) ---
+    // Desbloqueamos después de 3 segundos
+    setTimeout(() => { isInteracting = false; }, 3000);
+
     try {
       const response = await fetch('/api/mascota/', {
         method: 'POST',
@@ -1466,39 +1512,48 @@ body.no-scroll {
       });
       if (response.ok) { 
           const data = await response.json();
-          actualizarUI(data); // Actualiza las barras con los nuevos datos
+          actualizarUI(data); 
       }
     } catch (error) { console.error("Error API:", error); }
   }
 
-  // 7. ACTUALIZACIÓN DE LA INTERFAZ
+  // 6. ACTUALIZAR BARRAS Y ANIMACIÓN BASE
   function actualizarUI(data) {
     if(data.nombre) document.getElementById('petNameDisplay').innerText = data.nombre + " 🧡";
     
-    // Actualiza el ancho y texto de las barras
     setBar('barHambre', 'valHambre', data.hambre);
     setBar('barFelicidad', 'valFelicidad', data.felicidad);
     setBar('barEnergia', 'valEnergia', data.energia);
     setBar('barHigiene', 'valHigiene', data.higiene);
 
-    // Lógica automática de estados (Si está triste, cambia animación)
-    if (data.energia < 10) { 
-        triggerAnim(anims.sleep); 
-    } else if (data.felicidad < 30) {
-        triggerAnim(anims.sad);
-    } else { 
-        triggerAnim(anims.normal); 
+    // Solo cambiamos la animación base si NO estamos interactuando manualmente
+    if (!isInteracting) {
+        if (data.energia < 10) { 
+            triggerAnim(anims.sleep); 
+        } else if (data.felicidad < 30) {
+            triggerAnim(anims.sad);
+        } else { 
+            triggerAnim(anims.normal); 
+        }
     }
   }
 
   function setBar(idBar, idText, val) {
     const bar = document.getElementById(idBar);
     const txt = document.getElementById(idText);
-    if(bar) bar.style.width = val + "%";
+    
+    // Cambiar color de barra según estado (Verde, Amarillo, Rojo)
+    let color = '#4CAF50'; // Verde
+    if(val < 50) color = '#FFC107'; // Amarillo
+    if(val < 30) color = '#FF5252'; // Rojo
+    
+    if(bar) {
+        bar.style.width = val + "%";
+        bar.style.backgroundColor = color;
+    }
     if(txt) txt.innerText = val + "%";
   }
 
-  // Obtener Token CSRF (Necesario para formularios en Django)
   function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -1514,10 +1569,9 @@ body.no-scroll {
     return cookieValue;
   }
 
-  // 8. INICIO AUTOMÁTICO
   document.addEventListener('DOMContentLoaded', () => {
-    cargarMascota(); // Carga inicial
-    setInterval(cargarMascota, 10000); // Actualiza cada 10 seg
+    cargarMascota(); 
+    setInterval(cargarMascota, 10000); 
   });
 </script>
 
