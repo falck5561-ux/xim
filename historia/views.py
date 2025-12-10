@@ -141,26 +141,34 @@ def api_eliminar_deseo(request, id):
     deseo.delete()
     return JsonResponse({'status': 'ok'})
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt 
+import json
+
+# Tus modelos
+from .models import Momento, Cancion, Deseo, Mascota 
+from .forms import MomentoForm, CancionForm
+
+# --- (AQUÍ VAN TUS VISTAS DE MOMENTOS, MÚSICA Y DESEOS IGUAL QUE ANTES) ---
+# ... (He omitido esa parte para no hacer esto larguísimo, déjala como estaba) ...
+
 
 # ==========================================
-# --- NUEVAS VISTAS PARA LA MASCOTA (POU) ---
+# --- VISTA DE LA MASCOTA (ACTUALIZADA) ---
 # ==========================================
 
 @csrf_exempt
 def api_mascota(request):
     """
     Maneja el estado de la mascota compartida.
-    GET: Calcula desgaste por tiempo y devuelve estado.
-    POST: Recibe acción (comer, jugar) y actualiza estado.
     """
-    # Siempre usamos el ID=1 porque es una mascota compartida
+    # Usamos ID=1 para la mascota compartida
     pet, created = Mascota.objects.get_or_create(id=1)
 
     if request.method == 'GET':
-        # 1. Calculamos cuánto bajaron las stats desde la última visita
         pet.calcular_estado_actual()
-        
-        # 2. Devolvemos los datos actualizados
         return JsonResponse({
             "nombre": pet.nombre,
             "hambre": pet.hambre,
@@ -174,27 +182,28 @@ def api_mascota(request):
             data = json.loads(request.body)
             accion = data.get('accion')
 
-            # Lógica del juego
+            # --- LÓGICA DEL JUEGO ---
+
             if accion == 'comer':
-                pet.hambre = min(100, pet.hambre + 20) # Sube 20, tope 100
-                # Comer da un poquito de energía también
+                pet.hambre = min(100, pet.hambre + 20) 
                 pet.energia = min(100, pet.energia + 5) 
+                pet.higiene = max(0, pet.higiene - 5) # Comer ensucia un poquito
 
             elif accion == 'jugar':
                 pet.felicidad = min(100, pet.felicidad + 15)
-                pet.energia = max(0, pet.energia - 10) # Jugar cansa
-                pet.higiene = max(0, pet.higiene - 5)  # Jugar ensucia un poco
+                pet.energia = max(0, pet.energia - 10) 
+                pet.higiene = max(0, pet.higiene - 10) # Jugar ensucia más
 
             elif accion == 'dormir':
-                pet.energia = 100
-                # Dormir da un poco de hambre
-                pet.hambre = max(0, pet.hambre - 10)
+                pet.energia = 100 # Recarga total
+                pet.hambre = max(0, pet.hambre - 15) # Despierta con hambre
 
-            elif accion == 'bañar':
-                pet.higiene = 100
-                pet.felicidad = min(100, pet.felicidad + 5) # Estar limpio da gusto
-            
-            # Guardar cambios (esto actualiza 'ultima_actualizacion' automáticamente)
+            # --- AQUÍ ESTÁ EL CAMBIO IMPORTANTE ---
+            elif accion == 'limpiar': 
+                pet.higiene = 100 # ¡Queda brillante!
+                pet.felicidad = min(100, pet.felicidad + 10) # Le gusta estar limpia
+            # --------------------------------------
+
             pet.save()
             
             return JsonResponse({
