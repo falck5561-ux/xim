@@ -1033,90 +1033,246 @@ body.no-scroll {
         </div>
     </div>
 
-    <div class="timer-box"><span class="timer-number" id="seconds">0</span><span class="timer-label">Seg</span></div>
-        </div>
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
 
-        <style>
-          .pet-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 25px;
-            max-width: 350px;
-            margin: 30px auto;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            border: 4px solid #ff9ff3;
-            text-align: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          }
-          .pet-name { color: #ff6b81; margin: 0 0 10px 0; font-family: 'Comic Sans MS', cursive; font-size: 24px; }
-          .pet-avatar {
-            font-size: 100px; margin: 10px 0; cursor: pointer; user-select: none;
-            animation: bounce 2s infinite ease-in-out; filter: drop-shadow(0 10px 5px rgba(0,0,0,0.1)); transition: transform 0.1s;
-          }
-          .pet-avatar:active { transform: scale(0.9); }
-          @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-          .stat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 14px; font-weight: bold; color: #555; }
-          .progress-bg { flex: 1; background: #dfe6e9; border-radius: 10px; height: 14px; overflow: hidden; }
-          .progress-fill { height: 100%; border-radius: 10px; transition: width 0.5s ease-out; }
-          .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-          .btn-pet { border: none; padding: 12px; border-radius: 12px; color: white; font-weight: 800; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-          .btn-pet:hover { transform: translateY(-2px); }
-          .btn-pet:active { transform: scale(0.95); }
-        </style>
+<style>
+  /* FIX DE MAQUETACIÓN: Separa a la mascota del contador de arriba */
+  .pet-section-wrapper {
+    clear: both;
+    width: 100%;
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    z-index: 10;
+  }
 
-        <div class="pet-card" data-aos="zoom-in">
-          <h2 id="petName" class="pet-name">Cargando...</h2>
-          <div id="petAvatar" class="pet-avatar" onclick="interactuar('jugar')">🥚</div>
-          <div class="stats-area">
-            <div class="stat-row"><span>🍔</span><div class="progress-bg"><div id="barHambre" class="progress-fill" style="width: 0%; background: #ff6b6b;"></div></div></div>
-            <div class="stat-row"><span>💖</span><div class="progress-bg"><div id="barFelicidad" class="progress-fill" style="width: 0%; background: #feca57;"></div></div></div>
-            <div class="stat-row"><span>⚡</span><div class="progress-bg"><div id="barEnergia" class="progress-fill" style="width: 0%; background: #54a0ff;"></div></div></div>
-            <div class="stat-row"><span>🚿</span><div class="progress-bg"><div id="barHigiene" class="progress-fill" style="width: 0%; background: #1dd1a1;"></div></div></div>
-          </div>
-          <div class="actions-grid">
-            <button class="btn-pet" style="background: #ff7675;" onclick="interactuar('comer')">Comer</button>
-            <button class="btn-pet" style="background: #fab1a0;" onclick="interactuar('jugar')">Jugar</button>
-            <button class="btn-pet" style="background: #74b9ff;" onclick="interactuar('bañar')">Bañar</button>
-            <button class="btn-pet" style="background: #a29bfe;" onclick="interactuar('dormir')">Dormir</button>
-          </div>
-        </div>
+  /* Tarjeta Glassmorphism (Efecto Cristal) */
+  .pet-card-pro {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 30px;
+    padding: 25px;
+    width: 90%;
+    max-width: 380px;
+    box-shadow: 
+      0 15px 35px rgba(255, 107, 129, 0.15),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255,255,255,0.8);
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  
+  .pet-card-pro:hover { transform: translateY(-5px); }
 
-        <script>
-          async function cargarMascota() {
-            try {
-              const response = await fetch('/api/mascota/');
-              if (response.ok) { actualizarUI(await response.json()); }
-            } catch (error) { console.error("Error conectando con Pochita:", error); }
+  .pet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .pet-name-badge {
+    background: linear-gradient(45deg, #ff9a9e, #ff6b81);
+    color: white;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 0 4px 10px rgba(255, 107, 129, 0.4);
+  }
+
+  /* Contenedor de la animación */
+  .lottie-container {
+    width: 200px; /* Un poco más grande para el hámster */
+    height: 200px;
+    margin: 0 auto;
+    cursor: pointer;
+    filter: drop-shadow(0 10px 20px rgba(255, 154, 158, 0.3));
+  }
+
+  /* Barras de estado */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 15px 0;
+  }
+
+  .stat-mini { text-align: left; }
+  
+  .stat-label {
+    font-size: 0.75rem;
+    color: #636e72;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+  }
+
+  .progress-pill-bg {
+    background: #fff;
+    height: 10px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+  }
+  
+  .progress-pill-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Botonera */
+  .controls-dock {
+    background: white;
+    padding: 12px;
+    border-radius: 25px;
+    display: flex;
+    justify-content: space-around;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    margin-top: 15px;
+  }
+
+  .btn-icon {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 18px;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #f8f9fa;
+    color: #b2bec3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-icon:hover { transform: scale(1.15) translateY(-3px); }
+  .btn-eat:hover { color: #ff6b6b; background: #fff0f3; }
+  .btn-play:hover { color: #feca57; background: #fffbf0; }
+  .btn-bath:hover { color: #54a0ff; background: #f0f8ff; }
+  .btn-sleep:hover { color: #a29bfe; background: #f3f0ff; }
+</style>
+
+<div class="pet-section-wrapper">
+  <div class="pet-card-pro" data-aos="fade-up">
+    
+    <div class="pet-header">
+      <div class="pet-name-badge" id="petNameDisplay">Pochita 🧡</div>
+      <div style="font-size: 1.2rem;">✨</div>
+    </div>
+
+    <div class="lottie-container" onclick="interactuar('jugar')">
+      <dotlottie-player 
+        id="petLottie"
+        src="https://lottie.host/b62e382f-850b-418d-8177-fb83008d9e9c/N8jkBm9r7B.lottie" 
+        background="transparent" 
+        speed="1" 
+        style="width: 100%; height: 100%;" 
+        loop 
+        autoplay>
+      </dotlottie-player>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-mini"><div class="stat-label"><span>Hambre</span> <span id="valHambre">0%</span></div><div class="progress-pill-bg"><div id="barHambre" class="progress-pill-fill" style="width: 50%; background: #ff6b6b;"></div></div></div>
+      <div class="stat-mini"><div class="stat-label"><span>Felicidad</span> <span id="valFelicidad">0%</span></div><div class="progress-pill-bg"><div id="barFelicidad" class="progress-pill-fill" style="width: 50%; background: #feca57;"></div></div></div>
+      <div class="stat-mini"><div class="stat-label"><span>Energía</span> <span id="valEnergia">0%</span></div><div class="progress-pill-bg"><div id="barEnergia" class="progress-pill-fill" style="width: 50%; background: #54a0ff;"></div></div></div>
+      <div class="stat-mini"><div class="stat-label"><span>Higiene</span> <span id="valHigiene">0%</span></div><div class="progress-pill-bg"><div id="barHigiene" class="progress-pill-fill" style="width: 50%; background: #1dd1a1;"></div></div></div>
+    </div>
+
+    <div class="controls-dock">
+      <button class="btn-icon btn-eat" onclick="interactuar('comer')"><i class="bi bi-egg-fried"></i></button>
+      <button class="btn-icon btn-play" onclick="interactuar('jugar')"><i class="bi bi-controller"></i></button>
+      <button class="btn-icon btn-bath" onclick="interactuar('bañar')"><i class="bi bi-droplet"></i></button>
+      <button class="btn-icon btn-sleep" onclick="interactuar('dormir')"><i class="bi bi-moon-stars"></i></button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // AQUI YA PUSE TU LINK DEL HÁMSTER
+  const hamsterLink = "https://lottie.host/b62e382f-850b-418d-8177-fb83008d9e9c/N8jkBm9r7B.lottie";
+
+  const anims = {
+    normal: hamsterLink,  // El hámster corriendo
+    playing: hamsterLink, // El mismo hámster
+    
+    // Animaciones extra (puedes cambiarlas luego si encuentras más)
+    sleep: "https://lottie.host/50a63162-8e7c-4740-9669-7e28945625c5/z5W6XQz9pD.lottie", 
+    sad: "https://lottie.host/98f8b896-1896-4876-8802-18776823528b/r4Xy4F6F4E.json",
+    eating: hamsterLink // Por ahora usa el mismo hámster al comer
+  };
+
+  const player = document.getElementById('petLottie');
+
+  async function cargarMascota() {
+    try {
+      const response = await fetch('/api/mascota/');
+      if (response.ok) { actualizarUI(await response.json()); }
+    } catch (error) { console.error("Error:", error); }
+  }
+
+  async function interactuar(accion) {
+    if(accion === 'dormir') triggerAnim(anims.sleep);
+    
+    try {
+      const response = await fetch('/api/mascota/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accion: accion })
+      });
+      if (response.ok) { 
+          const data = await response.json();
+          actualizarUI(data);
+          // Efecto temporal al interactuar
+          if(accion === 'comer' || accion === 'jugar') { 
+             // Si quieres que haga algo especial, aquí va. 
+             // Por ahora recarga los datos visuales.
           }
-          async function interactuar(accion) {
-            try {
-              const response = await fetch('/api/mascota/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ accion: accion })
-              });
-              if (response.ok) { actualizarUI(await response.json()); }
-            } catch (error) { console.error("Error en la acción:", error); }
-          }
-          function actualizarUI(data) {
-            if(data.nombre) document.getElementById('petName').innerText = data.nombre + " 🧡";
-            document.getElementById('barHambre').style.width = data.hambre + "%";
-            document.getElementById('barFelicidad').style.width = data.felicidad + "%";
-            document.getElementById('barEnergia').style.width = data.energia + "%";
-            document.getElementById('barHigiene').style.width = data.higiene + "%";
-            let emoji = '🥰'; 
-            if (data.felicidad < 40) emoji = '😢';
-            if (data.hambre < 30) emoji = '🤤';
-            if (data.higiene < 30) emoji = '💩'; 
-            if (data.energia < 20) emoji = '😴';
-            document.getElementById('petAvatar').innerText = emoji;
-          }
-          document.addEventListener('DOMContentLoaded', () => {
-            cargarMascota();
-            setInterval(cargarMascota, 10000);
-          });
-        </script>
-        </div> ```
+      }
+    } catch (error) { console.error("Error:", error); }
+  }
+
+  function triggerAnim(url) {
+    if(player.src === url) return; 
+    player.load(url);
+  }
+
+  function actualizarUI(data) {
+    if(data.nombre) document.getElementById('petNameDisplay').innerText = data.nombre + " 🧡";
+    
+    setBar('barHambre', 'valHambre', data.hambre);
+    setBar('barFelicidad', 'valFelicidad', data.felicidad);
+    setBar('barEnergia', 'valEnergia', data.energia);
+    setBar('barHigiene', 'valHigiene', data.higiene);
+
+    // Lógica de estados
+    if (data.energia < 10) { 
+        triggerAnim(anims.sleep); 
+    } else if (data.felicidad < 30) {
+        triggerAnim(anims.sad);
+    } else { 
+        triggerAnim(anims.normal); 
+    }
+  }
+
+  function setBar(idBar, idText, val) {
+    document.getElementById(idBar).style.width = val + "%";
+    document.getElementById(idText).innerText = val + "%";
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    cargarMascota();
+    setInterval(cargarMascota, 10000);
+  });
+</script>
 
 
     <div class="container mb-5">
