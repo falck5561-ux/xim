@@ -1036,10 +1036,10 @@ body.no-scroll {
     <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
 
 <style>
-  /* --- ESTILOS GENERALES --- */
+  /* --- ESTILOS PREMIUM --- */
   .pet-section-wrapper {
     width: 100%;
-    margin-top: 40px; /* Separación del contador */
+    margin-top: 40px;
     display: flex;
     justify-content: center;
     position: relative;
@@ -1047,149 +1047,221 @@ body.no-scroll {
     padding-bottom: 30px;
   }
 
-  /* Tarjeta Efecto Cristal */
   .pet-card-pro {
-    background: rgba(255, 255, 255, 0.90); /* Más sólido para que se lea bien */
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border-radius: 30px;
-    padding: 25px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 35px;
+    padding: 30px 25px;
     width: 90%;
-    max-width: 380px;
-    box-shadow: 0 15px 35px rgba(255, 107, 129, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(255,255,255,0.8);
+    max-width: 400px;
+    /* Sombra más suave y romántica */
+    box-shadow: 
+      0 20px 50px rgba(255, 107, 129, 0.25),
+      inset 0 0 0 2px rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.6);
     text-align: center;
-    transition: transform 0.3s ease;
+    position: relative;
+    /* Animación suave de "respiración" */
+    animation: floatCard 6s ease-in-out infinite;
+  }
+
+  @keyframes floatCard {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  /* BURBUJA DE DIÁLOGO */
+  .speech-bubble {
+    position: absolute;
+    top: -40px; /* Ajustado para que flote encima */
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    background: #fff;
+    border: 2px solid #ff9a9e;
+    border-radius: 20px;
+    padding: 8px 15px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    color: #ff6b81;
+    font-weight: bold;
+    white-space: nowrap;
+    box-shadow: 0 5px 15px rgba(255, 107, 129, 0.2);
+    z-index: 100;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+  }
+  
+  .speech-bubble.show {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+    top: 15px; /* Baja un poco al aparecer */
+  }
+
+  .speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px 8px 0;
+    border-style: solid;
+    border-color: #ff9a9e transparent transparent transparent;
   }
 
   .pet-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
   }
 
   .pet-name-badge {
-    background: linear-gradient(45deg, #ff9a9e, #ff6b81);
+    background: linear-gradient(90deg, #ff9a9e, #ff6b81, #ff9a9e);
+    background-size: 200% 200%;
+    animation: gradientMove 5s ease infinite;
     color: white;
-    padding: 6px 18px;
-    border-radius: 20px;
+    padding: 8px 20px;
+    border-radius: 50px;
     font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    box-shadow: 0 4px 10px rgba(255, 107, 129, 0.4);
+    font-weight: 800;
+    font-size: 1.1rem;
+    box-shadow: 0 5px 15px rgba(255, 107, 129, 0.3);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
   }
 
-  /* Animación */
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
   .lottie-container {
-    width: 200px;
-    height: 200px;
+    width: 220px;
+    height: 220px;
     margin: 0 auto;
     cursor: pointer;
+    position: relative;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
+    filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));
+    transition: transform 0.2s;
   }
+  
+  .lottie-container:active { transform: scale(0.95); }
 
-  /* Barras de estado */
+  /* Grid de Estadísticas */
   .stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin: 15px 0;
+    gap: 15px 20px;
+    margin: 20px 0;
+    background: rgba(255,255,255,0.5);
+    padding: 15px;
+    border-radius: 20px;
   }
 
-  .stat-mini { text-align: left; }
-  
   .stat-label {
     font-size: 0.75rem;
     color: #636e72;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
     display: flex;
     justify-content: space-between;
-    font-weight: 600;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   .progress-pill-bg {
-    background: #fff;
-    height: 10px;
+    background: #f1f2f6;
+    height: 12px;
     border-radius: 10px;
     overflow: hidden;
-    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
   }
   
   .progress-pill-fill {
     height: 100%;
     border-radius: 10px;
-    transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* Efecto brillo en la barra */
+    background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+    background-size: 1rem 1rem;
   }
 
-  /* Botones de acción */
+  /* Botones de acción mejorados */
   .controls-dock {
-    background: white;
-    padding: 10px;
-    border-radius: 25px;
+    background: #fff;
+    padding: 12px;
+    border-radius: 30px;
     display: flex;
     justify-content: space-between;
     gap: 10px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    margin-top: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    margin-top: 10px;
+    border: 1px solid #f0f0f0;
   }
 
   .btn-icon {
     flex: 1;
-    height: 50px;
+    height: 55px;
     border: none;
-    border-radius: 18px;
-    font-size: 1.4rem;
+    border-radius: 20px;
+    font-size: 1.5rem;
     cursor: pointer;
-    background: #f8f9fa;
+    background: #fff;
     color: #b2bec3;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    border: 1px solid #f5f6fa;
   }
 
-  .btn-icon:active { transform: scale(0.95); }
-  .btn-eat:active, .btn-eat:hover { color: #ff6b6b; background: #fff0f3; }
-  .btn-play:active, .btn-play:hover { color: #feca57; background: #fffbf0; }
-  .btn-bath:active, .btn-bath:hover { color: #54a0ff; background: #f0f8ff; }
-  .btn-sleep:active, .btn-sleep:hover { color: #a29bfe; background: #f3f0ff; }
+  /* Colores al pasar el mouse o tocar */
+  .btn-eat:hover { color: #ff6b6b; background: #fff0f3; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(255, 107, 107, 0.2); }
+  .btn-play:hover { color: #feca57; background: #fffbf0; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(254, 202, 87, 0.2); }
+  .btn-bath:hover { color: #54a0ff; background: #f0f8ff; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(84, 160, 255, 0.2); }
+  .btn-sleep:hover { color: #a29bfe; background: #f3f0ff; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(162, 155, 254, 0.2); }
 
-  /* --- AJUSTES PARA CELULAR (Evita que se vea apretado) --- */
+  /* Animación de Emojis Flotantes */
+  .floating-emoji {
+    position: absolute;
+    font-size: 2rem;
+    pointer-events: none;
+    animation: floatUpFade 1.5s ease-out forwards;
+    z-index: 999;
+  }
+
+  @keyframes floatUpFade {
+    0% { transform: translateY(0) scale(0.5); opacity: 0; }
+    20% { transform: translateY(-20px) scale(1.2); opacity: 1; }
+    100% { transform: translateY(-100px) scale(1); opacity: 0; }
+  }
+
+  /* --- AJUSTES MÓVIL --- */
   @media (max-width: 480px) {
-    .pet-card-pro {
-      width: 94% !important; /* Aprovecha más ancho */
-      padding: 15px !important;
-    }
-    .lottie-container {
-      width: 150px !important; /* Mascota un poco más pequeña */
-      height: 150px !important;
-    }
-    .stats-grid {
-      gap: 10px !important; /* Menos espacio entre barras */
-      margin: 10px 0 !important;
-    }
-    .controls-dock {
-      padding: 8px !important;
-      margin-top: 10px !important;
-    }
-    .btn-icon {
-      height: 45px !important;
-      font-size: 1.2rem !important;
-    }
+    .pet-card-pro { width: 92% !important; padding: 20px 15px !important; }
+    .lottie-container { width: 170px !important; height: 170px !important; margin-bottom: 10px; }
+    .stats-grid { gap: 10px 15px !important; margin: 10px 0 !important; padding: 10px !important;}
+    .btn-icon { height: 50px !important; font-size: 1.3rem !important; }
+    .speech-bubble { top: 0px !important; font-size: 0.8rem; }
   }
 </style>
 
 <div class="pet-section-wrapper">
-  <div class="pet-card-pro" data-aos="fade-up">
+  <div class="pet-card-pro" data-aos="zoom-in-up">
     
+    <div id="pochitaSpeech" class="speech-bubble">¡Hola Ximena! ❤️</div>
+
     <div class="pet-header">
       <div class="pet-name-badge" id="petNameDisplay">Pochita 🧡</div>
-      <div style="font-size: 1.2rem;">✨</div>
+      <div style="font-size: 1.4rem; animation: pulse 2s infinite;">✨</div>
     </div>
 
-    <div class="lottie-container" onclick="interactuar('jugar')">
+    <div class="lottie-container" id="lottieZone" onclick="interactuar('jugar')">
       <dotlottie-player 
         id="petLottie"
         src="https://lottie.host/b62e382f-850b-418d-8177-fb83008d9e9c/N8jkBm9r7B.lottie" 
@@ -1202,10 +1274,10 @@ body.no-scroll {
     </div>
 
     <div class="stats-grid">
-      <div class="stat-mini"><div class="stat-label"><span>Hambre</span> <span id="valHambre">0%</span></div><div class="progress-pill-bg"><div id="barHambre" class="progress-pill-fill" style="width: 50%; background: #ff6b6b;"></div></div></div>
-      <div class="stat-mini"><div class="stat-label"><span>Felicidad</span> <span id="valFelicidad">0%</span></div><div class="progress-pill-bg"><div id="barFelicidad" class="progress-pill-fill" style="width: 50%; background: #feca57;"></div></div></div>
-      <div class="stat-mini"><div class="stat-label"><span>Energía</span> <span id="valEnergia">0%</span></div><div class="progress-pill-bg"><div id="barEnergia" class="progress-pill-fill" style="width: 50%; background: #54a0ff;"></div></div></div>
-      <div class="stat-mini"><div class="stat-label"><span>Higiene</span> <span id="valHigiene">0%</span></div><div class="progress-pill-bg"><div id="barHigiene" class="progress-pill-fill" style="width: 50%; background: #1dd1a1;"></div></div></div>
+      <div class="stat-mini"><div class="stat-label"><span>🍔 Hambre</span> <span id="valHambre">0%</span></div><div class="progress-pill-bg"><div id="barHambre" class="progress-pill-fill" style="width: 50%; background: #ff6b6b;"></div></div></div>
+      <div class="stat-mini"><div class="stat-label"><span>💖 Felicidad</span> <span id="valFelicidad">0%</span></div><div class="progress-pill-bg"><div id="barFelicidad" class="progress-pill-fill" style="width: 50%; background: #feca57;"></div></div></div>
+      <div class="stat-mini"><div class="stat-label"><span>⚡ Energía</span> <span id="valEnergia">0%</span></div><div class="progress-pill-bg"><div id="barEnergia" class="progress-pill-fill" style="width: 50%; background: #54a0ff;"></div></div></div>
+      <div class="stat-mini"><div class="stat-label"><span>🛁 Higiene</span> <span id="valHigiene">0%</span></div><div class="progress-pill-bg"><div id="barHigiene" class="progress-pill-fill" style="width: 50%; background: #1dd1a1;"></div></div></div>
     </div>
 
     <div class="controls-dock">
@@ -1219,30 +1291,82 @@ body.no-scroll {
 </div>
 
 <script>
-  // Enlaces seguros (públicos)
+  // === CONFIGURACIÓN ===
   const hamsterLink = "https://lottie.host/b62e382f-850b-418d-8177-fb83008d9e9c/N8jkBm9r7B.lottie";
-
   const anims = {
     normal: hamsterLink,  
     playing: hamsterLink, 
-    sleep: hamsterLink, // Usamos el normal para evitar errores 403
+    sleep: hamsterLink, // Protección contra error 403
     sad: "https://lottie.host/98f8b896-1896-4876-8802-18776823528b/r4Xy4F6F4E.json",
     eating: hamsterLink 
   };
 
   const player = document.getElementById('petLottie');
+  const speechBubble = document.getElementById('pochitaSpeech');
+  let bubbleTimeout;
 
-  // Si algo falla, se restaura solo
+  // Frases aleatorias para darle personalidad
+  const frases = {
+    comer: ["¡Qué rico! 😋", "¡Ñam ñam! 🍔", "¡Gracias mami! ❤️", "¡Tengo la panza llena!"],
+    jugar: ["¡Qué divertido! 🎮", "¡Te quiero Ximena! ✨", "¡Vamos a correr!", "¡Yujuuu!"],
+    banar: ["¡Agüita fresca! 🚿", "¡Quedé limpiecito! ✨", "¡Glu glu glu! 🛁"],
+    dormir: ["Buenas noches... 💤", "Zzz... te amo...", "A mimir 🌙"]
+  };
+
   player.addEventListener('error', () => {
       console.warn("Lottie error, restaurando...");
       if (player.src !== anims.normal) player.src = anims.normal;
   });
 
-  // --- SOLUCIÓN AL ERROR DE CONSOLA ---
-  // Cambiamos .src directamente en lugar de usar .load()
   function triggerAnim(url) {
     if(player.src === url) return; 
     player.src = url;
+  }
+
+  // --- NUEVA FUNCIÓN: EFECTOS VISUALES ---
+  function mostrarReaccion(accion) {
+    // 1. Mostrar Frase Aleatoria
+    const lista = frases[accion] || ["¡Hola! ❤️"];
+    const frase = lista[Math.floor(Math.random() * lista.length)];
+    speechBubble.innerText = frase;
+    speechBubble.classList.add('show');
+
+    // Ocultar burbuja después de 2.5 segundos
+    clearTimeout(bubbleTimeout);
+    bubbleTimeout = setTimeout(() => {
+        speechBubble.classList.remove('show');
+    }, 2500);
+
+    // 2. Lluvia de Emojis
+    let emoji = '✨';
+    if(accion === 'comer') emoji = '🍔';
+    if(accion === 'jugar') emoji = '💖';
+    if(accion === 'banar') emoji = '🫧';
+    if(accion === 'dormir') emoji = '💤';
+
+    crearEmojiFlotante(emoji);
+  }
+
+  function crearEmojiFlotante(char) {
+      const zone = document.getElementById('lottieZone');
+      const rect = zone.getBoundingClientRect();
+      
+      // Crear 3 emojis
+      for(let i=0; i<3; i++) {
+          const span = document.createElement('span');
+          span.innerText = char;
+          span.className = 'floating-emoji';
+          // Posición aleatoria cerca del centro
+          const randomX = Math.random() * 100 - 50; 
+          span.style.left = `calc(50% + ${randomX}px)`;
+          span.style.top = '50%';
+          span.style.animationDelay = (i * 0.1) + 's'; // Retraso escalonado
+          
+          zone.appendChild(span);
+          
+          // Eliminar del DOM al terminar animación
+          setTimeout(() => span.remove(), 1500);
+      }
   }
 
   async function cargarMascota() {
@@ -1253,7 +1377,9 @@ body.no-scroll {
   }
 
   async function interactuar(accion) {
-    // Reacción inmediata
+    // --- AQUÍ ACTIVAMOS LOS EFECTOS ---
+    mostrarReaccion(accion);
+
     if(accion === 'dormir') triggerAnim(anims.sleep);
     if(accion === 'jugar') triggerAnim(anims.playing);
     
@@ -1281,7 +1407,6 @@ body.no-scroll {
     setBar('barEnergia', 'valEnergia', data.energia);
     setBar('barHigiene', 'valHigiene', data.higiene);
 
-    // Estados automáticos
     if (data.energia < 10) { 
         triggerAnim(anims.sleep); 
     } else if (data.felicidad < 30) {
