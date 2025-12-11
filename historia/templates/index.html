@@ -995,6 +995,61 @@ body.no-scroll {
         pointer-events: none !important;
     }
 }
+
+/* --- CORRECCIÓN POLAROIDS --- */
+.polaroid-card {
+    background: white;
+    padding: 8px; /* Menos borde blanco */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transform: rotate(-1deg); 
+    border-radius: 4px; 
+    
+    /* CLAVE 1: La altura se ajusta al contenido, no se estira */
+    height: auto !important; 
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px; /* Espacio entre filas */
+}
+
+/* Forzar que la foto siempre sea cuadrada y no se estire */
+.polaroid-img-container {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Cuadrado perfecto */
+    overflow: hidden;
+    margin-bottom: 8px;
+    background: #f0f0f0;
+}
+
+.polaroid-img-container img, 
+.polaroid-img-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Rellena el cuadro sin deformarse */
+}
+
+/* CLAVE 2: Arreglar texto que se sale */
+.polaroid-caption {
+    text-align: center;
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.1rem; /* Texto ajustado para móvil */
+    color: #2d3436;
+    line-height: 1.1;
+    padding-bottom: 5px;
+    
+    /* Romper palabras largas obligatoriamente */
+    word-wrap: break-word;      
+    overflow-wrap: break-word;  
+    hyphens: auto;
+    width: 100%;
+}
+
+.polaroid-caption small {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.7rem;
+    color: #999;
+}
+
     </style>
 </head>
 <body class="no-scroll">
@@ -1838,13 +1893,14 @@ body.no-scroll {
         <h2 class="text-center romantic-font mb-5 display-5 text-danger">Nuestra Historia</h2>
         <div class="row g-5 px-3">
     {% for momento in momentos %}
-    <div class="col-6 col-lg-4" data-aos="fade-up">
-        
-        <div class="polaroid-card h-100" 
-            data-id="{{ momento.id }}" data-titulo="{{ momento.titulo }}" 
-            data-fecha="{{ momento.fecha|date:'Y-m-d' }}" data-desc="{{ momento.descripcion }}" 
-            data-video="{% if momento.video %}{{ momento.video.url }}{% endif %}" 
-            data-foto="{% if momento.foto %}{{ momento.foto.url }}{% endif %}">
+    <div class="col-6 col-lg-4 mb-3" data-aos="fade-up">
+    <div class="polaroid-card" 
+        data-id="{{ momento.id }}" 
+        data-titulo="{{ momento.titulo }}" 
+        data-fecha="{{ momento.fecha|date:'Y-m-d' }}" 
+        data-desc="{{ momento.descripcion }}" 
+        data-video="{% if momento.video %}{{ momento.video.url }}{% endif %}" 
+        data-foto="{% if momento.foto %}{{ momento.foto.url }}{% endif %}">
             
             <div class="polaroid-actions">
                 <button class="action-btn" onclick="prepararEdicion(this)" title="Editar"><i class="bi bi-pencil-fill"></i></button>
@@ -2017,42 +2073,40 @@ body.no-scroll {
 </div>
     <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content aesthetic-modal">
+        <div class="modal-content p-4 border-0 shadow">
             
-            <div class="modal-header aesthetic-header justify-content-center position-relative">
-                <h3 class="romantic-font text-danger display-6 mb-0">Nuevo Recuerdo ✨</h3>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" style="position: absolute; right: 20px; top: 20px;"></button>
+            <div class="modal-header border-0 position-relative">
+                <h3 class="romantic-font text-primary text-center mb-0 w-100">Nuevo Recuerdo ✨</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" style="position: absolute; right: 0; top: 0;"></button>
             </div>
 
-            <div class="modal-body p-4">
+            <div class="modal-body">
                 <form id="addForm" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     
                     <div class="mb-3">
-                        <label class="form-label text-muted small fw-bold ls-2">TÍTULO</label>
-                        <input type="text" name="titulo" class="form-control aesthetic-input" placeholder="Ej: Nuestra primera cita" required>
+                        <label class="form-label fw-bold">Título</label>
+                        <input type="text" name="titulo" class="form-control" placeholder="Ej: Nuestra primera cita" required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label text-muted small fw-bold ls-2">FECHA</label>
-                        <input type="date" name="fecha" class="form-control aesthetic-input" required>
+                        <label class="form-label fw-bold">Fecha</label>
+                        <input type="date" name="fecha" class="form-control" required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label text-muted small fw-bold ls-2">HISTORIA</label>
-                        <textarea name="descripcion" class="form-control aesthetic-input" rows="3" placeholder="Escribe aquí lo bonito que fue..." required></textarea>
+                        <label class="form-label fw-bold">Historia</label>
+                        <textarea name="descripcion" class="form-control" rows="3" placeholder="Escribe aquí lo bonito que fue..." required></textarea>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label text-muted small fw-bold ls-2">FOTO O VIDEO</label>
-                        <div class="upload-box-aesthetic">
-                            <i class="bi bi-cloud-arrow-up-fill fs-1 text-danger opacity-50"></i>
-                            <p class="small text-muted mb-0 fw-bold">Toca aquí para subir archivo</p>
-                            <input type="file" name="foto" class="aesthetic-file-input" accept="image/*,video/*">
-                        </div>
+                    <div class="mb-3 border p-2 rounded bg-light">
+                        <label class="form-label text-danger fw-bold d-block mb-2">
+                            <i class="bi bi-camera-fill me-2"></i>Foto o Video
+                        </label>
+                        <input type="file" name="foto" class="form-control" accept="image/*,video/*">
                     </div>
 
-                    <button type="submit" class="btn btn-danger w-100 rounded-pill py-3 fw-bold shadow-sm" style="background: #ff6b81; border: none;">
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill mt-2 shadow">
                         Guardar en el Corazón ❤️
                     </button>
                 </form>
