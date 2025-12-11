@@ -1347,171 +1347,97 @@ body.no-scroll {
     /* Ajuste de posición de la burbuja en móvil */
     .speech-bubble { top: 0px !important; font-size: 0.8rem; }
   }
-
 /* ================================================================= */
-/* --- ESTILOS AESTHETIC COMPLETOS (Modales, Inputs y Alertas) --- */
+/* --- 4. SWEETALERT AESTHETIC CORREGIDO (FIX TOTAL) --- */
 /* ================================================================= */
 
-/* --- 1. CONTENEDORES Y MODALES --- */
-
-/* Ventana Modal Principal */
-.aesthetic-modal {
-    background: #ffffff !important; /* Blanco puro para contraste limpio */
-    border: 3px solid #ffcdd2 !important; /* Borde rosa suave */
-    border-radius: 30px !important;
-    box-shadow: 0 20px 50px rgba(255, 107, 129, 0.15) !important;
-    font-family: 'Poppins', sans-serif;
-    overflow: hidden;
-}
-
-/* Cabecera del modal (Títulos) */
-.aesthetic-header {
-    background: #fff0f3 !important; /* Fondo rosita muy pálido */
-    border-bottom: 2px dashed #ffb7b2 !important;
-    padding: 20px !important;
-    text-align: center;
-}
-
-.aesthetic-header h2, 
-.aesthetic-header h3 {
-    color: #e84393 !important; /* Rosa oscuro legible */
-    margin: 0;
-    font-family: 'Dancing Script', cursive !important;
-    font-size: 2.2rem;
-}
-
-/* --- 2. INPUTS (Cajas de texto normales) --- */
-
-.aesthetic-input {
-    border: 2px solid #ffcdd2 !important;
-    border-radius: 20px !important;
-    background-color: #ffffff !important;
-    color: #5d4037 !important; /* MARRÓN OSCURO: Crucial para leer lo que escribes */
-    font-size: 16px;
-    font-weight: 500;
-    padding: 15px !important;
-    width: 90%;
-    margin: 10px auto;
-    display: block;
-    outline: none;
-    transition: all 0.3s ease;
-}
-
-.aesthetic-input:focus {
-    border-color: #ff6b81 !important;
-    box-shadow: 0 0 10px rgba(255, 107, 129, 0.2) !important;
-}
-
-/* --- 3. ZONA DE SUBIR ARCHIVOS --- */
-
-.upload-box-aesthetic {
-    background-color: #fff5f7 !important;
-    border: 2px dashed #ff8fa3 !important;
-    border-radius: 20px;
-    padding: 30px 20px;
-    text-align: center;
-    color: #d63031 !important; /* Texto rojizo para instrucciones */
-    font-weight: 600;
-    position: relative;
-    transition: all 0.3s;
-    cursor: pointer;
-    margin: 20px 0;
-}
-
-.upload-box-aesthetic:hover {
-    background-color: #ffe0e6 !important;
-    transform: translateY(-2px);
-}
-
-.aesthetic-file-input {
-    position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;
-}
-
-/* --- 4. SWEETALERT (Alertas de Editar/Eliminar/Guardar) --- */
-
-/* El contenedor de la alerta */
+/* --- EL CONTENEDOR PRINCIPAL (Hacerlo más chiquito y tierno) --- */
 div:where(.swal2-popup) {
-    background: #ffffff !important;
-    border: 3px solid #ffcdd2 !important;
-    border-radius: 30px !important;
-    padding: 20px !important;
+    background: #fff0f3 !important; /* Fondo rosita muy pálido */
+    border: 3px solid #ffb7b2 !important;
+    border-radius: 35px !important;
+    padding: 1.5rem !important; /* Menos relleno para que no se vea gigante */
+    width: auto !important;     /* Que se ajuste al contenido */
+    max-width: 420px !important; /* Tope de ancho para que no se estire feo */
+    box-shadow: 0 15px 40px rgba(255, 107, 129, 0.25) !important;
 }
 
-/* Título de la alerta */
+/* --- TÍTULO --- */
 div:where(.swal2-title) {
-    color: #ff6b81 !important;
-    font-family: 'Dancing Script', cursive !important;
-    font-size: 2.5em !important;
+    color: #e84393 !important;
+    font-family: 'Dancing Script', cursive !important; /* Asegúrate de importar esta fuente */
+    font-size: 2rem !important;
+    margin-bottom: 0.5em !important;
+    text-shadow: 2px 2px 0px #fff;
 }
 
-/* Texto del cuerpo de la alerta */
-div:where(.swal2-html-container) {
-    color: #636e72 !important;
+/* --- EL INPUT (CORRECCIÓN DE TEXTO INVISIBLE + ICONO DE LÁPIZ) --- */
+div:where(.swal2-input) {
+    color: #5d4037 !important; /* MARRÓN: Texto visible garantizado */
+    background-color: #ffffff !important;
+    border: 2px dashed #ff8fa3 !important; /* Borde punteado aesthetic */
+    border-radius: 20px !important;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05) !important;
     font-size: 1.1em !important;
+    margin: 1em auto !important;
+    height: 3em !important; 
+    padding: 0 15px 0 45px !important; /* Padding izquierdo extra para el icono */
+    
+    /* TRUCO: Agregamos un lápiz con SVG en el fondo */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff8fa3'%3E%3Cpath d='M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 12px center; /* Icono a la izquierda */
+    background-size: 20px;
 }
 
-/* --- EL ARREGLO DEL INPUT EN LAS ALERTAS --- */
-/* Aquí es donde se arregla que no se veían las letras */
-div:where(.swal2-input), 
-div:where(.swal2-textarea) {
-    color: #5d4037 !important; /* Color oscuro obligatorio */
-    background: #fffbf0 !important; /* Fondo crema suave */
-    border: 2px solid #ffb7b2 !important;
-    border-radius: 15px !important;
-    box-shadow: none !important;
-    font-size: 1.2em !important;
-    margin: 1.5em auto !important;
-    height: auto !important; /* Ajuste de altura */
-    padding: 10px 15px !important;
+div:where(.swal2-input):focus {
+    border-color: #ff4757 !important;
+    border-style: solid !important; /* Cambia a sólido al escribir */
+    background-color: #fff !important;
+    box-shadow: 0 0 15px rgba(255, 107, 129, 0.2) !important;
+    outline: none !important;
 }
 
-div:where(.swal2-input):focus,
-div:where(.swal2-textarea):focus {
-    border-color: #ff6b81 !important;
-    background: #ffffff !important;
-    box-shadow: 0 0 10px rgba(255, 107, 129, 0.3) !important;
+/* --- BOTONES (Más pequeños y juntos) --- */
+div:where(.swal2-actions) {
+    margin-top: 1.2em !important;
+    gap: 15px !important; /* Espacio entre botones */
 }
 
-/* --- 5. BOTONES DE LAS ALERTAS (Adiós al morado y gris) --- */
-
-/* Botón CONFIRMAR / GUARDAR */
+/* Botón GUARDAR / SI */
 div:where(.swal2-confirm) {
-    background-color: #ff6b81 !important; /* Rosa principal */
+    background: linear-gradient(45deg, #ff9a9e 0%, #ff6b81 100%) !important;
     color: white !important;
     border-radius: 50px !important;
     border: none !important;
-    box-shadow: 0 4px 15px rgba(255, 107, 129, 0.4) !important;
-    padding: 12px 35px !important;
-    font-size: 1rem !important;
-    font-weight: bold !important;
-    outline: none !important; 
-}
-/* Efecto hover */
-div:where(.swal2-confirm):hover {
-    background-color: #ff4757 !important; /* Un poco más oscuro */
-    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(255, 107, 129, 0.4) !important;
+    padding: 10px 30px !important;
+    font-size: 0.95rem !important;
+    font-family: 'Poppins', sans-serif !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 /* Botón CANCELAR */
 div:where(.swal2-cancel) {
-    background-color: #ffffff !important; /* Blanco */
-    color: #ff6b81 !important; /* Letras rosas */
-    border: 2px solid #ff6b81 !important; /* Borde rosa */
+    background-color: transparent !important;
+    color: #ff6b81 !important;
+    border: 2px solid #ff6b81 !important;
     border-radius: 50px !important;
-    padding: 12px 35px !important;
-    font-size: 1rem !important;
-    font-weight: bold !important;
-    margin-left: 15px !important; /* Separación */
-    outline: none !important;
+    padding: 8px 25px !important;
+    font-size: 0.95rem !important;
+    font-family: 'Poppins', sans-serif !important;
 }
 
 div:where(.swal2-cancel):hover {
-    background-color: #fff0f3 !important;
+    background-color: #ffebef !important;
 }
 
-/* Quitar el borde azul feo de enfoque en botones */
-div:where(.swal2-styled):focus {
-    box-shadow: none !important;
+/* --- ICONO DE ALERTA (El signo de exclamación gigante) --- */
+/* Lo hacemos más sutil y rosita */
+div:where(.swal2-icon).swal2-warning {
+    border-color: #ffcdd2 !important;
+    color: #ff6b81 !important;
 }
 
 </style>
