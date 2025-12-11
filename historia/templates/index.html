@@ -1088,31 +1088,39 @@ body.no-scroll {
   }
 
   /* --- BURBUJA DE DIÁLOGO (Pochita habla) --- */
-  .speech-bubble {
+.speech-bubble {
     position: absolute;
-    top: -40px; /* Empieza un poco arriba */
+    top: -45px; /* La subí un poquito más para que no tape las orejas */
     left: 50%;
-    transform: translateX(-50%) scale(0); /* Empieza invisible (escala 0) */
+    transform: translateX(-50%) scale(0); /* Empieza invisible */
     
     background: #fff;
     border: 2px solid #ff9a9e; /* Borde rosa */
     border-radius: 20px;
-    padding: 8px 15px;
+    padding: 10px 18px; /* Más espacio interno */
     
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.85rem; /* Un pelín más chico para que quepa más texto */
     color: #ff6b81;
-    font-weight: bold;
-    white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
+    font-weight: 700;
+    
+    /* --- AQUÍ ESTÁ LA CORRECCIÓN DE TEXTO --- */
+    white-space: pre-wrap;  /* Respeta espacios y permite saltos de línea */
+    word-wrap: break-word;  /* Si una palabra es muy larga, la baja */
+    line-height: 1.3;       /* Espacio entre líneas para que se lea bien */
+    text-align: center;     /* Texto centrado */
+    
+    /* CONTROL DE TAMAÑO */
+    width: max-content;     /* Intenta ajustarse al texto... */
+    max-width: 260px;       /* ...pero si es muy largo, tope máximo (perfecto para cel) */
     
     box-shadow: 0 5px 15px rgba(255, 107, 129, 0.2);
-    z-index: 100; /* Encima de todo */
-    opacity: 0; /* Invisible por defecto */
+    z-index: 100; 
+    opacity: 0; 
     
-    /* Transición suave con efecto rebote al aparecer */
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    pointer-events: none; /* Para que no estorbe los clicks */
-  }
+    pointer-events: none;
+}
   
   /* Clase que activa la burbuja (se agrega con JS) */
   .speech-bubble.show {
@@ -1348,7 +1356,7 @@ body.no-scroll {
 
 <script>
   /* =========================================
-     POCHITA 3.0 - VERSIÓN EMOCIONAL & PROTECTORA
+     POCHITA 4.0 - VERSIÓN SIN ERRORES DE TEXTO
      ========================================= */
 
   const ASSETS = {
@@ -1370,11 +1378,13 @@ body.no-scroll {
       }
   };
 
-  // Variables de Control
+  // --- VARIABLES GLOBALES DE CONTROL ---
   let petState = { hambre: 50, felicidad: 50, energia: 50, higiene: 50 };
-  let isBusy = false;       
-  let speechTimeout = null; 
-  let typingTimeout = null; // Anti-bug de texto
+  let isBusy = false;
+  
+  // ESTAS DOS SON LA CLAVE PARA QUE NO SE PEGUE EL TEXTO
+  let timerEscribir = null; 
+  let timerBorrar = null;
 
   // --- BASE DE DATOS EMOCIONAL ---
   const DIALOGOS = {
@@ -1383,20 +1393,19 @@ body.no-scroll {
           tarde: ["¿Cómo va tu tarde mami? 🌤️", "Papi pregunta si ya comiste 🧡", "Te extrañamos mucho mami 🥺"],
           noche: ["Ya deja de pensar tanto y a mimir... 🌙", "Descansa mami, Papi cuida tus sueños 🛡️", "Sueña con Papi y conmigo ✨"]
       },
-      // NUEVA CATEGORÍA: APOYO EMOCIONAL (Para la ansiedad y sobrepensar)
       apoyo: [
-          "Mami, respira profundo... todo saldrá bien 🌸",
+          "Mami respira profundo... todo saldrá bien 🌸",
           "No pienses tanto las cosas, Papi te ama ❤️",
-          "Tu cabecita necesita descanso, mami ✨",
+          "Tu cabecita necesita descanso mami ✨",
           "Mami no te preocupes, Papi te cuida siempre 🛡️",
           "Eres muy valiente mami, Papi está orgulloso 💪",
           "Todo se va a arreglar, confía en Papi 🌟",
-          "Mami, eres lo más importante para Papi 🧡",
+          "Mami eres lo más importante para Papi 🧡",
           "¡Ánimo mami! Papi y yo estamos contigo 🦁",
           "Deja de darle vueltas, todo estará bien ✨"
       ],
       limpieza: [
-          "¡Uff, qué frescura! 🚿", 
+          "¡Uff qué frescura! 🚿", 
           "¡Ahora huelo rico para Papi! 🌹", 
           "¡Gracias mami, me siento nueva! ✨", 
           "¡Quedé rechinando de limpio! 🫧"
@@ -1421,7 +1430,7 @@ body.no-scroll {
       amor_random: [ 
           "Papi te ama muchísimo, me lo dijo hoy ❤️",
           "¡Eres la niña de los ojos de Papi! 🌎",
-          "Papi siempre te va a cuidar, mami 🛡️",
+          "Papi siempre te va a cuidar mami 🛡️",
           "¿Sabías que Papi se muere por ti? ✨",
           "Oye... Papi y yo te adoramos 🧡"
       ],
@@ -1433,76 +1442,94 @@ body.no-scroll {
       }
   };
 
+  // --- FUNCIÓN DE LIMPIEZA ABSOLUTA (EL BOTÓN DE PÁNICO) ---
+  function callar() {
+      // Detiene cualquier escritura en proceso
+      if (timerEscribir) clearTimeout(timerEscribir);
+      // Detiene el temporizador que borra la burbuja
+      if (timerBorrar) clearTimeout(timerBorrar);
+      
+      timerEscribir = null;
+      timerBorrar = null;
+      
+      // Limpia el texto visualmente al instante
+      UI.bubble.innerText = "";
+      UI.bubble.classList.remove('show');
+  }
+
+  // --- SISTEMA DE HABLA CORREGIDO ---
+  function hablar(texto, animacionUrl = null) {
+      // 1. PRIMERO NOS CALLAMOS (Para evitar letras encimadas)
+      callar();
+      
+      // 2. Preparamos animación y burbuja
+      if(animacionUrl) triggerAnim(animacionUrl);
+      
+      // Pequeño delay para asegurar que el DOM se limpió
+      setTimeout(() => {
+          const burbuja = UI.bubble;
+          burbuja.classList.add('show');
+          
+          let i = 0;
+          // Velocidad más lenta para que se vea elegante y se respeten espacios
+          const velocidad = 45; 
+
+          function escribir() {
+              if (i < texto.length) {
+                  // Agregamos letra por letra, respetando espacios
+                  burbuja.innerText += texto.charAt(i);
+                  i++;
+                  timerEscribir = setTimeout(escribir, velocidad);
+              }
+          }
+          escribir(); // Iniciar escritura
+
+          // 3. CALCULAR TIEMPO DE LECTURA
+          // (Letras * velocidad) + 3 segundos extra para leer bien
+          const tiempoLectura = (texto.length * velocidad) + 3000;
+
+          timerBorrar = setTimeout(() => {
+              burbuja.classList.remove('show');
+              if(animacionUrl !== ASSETS.sleep) triggerAnim(ASSETS.normal);
+          }, tiempoLectura);
+          
+      }, 50); // Fin del pequeño delay inicial
+  }
+
   // --- CEREBRO INTELIGENTE ---
   function pensar() {
       if (isBusy) return; 
 
-      // 1. Prioridad: Necesidades básicas
+      // Prioridad a necesidades
       if (petState.hambre < 30) return hablar(elegir(DIALOGOS.quejas.hambre), ASSETS.sad);
       if (petState.higiene < 30) return hablar(elegir(DIALOGOS.quejas.sucio), ASSETS.sad);
       if (petState.energia < 20) return hablar(elegir(DIALOGOS.quejas.cansado), ASSETS.sleep);
       if (petState.felicidad < 30) return hablar(elegir(DIALOGOS.quejas.triste), ASSETS.sad);
 
-      // 2. Lógica Emocional
+      // Decisión aleatoria
       const hora = new Date().getHours();
       const dado = Math.random();
 
-      // 30% Saludos según hora
       if(dado < 0.3) { 
           if (hora >= 6 && hora < 12) hablar(elegir(DIALOGOS.saludo.dia));
           else if (hora >= 12 && hora < 20) hablar(elegir(DIALOGOS.saludo.tarde));
           else hablar(elegir(DIALOGOS.saludo.noche));
       } 
-      // 40% Apoyo emocional (Para que no sobrepiense)
       else if (dado >= 0.3 && dado < 0.7) {
            hablar(elegir(DIALOGOS.apoyo));
       }
-      // 30% Amor de Papi random
       else {
           hablar(elegir(DIALOGOS.amor_random));
       }
-  }
-
-  // --- SISTEMA DE HABLA ROBUSTO (NO SE MEZCLA TEXTO) ---
-  function hablar(texto, animacionUrl = null) {
-      // 1. LIMPIEZA TOTAL
-      if (typingTimeout) clearTimeout(typingTimeout);
-      if (speechTimeout) clearTimeout(speechTimeout);
-      
-      // 2. Animación
-      if(animacionUrl) triggerAnim(animacionUrl);
-      
-      const burbuja = UI.bubble;
-      burbuja.innerText = ""; 
-      burbuja.classList.add('show');
-      
-      // 3. EFECTO TYPEWRITER
-      let i = 0;
-      const velocidad = 40; 
-
-      function typeWriter() {
-          if (i < texto.length) {
-              burbuja.innerText += texto.charAt(i);
-              i++;
-              typingTimeout = setTimeout(typeWriter, velocidad);
-          }
-      }
-      typeWriter(); 
-
-      // 4. TIEMPO DE LECTURA (Más tiempo para mensajes largos de apoyo)
-      const tiempoLectura = (texto.length * velocidad) + 3000;
-
-      speechTimeout = setTimeout(() => {
-          burbuja.classList.remove('show');
-          if(animacionUrl !== ASSETS.sleep) triggerAnim(ASSETS.normal);
-      }, tiempoLectura);
   }
 
   // --- INTERACCIÓN ---
   async function interactuar(accion) {
       if(accion === 'higiene' || accion === 'banar' || accion === 'bañar') accion = 'limpieza';
 
+      // DETENER PENSAMIENTO AUTOMÁTICO AL TOCAR UN BOTÓN
       isBusy = true; 
+      callar(); // Limpiamos cualquier cosa que estuviera diciendo
 
       crearParticulas(accion);
       
@@ -1521,6 +1548,7 @@ body.no-scroll {
       
       hablar(frase, anim);
 
+      // Guardar en servidor
       try {
           const res = await fetch('/api/mascota/', {
               method: 'POST',
@@ -1530,6 +1558,7 @@ body.no-scroll {
           if (res.ok) actualizarUI(await res.json());
       } catch (e) { console.error(e); }
       
+      // Desbloquear después de 4 segundos
       setTimeout(() => isBusy = false, 4000);
   }
 
@@ -1585,7 +1614,8 @@ body.no-scroll {
 
   // --- INICIALIZACIÓN ---
   document.addEventListener('DOMContentLoaded', () => {
-      // Saludo inicial emocional
+      // Saludo inicial limpio
+      callar();
       const h = new Date().getHours();
       let saludo = "¡Hola mami Xim! ❤️";
       if(h < 12) saludo = "¡Buenos días mami! Papi te ama ☀️";
@@ -1594,7 +1624,9 @@ body.no-scroll {
       hablar(saludo);
 
       setInterval(() => fetch('/api/mascota/').then(r=>r.json()).then(actualizarUI), 5000);
-      setInterval(pensar, 10000); 
+      
+      // Pensar cada 12 segundos
+      setInterval(pensar, 12000); 
   });
 </script>
 
