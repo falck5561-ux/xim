@@ -1407,7 +1407,7 @@ body.no-scroll {
   // --- INTERACCIÓN ---
   async function interactuar(accion) {
       // 1. CORRECCIÓN AUTOMÁTICA DE BOTONES VIEJOS
-      if(accion === 'higiene' || accion === 'banar') accion = 'limpieza';
+      if(accion === 'higiene' || accion === 'banar' || accion === 'bañar') accion = 'limpieza';
 
       isBusy = true; // Bloquea quejas mientras interactúas
 
