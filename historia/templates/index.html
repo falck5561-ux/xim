@@ -701,18 +701,21 @@ body.no-scroll {
     }
 
     /* 3. LA X (CERRAR) - REGRESA A LA IZQUIERDA (Estilo PC) */
+    /* 3. LA X (CERRAR) - AJUSTE FINO PARA QUE NO TOQUE LAS LÍNEAS */
     .book-close-btn {
         position: absolute !important;
-        top: 20px !important;       /* Arriba */
-        left: 20px !important;      /* A la IZQUIERDA */
-        right: auto !important;     /* Quitamos la derecha */
+        
+        /* AQUÍ ESTÁ EL CAMBIO: */
+        top: 12px !important;       /* Lo subimos (antes era 20px) */
+        left: 15px !important;      /* Lo pegamos un poco más a la orilla (antes 20px) */
+        
+        right: auto !important;
         
         width: 35px !important;
         height: 35px !important;
         
-        /* Estilo sutil y bonito como en PC */
         background-color: rgba(255, 107, 129, 0.1) !important; 
-        border: none !important;     /* Sin borde tosco */
+        border: none !important;
         border-radius: 50%;
         color: #ff6b81 !important;
         font-size: 1rem !important;
