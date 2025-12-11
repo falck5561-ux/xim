@@ -1348,21 +1348,25 @@ body.no-scroll {
     .speech-bubble { top: 0px !important; font-size: 0.8rem; }
   }
 
-/* --- ESTILOS AESTHETIC MEJORADOS (Legibilidad y Armonía) --- */
+/* ================================================================= */
+/* --- ESTILOS AESTHETIC COMPLETOS (Modales, Inputs y Alertas) --- */
+/* ================================================================= */
 
-/* 1. La Caja del Modal (Fondo blanco para contraste) */
+/* --- 1. CONTENEDORES Y MODALES --- */
+
+/* Ventana Modal Principal */
 .aesthetic-modal {
-    background: #ffffff !important; /* Blanco puro para que se lea todo */
-    border: 4px solid #ffcdd2 !important; /* Borde rosita suave */
+    background: #ffffff !important; /* Blanco puro para contraste limpio */
+    border: 3px solid #ffcdd2 !important; /* Borde rosa suave */
     border-radius: 30px !important;
-    box-shadow: 0 25px 50px rgba(168, 69, 69, 0.25) !important; /* Sombra suave rojiza */
-    font-family: 'Poppins', sans-serif; /* O la fuente que uses para texto */
+    box-shadow: 0 20px 50px rgba(255, 107, 129, 0.15) !important;
+    font-family: 'Poppins', sans-serif;
     overflow: hidden;
 }
 
-/* 2. Cabecera (Títulos) */
+/* Cabecera del modal (Títulos) */
 .aesthetic-header {
-    background: #fff0f3 !important; /* Un rosa muy, muy pálido de fondo */
+    background: #fff0f3 !important; /* Fondo rosita muy pálido */
     border-bottom: 2px dashed #ffb7b2 !important;
     padding: 20px !important;
     text-align: center;
@@ -1370,48 +1374,43 @@ body.no-scroll {
 
 .aesthetic-header h2, 
 .aesthetic-header h3 {
-    color: #e84393 !important; /* Rosa oscuro para que se lea bien */
+    color: #e84393 !important; /* Rosa oscuro legible */
     margin: 0;
-    font-family: 'Dancing Script', cursive !important; /* Tu fuente cursiva */
-    font-size: 2rem;
+    font-family: 'Dancing Script', cursive !important;
+    font-size: 2.2rem;
 }
 
-/* 3. Inputs (Cajas de texto) */
+/* --- 2. INPUTS (Cajas de texto normales) --- */
+
 .aesthetic-input {
-    border: 2px solid #f8c2c2 !important; /* Rosa pastel */
+    border: 2px solid #ffcdd2 !important;
     border-radius: 20px !important;
-    background-color: #fff !important;
-    color: #4a4a4a !important; /* Gris oscuro: CRUCIAL para legibilidad */
+    background-color: #ffffff !important;
+    color: #5d4037 !important; /* MARRÓN OSCURO: Crucial para leer lo que escribes */
     font-size: 16px;
     font-weight: 500;
     padding: 15px !important;
-    width: 90%; /* Para que no pegue a los bordes */
+    width: 90%;
     margin: 10px auto;
     display: block;
     outline: none;
     transition: all 0.3s ease;
 }
 
-/* Placeholder (el texto de ayuda dentro del input) */
-.aesthetic-input::placeholder {
-    color: #bcaaa4 !important; /* Marrón clarito suave */
-}
-
-/* Cuando haces clic en el input */
 .aesthetic-input:focus {
-    border-color: #ff6b81 !important; /* Se pone rosa fuerte */
-    box-shadow: 0 0 15px rgba(255, 107, 129, 0.2) !important;
-    transform: scale(1.02); /* Efecto pop pequeño */
+    border-color: #ff6b81 !important;
+    box-shadow: 0 0 10px rgba(255, 107, 129, 0.2) !important;
 }
 
-/* 4. Zona de subir archivos */
+/* --- 3. ZONA DE SUBIR ARCHIVOS --- */
+
 .upload-box-aesthetic {
-    background-color: #fff5f7 !important; /* Rosa casi blanco */
+    background-color: #fff5f7 !important;
     border: 2px dashed #ff8fa3 !important;
     border-radius: 20px;
     padding: 30px 20px;
     text-align: center;
-    color: #d63031 !important; /* Texto rojo oscuro para instrucciones */
+    color: #d63031 !important; /* Texto rojizo para instrucciones */
     font-weight: 600;
     position: relative;
     transition: all 0.3s;
@@ -1428,41 +1427,91 @@ body.no-scroll {
     position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;
 }
 
-/* 5. Alertas SweetAlert (Las notificaciones) */
+/* --- 4. SWEETALERT (Alertas de Editar/Eliminar/Guardar) --- */
+
+/* El contenedor de la alerta */
 div:where(.swal2-popup) {
     background: #ffffff !important;
-    border-radius: 30px !important;
     border: 3px solid #ffcdd2 !important;
+    border-radius: 30px !important;
+    padding: 20px !important;
 }
 
 /* Título de la alerta */
 div:where(.swal2-title) {
-    color: #e84393 !important;
+    color: #ff6b81 !important;
     font-family: 'Dancing Script', cursive !important;
-    font-size: 2.2em !important;
+    font-size: 2.5em !important;
 }
 
-/* Texto del contenido de la alerta */
+/* Texto del cuerpo de la alerta */
 div:where(.swal2-html-container) {
-    color: #636e72 !important; /* Gris para leer bien */
+    color: #636e72 !important;
     font-size: 1.1em !important;
 }
 
-/* 6. Botones de confirmación (SweetAlert y Modales) */
-div:where(.swal2-confirm), .aesthetic-btn {
-    background-color: #ff6b81 !important; /* El color de los botones de tu web */
-    color: #ffffff !important; /* Texto blanco sobre fondo oscuro */
-    border-radius: 50px !important; /* Redondos como pastillas */
-    border: none !important;
-    box-shadow: 0 4px 15px rgba(255, 107, 129, 0.4) !important;
-    font-weight: bold;
-    padding: 12px 30px !important;
-    transition: transform 0.2s;
+/* --- EL ARREGLO DEL INPUT EN LAS ALERTAS --- */
+/* Aquí es donde se arregla que no se veían las letras */
+div:where(.swal2-input), 
+div:where(.swal2-textarea) {
+    color: #5d4037 !important; /* Color oscuro obligatorio */
+    background: #fffbf0 !important; /* Fondo crema suave */
+    border: 2px solid #ffb7b2 !important;
+    border-radius: 15px !important;
+    box-shadow: none !important;
+    font-size: 1.2em !important;
+    margin: 1.5em auto !important;
+    height: auto !important; /* Ajuste de altura */
+    padding: 10px 15px !important;
 }
 
-div:where(.swal2-confirm):hover, .aesthetic-btn:hover {
+div:where(.swal2-input):focus,
+div:where(.swal2-textarea):focus {
+    border-color: #ff6b81 !important;
+    background: #ffffff !important;
+    box-shadow: 0 0 10px rgba(255, 107, 129, 0.3) !important;
+}
+
+/* --- 5. BOTONES DE LAS ALERTAS (Adiós al morado y gris) --- */
+
+/* Botón CONFIRMAR / GUARDAR */
+div:where(.swal2-confirm) {
+    background-color: #ff6b81 !important; /* Rosa principal */
+    color: white !important;
+    border-radius: 50px !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(255, 107, 129, 0.4) !important;
+    padding: 12px 35px !important;
+    font-size: 1rem !important;
+    font-weight: bold !important;
+    outline: none !important; 
+}
+/* Efecto hover */
+div:where(.swal2-confirm):hover {
+    background-color: #ff4757 !important; /* Un poco más oscuro */
     transform: scale(1.05);
-    background-color: #ff4757 !important;
+}
+
+/* Botón CANCELAR */
+div:where(.swal2-cancel) {
+    background-color: #ffffff !important; /* Blanco */
+    color: #ff6b81 !important; /* Letras rosas */
+    border: 2px solid #ff6b81 !important; /* Borde rosa */
+    border-radius: 50px !important;
+    padding: 12px 35px !important;
+    font-size: 1rem !important;
+    font-weight: bold !important;
+    margin-left: 15px !important; /* Separación */
+    outline: none !important;
+}
+
+div:where(.swal2-cancel):hover {
+    background-color: #fff0f3 !important;
+}
+
+/* Quitar el borde azul feo de enfoque en botones */
+div:where(.swal2-styled):focus {
+    box-shadow: none !important;
 }
 
 </style>
