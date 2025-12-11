@@ -2458,62 +2458,74 @@ document.getElementById('bookModal').addEventListener('hide.bs.modal', stopAutoB
     }
 
     function evaluarResultado() {
-        const modalBody = document.querySelector('#triviaModal .modal-body');
+    const modalBody = document.querySelector('#triviaModal .modal-body');
+    
+    // Ocultar preguntas
+    document.getElementById('question-container').style.display = 'none';
+
+    if (score >= 9) {
+        // --- GANÓ (9 o 10 aciertos) ---
+        document.getElementById('win-container').style.display = 'block';
         
-        // Ocultar preguntas
-        document.getElementById('question-container').style.display = 'none';
+        // Actualizar texto de victoria
+        const title = document.querySelector('#win-container h2');
+        const text = document.querySelector('#win-container p');
+        title.innerText = `¡Calificación: ${score}/10! 🌟`;
+        text.innerText = "Eres la mejor novia del mundo. ¡Te ganaste esto!";
+        
+        lanzarConfetiSuave();
 
-        if (score >= 9) {
-            // --- GANÓ (9 o 10 aciertos) ---
-            document.getElementById('win-container').style.display = 'block';
-            
-            // Actualizar texto de victoria
-            const title = document.querySelector('#win-container h2');
-            const text = document.querySelector('#win-container p');
-            title.innerText = `¡Calificación: ${score}/10! 🌟`;
-            text.innerText = "Eres la mejor novia del mundo. ¡Te ganaste esto!";
-            
-            lanzarConfetiSuave();
+    } else {
+        // --- PERDIÓ (Menos de 9) ---
+        // Crear contenedor de error temporalmente
+        const errorDiv = document.createElement('div');
+        errorDiv.id = 'error-msg-container';
+        errorDiv.innerHTML = `
+            <h2 class="romantic-font text-danger display-1 mb-3">😱</h2>
+            <h3 class="fw-bold text-dark">Calificación: ${score}/10</h3>
+            <p class="text-muted mb-4">Mmm... te falta estudiar más sobre nosotros. <br>Necesitas mínimo 9 para el regalo.</p>
+            <button id="retryBtn" class="btn btn-secondary rounded-pill px-4" disabled>
+                Inténtalo de nuevo en 5s
+            </button>
+        `;
+        modalBody.appendChild(errorDiv);
 
-        } else {
-            // --- PERDIÓ (Menos de 9) ---
-            // Crear contenedor de error temporalmente
-            const errorDiv = document.createElement('div');
-            errorDiv.id = 'error-msg-container';
-            errorDiv.innerHTML = `
-                <h2 class="romantic-font text-danger display-1 mb-3">😱</h2>
-                <h3 class="fw-bold text-dark">Calificación: ${score}/10</h3>
-                <p class="text-muted mb-4">Mmm... te falta estudiar más sobre nosotros. <br>Necesitas mínimo 9 para el regalo.</p>
-                <button id="retryBtn" class="btn btn-secondary rounded-pill px-4" disabled>
-                    Inténtalo de nuevo en 10s
-                </button>
-            `;
-            modalBody.appendChild(errorDiv);
-
-            // LÓGICA DEL BLOQUEO DE 10 SEGUNDOS
-            let timeLeft = 10;
-            const btn = document.getElementById('retryBtn');
+        // LÓGICA DEL BLOQUEO (Bajé el tiempo a 5s para probar más rápido, cámbialo a 10 si prefieres)
+        let timeLeft = 5; 
+        const btn = document.getElementById('retryBtn');
+        
+        const timer = setInterval(() => {
+            timeLeft--;
+            btn.innerText = `Inténtalo de nuevo en ${timeLeft}s`;
             
-            const timer = setInterval(() => {
-                timeLeft--;
-                btn.innerText = `Inténtalo de nuevo en ${timeLeft}s`;
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                btn.innerText = "🔄 Intentar de Nuevo";
+                btn.classList.remove('btn-secondary');
+                btn.classList.add('btn-danger');
+                btn.disabled = false;
                 
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    btn.innerText = "🔄 Intentar de Nuevo";
-                    btn.classList.remove('btn-secondary');
-                    btn.classList.add('btn-danger');
-                    btn.disabled = false;
+                // --- AQUÍ ESTÁ EL CAMBIO IMPORTANTE ---
+                btn.onclick = () => {
+                    // 1. Quitamos el mensaje de error
+                    errorDiv.remove();
                     
-                    // Al hacer click, reinicia el juego
-                    btn.onclick = () => {
-                        errorDiv.remove();
-                        iniciarJuego();
-                    };
-                }
-            }, 1000);
-        }
+                    // 2. Reiniciamos variables SIN llamar a iniciarJuego()
+                    score = 0;
+                    qIdx = 0;
+                    
+                    // 3. Restauramos la vista del juego manualmente
+                    document.getElementById('question-container').style.display = 'block';
+                    document.getElementById('win-container').style.display = 'none';
+                    document.getElementById('prizes-container').style.display = 'none';
+                    
+                    // 4. Mostramos la primera pregunta
+                    showQ();
+                };
+            }
+        }, 1000);
     }
+}
 
     function abrirRegaloFinal() {
         // Duración de la lluvia de corazones
