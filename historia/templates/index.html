@@ -1348,7 +1348,7 @@ body.no-scroll {
 
 <script>
   /* =========================================
-     POCHITA ULTIMATE - VERSIÓN FINAL INTELIGENTE
+     POCHITA 3.0 - VERSIÓN EMOCIONAL & PROTECTORA
      ========================================= */
 
   const ASSETS = {
@@ -1370,99 +1370,115 @@ body.no-scroll {
       }
   };
 
-  // Estado local y variables de control
+  // Variables de Control
   let petState = { hambre: 50, felicidad: 50, energia: 50, higiene: 50 };
-  let isBusy = false;       // Para no interrumpir acciones
-  let speechTimeout = null; // Para borrar la burbuja
-  let typingTimeout = null; // Para detener la escritura (FIX)
+  let isBusy = false;       
+  let speechTimeout = null; 
+  let typingTimeout = null; // Anti-bug de texto
 
-  // --- BASE DE DATOS DE DIÁLOGOS ---
+  // --- BASE DE DATOS EMOCIONAL ---
   const DIALOGOS = {
       saludo: {
-          dia: ["¡Buenos días mami Xim! ☀️", "¡A brillar hoy preciosa! ✨", "Despierta dormilona ❤️"],
-          tarde: ["¿Cómo va tu tarde amor? 🌤️", "Ya te extrañaba mami 🧡", "¡Qué calor hace! 🥵"],
-          noche: ["Ya casi a mimir... 🌙", "Buenas noches mami Ximena 💤", "Sueña con papi y conmigo ✨"]
+          dia: ["¡Buenos días mami! Papi te manda besos ☀️", "¡A brillar hoy mi niña! ✨", "Despierta bonita, Papi te piensa ❤️"],
+          tarde: ["¿Cómo va tu tarde mami? 🌤️", "Papi pregunta si ya comiste 🧡", "Te extrañamos mucho mami 🥺"],
+          noche: ["Ya deja de pensar tanto y a mimir... 🌙", "Descansa mami, Papi cuida tus sueños 🛡️", "Sueña con Papi y conmigo ✨"]
       },
+      // NUEVA CATEGORÍA: APOYO EMOCIONAL (Para la ansiedad y sobrepensar)
+      apoyo: [
+          "Mami, respira profundo... todo saldrá bien 🌸",
+          "No pienses tanto las cosas, Papi te ama ❤️",
+          "Tu cabecita necesita descanso, mami ✨",
+          "Mami no te preocupes, Papi te cuida siempre 🛡️",
+          "Eres muy valiente mami, Papi está orgulloso 💪",
+          "Todo se va a arreglar, confía en Papi 🌟",
+          "Mami, eres lo más importante para Papi 🧡",
+          "¡Ánimo mami! Papi y yo estamos contigo 🦁",
+          "Deja de darle vueltas, todo estará bien ✨"
+      ],
       limpieza: [
           "¡Uff, qué frescura! 🚿", 
-          "¡Ahora huelo a rosas para ti! 🌹", 
-          "¡Gracias mami, estaba pegajoso! ✨", 
+          "¡Ahora huelo rico para Papi! 🌹", 
+          "¡Gracias mami, me siento nueva! ✨", 
           "¡Quedé rechinando de limpio! 🫧"
       ],
       comer: [
-          "¡Ñam ñam! Estaba delicioso 🥕", 
+          "¡Ñam ñam! Provechito mami 🥕", 
           "¡Barriga llena, corazón contento! ❤️", 
           "¡Gracias por cuidarme mami! 😋",
-          "¡Eres la mejor chef Ximena! 🍔"
+          "¡Tú también come rico mami! 🍔"
       ],
       jugar: [
-          "¡Jijiji qué cosquillas! 🎮", 
-          "¡Eres súper divertida mami! 💖", 
-          "¡Vamos a correr! 🏃💨",
-          "¡Me encanta pasar tiempo contigo! ✨"
+          "¡Jijiji qué divertido! 🎮", 
+          "¡Me encanta verte sonreír mami! 💖", 
+          "¡Papi dice que te ves hermosa riendo! ✨",
+          "¡Vamos a jugar un ratito! 🏃💨"
       ],
       dormir: [
           "Hasta mañana mami... 😴", 
-          "Zzz... soñaré contigo... 💤", 
-          "Apaga la luz porfis... 🌙"
+          "Zzz... soñaré con Papi... 💤", 
+          "Apaga la luz y descansa tu mente... 🌙"
       ],
       amor_random: [ 
-          "Josue te ama mucho, me lo dijo hoy ❤️",
-          "¡Eres la niña más bonita del mundo! 🌎",
-          "Me gusta cuando sonríes 😁",
-          "¿Sabías que eres increíble? ✨",
-          "Oye... te quiero mucho 🧡"
+          "Papi te ama muchísimo, me lo dijo hoy ❤️",
+          "¡Eres la niña de los ojos de Papi! 🌎",
+          "Papi siempre te va a cuidar, mami 🛡️",
+          "¿Sabías que Papi se muere por ti? ✨",
+          "Oye... Papi y yo te adoramos 🧡"
       ],
       quejas: {
           hambre: ["Mami... mi pancita ruge 🥕", "Tengo mucha hambrita 🥺"],
-          sucio: ["Iugh, huelo a quesito... báñame 🧀", "Me siento sucio mami 🤢"],
-          triste: ["Abrázame, estoy triste... 💔", "Juega conmigo un ratito 🥺"],
+          sucio: ["Iugh, huelo feíto... báñame 🧀", "Me siento sucio mami 🤢"],
+          triste: ["Abrázame mami, me siento solita... 💔", "Juega conmigo un ratito 🥺"],
           cansado: ["Se me cierran los ojitos... 😴", "Necesito una siesta mami 💤"]
       }
   };
 
-  // --- CEREBRO: PIENSA Y DECIDE QUÉ DECIR ---
+  // --- CEREBRO INTELIGENTE ---
   function pensar() {
-      if (isBusy) return; // Si estamos jugando, no interrumpe
+      if (isBusy) return; 
 
-      // 1. Prioridad: Quejas vitales (Si algo está mal, se queja)
+      // 1. Prioridad: Necesidades básicas
       if (petState.hambre < 30) return hablar(elegir(DIALOGOS.quejas.hambre), ASSETS.sad);
       if (petState.higiene < 30) return hablar(elegir(DIALOGOS.quejas.sucio), ASSETS.sad);
       if (petState.energia < 20) return hablar(elegir(DIALOGOS.quejas.cansado), ASSETS.sleep);
       if (petState.felicidad < 30) return hablar(elegir(DIALOGOS.quejas.triste), ASSETS.sad);
 
-      // 2. Si todo está bien, decide aleatoriamente
+      // 2. Lógica Emocional
       const hora = new Date().getHours();
       const dado = Math.random();
 
-      // 30% de probabilidad de saludar según la hora
+      // 30% Saludos según hora
       if(dado < 0.3) { 
           if (hora >= 6 && hora < 12) hablar(elegir(DIALOGOS.saludo.dia));
           else if (hora >= 12 && hora < 20) hablar(elegir(DIALOGOS.saludo.tarde));
           else hablar(elegir(DIALOGOS.saludo.noche));
       } 
-      // 30% de probabilidad de decir algo lindo random
-      else if (dado > 0.7) {
+      // 40% Apoyo emocional (Para que no sobrepiense)
+      else if (dado >= 0.3 && dado < 0.7) {
+           hablar(elegir(DIALOGOS.apoyo));
+      }
+      // 30% Amor de Papi random
+      else {
           hablar(elegir(DIALOGOS.amor_random));
       }
   }
 
   // --- SISTEMA DE HABLA ROBUSTO (NO SE MEZCLA TEXTO) ---
   function hablar(texto, animacionUrl = null) {
-      // 1. LIMPIEZA TOTAL: Detenemos cualquier escritura o borrado pendiente
+      // 1. LIMPIEZA TOTAL
       if (typingTimeout) clearTimeout(typingTimeout);
       if (speechTimeout) clearTimeout(speechTimeout);
       
-      // 2. Configurar animación si cambia
+      // 2. Animación
       if(animacionUrl) triggerAnim(animacionUrl);
       
       const burbuja = UI.bubble;
-      burbuja.innerText = ""; // Borramos texto visualmente
+      burbuja.innerText = ""; 
       burbuja.classList.add('show');
       
-      // 3. EFECTO MÁQUINA DE ESCRIBIR (Letra por letra)
+      // 3. EFECTO TYPEWRITER
       let i = 0;
-      const velocidad = 40; // Milisegundos por letra
+      const velocidad = 40; 
 
       function typeWriter() {
           if (i < texto.length) {
@@ -1471,37 +1487,33 @@ body.no-scroll {
               typingTimeout = setTimeout(typeWriter, velocidad);
           }
       }
-      typeWriter(); // ¡Acción!
+      typeWriter(); 
 
-      // 4. TIEMPO INTELIGENTE DE LECTURA
-      // (Largo del texto * velocidad) + 2.5 segundos extra para leer con calma
-      const tiempoLectura = (texto.length * velocidad) + 2500;
+      // 4. TIEMPO DE LECTURA (Más tiempo para mensajes largos de apoyo)
+      const tiempoLectura = (texto.length * velocidad) + 3000;
 
       speechTimeout = setTimeout(() => {
           burbuja.classList.remove('show');
-          // Si no está durmiendo, regresa a la animación normal
           if(animacionUrl !== ASSETS.sleep) triggerAnim(ASSETS.normal);
       }, tiempoLectura);
   }
 
-  // --- INTERACCIÓN CON BOTONES ---
+  // --- INTERACCIÓN ---
   async function interactuar(accion) {
-      // Corrección para nombres viejos de botones
       if(accion === 'higiene' || accion === 'banar' || accion === 'bañar') accion = 'limpieza';
 
-      isBusy = true; // Bloqueamos el cerebro automático
+      isBusy = true; 
 
-      // 1. Efectos visuales inmediatos
       crearParticulas(accion);
       
-      // 2. Feedback instantáneo en las barras (Ilusión de velocidad)
+      // Feedback visual rápido
       if(accion === 'limpieza') actualizarBarra('barHigiene', 100); 
       if(accion === 'comer') actualizarBarra('barHambre', Math.min(100, petState.hambre + 25));
       if(accion === 'jugar') actualizarBarra('barFelicidad', Math.min(100, petState.felicidad + 20));
       if(accion === 'dormir') actualizarBarra('barEnergia', 100);
 
-      // 3. Elegir frase y animación
-      const frase = elegir(DIALOGOS[accion] || ["¡Te quiero!"]);
+      // Elegir frase
+      const frase = elegir(DIALOGOS[accion] || ["¡Te quiero mami!"]);
       let anim = ASSETS.normal;
       
       if(accion === 'dormir') anim = ASSETS.sleep;
@@ -1509,7 +1521,6 @@ body.no-scroll {
       
       hablar(frase, anim);
 
-      // 4. Enviar datos reales al servidor (en segundo plano)
       try {
           const res = await fetch('/api/mascota/', {
               method: 'POST',
@@ -1517,13 +1528,12 @@ body.no-scroll {
               body: JSON.stringify({ accion: accion })
           });
           if (res.ok) actualizarUI(await res.json());
-      } catch (e) { console.error("Error guardando:", e); }
+      } catch (e) { console.error(e); }
       
-      // 5. Desbloquear después de unos segundos
       setTimeout(() => isBusy = false, 4000);
   }
 
-  // --- HERRAMIENTAS VISUALES ---
+  // --- UTILIDADES ---
   function elegir(array) {
       return array[Math.floor(Math.random() * array.length)];
   }
@@ -1539,19 +1549,17 @@ body.no-scroll {
           let s = document.createElement('span');
           s.innerText = icono;
           s.className = 'floating-emoji';
-          // Posición aleatoria cerca del centro
           s.style.left = (Math.random() * 60 + 20) + '%';
           s.style.top = (Math.random() * 40 + 30) + '%';
           s.style.fontSize = (Math.random() * 1.5 + 1) + 'rem'; 
           s.style.animationDelay = (i * 0.1) + 's';
           UI.zone.appendChild(s);
-          setTimeout(() => s.remove(), 2500); // Se borran solas
+          setTimeout(() => s.remove(), 2500);
       }
   }
 
-  // --- ACTUALIZAR INTERFAZ DESDE SERVIDOR ---
   function actualizarUI(data) {
-      petState = data; // Guardamos estado real
+      petState = data;
       if(data.nombre) document.getElementById('petNameDisplay').innerText = data.nombre + " 🧡";
       
       actualizarBarra('barHambre', data.hambre);
@@ -1565,10 +1573,9 @@ body.no-scroll {
       const txt = document.getElementById('val' + id.replace('bar',''));
       if(el) {
           el.style.width = val + "%";
-          // Semáforo de colores
-          if(val < 30) el.style.backgroundColor = '#ff4d4d'; // Rojo
-          else if(val < 60) el.style.backgroundColor = '#ffca28'; // Amarillo
-          else el.style.backgroundColor = '#66bb6a'; // Verde
+          if(val < 30) el.style.backgroundColor = '#ff4d4d'; 
+          else if(val < 60) el.style.backgroundColor = '#ffca28'; 
+          else el.style.backgroundColor = '#66bb6a'; 
       }
       if(txt) txt.innerText = Math.round(val) + "%";
   }
@@ -1578,19 +1585,16 @@ body.no-scroll {
 
   // --- INICIALIZACIÓN ---
   document.addEventListener('DOMContentLoaded', () => {
-      // Saludo inicial al cargar página
+      // Saludo inicial emocional
       const h = new Date().getHours();
-      let saludo = "¡Hola Ximena! ❤️";
-      if(h < 12) saludo = "¡Buenos días amor! ☀️";
-      else if(h > 20) saludo = "¡Buenas noches linda! 🌙";
+      let saludo = "¡Hola mami Xim! ❤️";
+      if(h < 12) saludo = "¡Buenos días mami! Papi te ama ☀️";
+      else if(h > 20) saludo = "¡Buenas noches mami! Descansa tu mente 🌙";
       
       hablar(saludo);
 
-      // Sincronizar datos cada 5s
       setInterval(() => fetch('/api/mascota/').then(r=>r.json()).then(actualizarUI), 5000);
-      
-      // Cerebro pensando cada 12s
-      setInterval(pensar, 12000); 
+      setInterval(pensar, 10000); 
   });
 </script>
 
