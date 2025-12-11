@@ -400,42 +400,41 @@ body {
     margin-top: auto; /* Empuja los controles al final */
 }
 
-/* --- BOTONES DEL LIBRO (NUEVO ESTILO GRANDE) --- */
+/* --- BOTONES DEL LIBRO (ESTILO GENERAL PC Y MÓVIL - CORREGIDO) --- */
 .book-btn {
-    background-color: white; /* Fondo blanco */
-    border: 2px solid #fab1a0; /* Borde más visible */
+    background-color: white;
+    border: 2px solid #fab1a0;
     color: #fab1a0;
     
-    /* ESTOS SON LOS TAMAÑOS PARA PC */
-    padding: 10px 30px; 
-    font-size: 1.2rem; /* Íconos grandes */
+    /* TAMAÑO NORMAL ESTÉTICO PARA PC */
+    padding: 8px 20px;  /* Menos relleno que antes */
+    font-size: 1rem;    /* Tamaño de letra normal */
     
     border-radius: 50px;
     font-family: 'Montserrat', sans-serif;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Sombra más sutil */
     
-    /* Centrado perfecto */
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 5px; /* Espacio entre icono y texto */
 }
 
 .book-btn:hover {
     background-color: #fab1a0;
     color: white;
-    transform: translateY(-3px); /* Efecto de elevación */
-    box-shadow: 0 8px 15px rgba(250, 177, 160, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(250, 177, 160, 0.4);
 }
 
-/* Ajuste especial para el botón central */
-/* Ajuste para el botón central en PC */
+/* Ajuste específico para que el botón de en medio no se vea raro */
 #btnAutoBook {
-    font-size: 1rem; /* Texto legible */
-    padding: 10px 25px;
-    border-width: 2px; /* Que combine con los otros */
+    padding: 8px 20px; /* Mismo padding que los demás */
+    font-size: 1rem;
 }
+
 /* --- 5. BOTONES FLOTANTES GEMELOS (Música y Agregar) --- */
         
         /* Estilos compartidos para que sean IDÉNTICOS */
@@ -681,61 +680,73 @@ body.no-scroll {
     background: #ff4757; /* Se pone un poco más oscuro */
 }
 
-/* --- CORRECCIÓN PARA EL LIBRO EN CELULAR (CENTRADO PERFECTO) --- */
+/* --- CORRECCIÓN PARA EL LIBRO EN CELULAR (FINAL) --- */
 @media (max-width: 768px) {
     .book-modal-content {
-        padding: 0 !important; /* Quita padding extra del modal */
-        align-items: center;   /* Centra verticalmente */
+        padding: 0 !important;
+        align-items: center;
     }
 
-    /* 1. Arreglar el contenedor del libro */
     .book-wrapper {
-        width: 95% !important; /* Que no ocupe todo el ancho */
-        min-height: 480px !important;
-        margin: 0 auto !important; /* ESTO LO CENTRA HORIZONTALMENTE */
-        padding: 15px 10px !important;
-        
-        /* Ajuste de sombras para móvil */
+        width: 92% !important;
+        min-height: 450px !important;
+        margin: 0 auto !important;
+        padding: 20px 10px !important;
+        /* IMPORTANTE: relative para que la X se posicione respecto a esto */
+        position: relative !important; 
         box-shadow: 
             inset 10px 0 20px rgba(0,0,0,0.1), 
-            inset -2px 0 5px rgba(0,0,0,0.05), 
             0 10px 25px rgba(0,0,0,0.3) !important;
     }
 
-    /* 2. Centrar texto */
     .book-page-content {
         padding: 5px !important;
-        width: 100%;
     }
 
     .reason-text-display {
-        font-size: 2rem !important;
-        min-height: 200px !important; /* Evita saltos bruscos */
+        font-size: 1.8rem !important;
+        min-height: 180px !important;
     }
 
-    /* 3. Botones compactos y INPUT DE PÁGINA */
+    /* --- CONTROLES EN MÓVIL (TAMAÑO NORMAL) --- */
     .book-controls {
-        flex-wrap: wrap; /* Permite que el input baje si es necesario */
+        flex-wrap: wrap;
         gap: 10px;
-        padding-bottom: 10px !important;
+        padding-bottom: 15px !important;
+        justify-content: center !important;
     }
 
     .book-btn {
-        font-size: 0.8rem !important; 
-        padding: 5px 10px !important;
+        /* Tamaño normalito para dedo, no gigante */
+        padding: 8px 15px !important;
+        font-size: 0.95rem !important;
+        width: auto !important; /* Evita que se estiren */
+        flex: initial !important;
+        background-color: white !important; /* Fondo blanco limpio */
     }
 
-    /* Ajustar botón cerrar */
+    /* --- ARREGLO DEFINITIVO DE LA X EN MÓVIL --- */
     .book-close-btn {
-        top: 10px !important;
-        left: 10px !important;
-        width: 30px !important;
-        height: 30px !important;
+        position: absolute !important;
+        /* Lo sacamos hacia arriba y a la derecha del cuaderno */
+        top: -15px !important;  
+        right: -10px !important;
+        left: auto !important;
+        
+        width: 38px !important; /* Tamaño bueno para dedo */
+        height: 38px !important;
+        
+        background-color: white !important;
+        border: 2px solid #ff6b81 !important;
+        color: #ff6b81 !important;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15) !important;
+        z-index: 205 !important;
     }
     
     .bookmark {
         right: 15px !important;
-        height: 60px !important;
+        height: 40px !important;
+        top: -5px !important;
     }
 }
 
@@ -2253,6 +2264,11 @@ function abrirLibro() {
 }
 
 function updateBook() { 
+    // 1. REGLA ESTRICTA: Si regresa al inicio (Página 1), SE BLOQUEA EL TRUCO
+    if (currentPage === 0) {
+        localStorage.removeItem('jx_book_unlocked');
+    }
+
     // A. Guardar progreso actual siempre
     localStorage.setItem('jx_book_page', currentPage);
 
@@ -2275,7 +2291,7 @@ function updateBook() {
         localStorage.setItem('jx_book_unlocked', 'true');
     }
 
-    // Actualizamos números
+    // Actualizamos números visuales
     document.getElementById('displayReasonNum').innerText = currentPage + 1;
     document.getElementById('pageNum').innerText = currentPage + 1;
     
@@ -2293,9 +2309,11 @@ function updateBook() {
 
     // D. LÓGICA DEL INPUT DE SALTO (SECRETO)
     const jumper = document.getElementById('pageJumper');
+    // Verificamos si la llave existe (si se borró arriba, esto será falso)
     const isUnlocked = localStorage.getItem('jx_book_unlocked') === 'true';
 
-    if (isUnlocked && currentPage > 0) {
+    // Si está desbloqueado se muestra, si no, se oculta.
+    if (isUnlocked) {
         jumper.style.display = 'block';
     } else {
         jumper.style.display = 'none';
