@@ -680,81 +680,90 @@ body.no-scroll {
     background: #ff4757; /* Se pone un poco más oscuro */
 }
 
-/* --- CORRECCIÓN FINAL DEFINITIVA PARA CELULAR --- */
+/* --- DISEÑO MÓVIL IDENTICO A PC (CORREGIDO) --- */
 @media (max-width: 768px) {
-    /* 1. Ajuste del Modal para que no se vea recortado */
+    /* 1. Limpieza del modal */
     .book-modal-content {
         padding: 0 !important;
         background: transparent !important;
         border: none !important;
     }
 
-    /* 2. El Cuaderno (Book Wrapper) */
+    /* 2. El Cuaderno */
     .book-wrapper {
-        width: 95% !important; /* Ocupa casi todo el ancho */
+        width: 95% !important;
         min-height: 500px !important;
-        margin: 10px auto !important; /* Centrado */
-        
-        /* Damos MUCHO espacio arriba (padding-top) para que la X quepa ADENTRO */
+        margin: 10px auto !important;
+        /* Espacio arriba para que quepan la X y el separador sin cortarse */
         padding: 60px 20px 20px 20px !important; 
-        
         position: relative !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
-        overflow: hidden; /* Para que nada se salga feo */
+        overflow: hidden; 
     }
 
-    /* 3. LA X (CERRAR) - UBICACIÓN PERFECTA ADENTRO */
+    /* 3. LA X (CERRAR) - REGRESA A LA IZQUIERDA (Estilo PC) */
     .book-close-btn {
         position: absolute !important;
-        top: 15px !important;    /* Adentro del papel, arriba */
-        right: 15px !important;  /* Adentro del papel, derecha */
-        left: auto !important;
+        top: 20px !important;       /* Arriba */
+        left: 20px !important;      /* A la IZQUIERDA */
+        right: auto !important;     /* Quitamos la derecha */
         
-        width: 40px !important;
-        height: 40px !important;
+        width: 35px !important;
+        height: 35px !important;
         
-        background-color: white !important;
-        border: 2px solid #ff6b81 !important;
+        /* Estilo sutil y bonito como en PC */
+        background-color: rgba(255, 107, 129, 0.1) !important; 
+        border: none !important;     /* Sin borde tosco */
         border-radius: 50%;
         color: #ff6b81 !important;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+        font-size: 1rem !important;
+        
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
         z-index: 200 !important;
-        opacity: 1 !important;
     }
 
-    /* 4. BOTONES DE NAVEGACIÓN (SEPARADOS COMO EN PC) */
+    /* 4. EL SEPARADOR ROJO (BOOKMARK) - REGRESA A LA DERECHA */
+    .bookmark {
+        display: flex !important;   /* ¡Lo hacemos visible! */
+        position: absolute !important;
+        top: -15px !important;      /* Colgando desde arriba */
+        right: 30px !important;     /* A la DERECHA */
+        left: auto !important;
+        
+        width: 40px !important;     /* Ajustado para móvil */
+        height: 70px !important;
+        font-size: 1.2rem !important;
+        z-index: 10;
+    }
+
+    /* 5. BOTONES DE NAVEGACIÓN (SEPARADOS) */
     .book-controls {
         display: flex !important;
-        /* AQUÍ ESTÁ LA CLAVE: Space-between los separa a los extremos */
-        justify-content: space-between !important; 
+        justify-content: space-between !important; /* Separados a los extremos */
         align-items: center !important;
         width: 100% !important;
         padding-top: 10px !important;
-        gap: 0 !important; /* Quitamos el gap forzado para que usen todo el espacio */
     }
 
     .book-btn {
-        /* Tamaño cómodo para el dedo */
-        padding: 10px 15px !important;
-        font-size: 1rem !important;
-        flex: 0 0 auto !important; /* No dejar que se encojan */
+        padding: 8px 15px !important;
+        font-size: 0.9rem !important;
+        flex: 0 0 auto !important;
+        background-color: white !important;
+        border: 2px solid #fab1a0 !important;
     }
     
-    /* El botón de en medio (Auto/Pausa) */
     #btnAutoBook {
-        font-size: 0.9rem !important;
+        font-size: 0.85rem !important;
         padding: 8px 12px !important;
     }
 
-    /* Ajuste del texto para que no choque con nada */
+    /* Texto */
     .reason-text-display {
-        font-size: 1.8rem !important;
+        font-size: 1.7rem !important;
         min-height: 200px !important;
         margin-top: 10px !important;
-    }
-    
-    .bookmark {
-        display: none !important; /* Ocultamos el marcador rojo en cel para limpiar la vista */
     }
 }
 
