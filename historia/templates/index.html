@@ -1955,7 +1955,40 @@ body.no-scroll {
         </div>
     </div>
 
-    <div class="modal fade" id="musicManagerModal"></div><div class="modal-dialog modal-dialog-centered"><div class="modal-content bg-dark text-white border-0 shadow-lg" style="border-radius: 20px;"><div class="modal-header border-0"><h5 class="modal-title romantic-font text-danger fs-3">🎧 JX</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="music-upload-zone mb-4" onclick="document.getElementById('songFileInput').click()"><i class="bi bi-cloud-upload fs-1 mb-2"></i><h6 class="mb-1 fw-bold">Subir Nueva Canción</h6><p class="mb-0 small">Toca aquí para elegir un archivo</p><input type="file" id="songFileInput" accept="audio/*" style="display: none;" onchange="subirCancion(this)"></div><h6 class="text-uppercase text-info small ls-2 mb-3 ps-2">Tu Lista de Reproducción</h6><div id="songListContainer" style="max-height: 300px; overflow-y: auto; padding-right: 5px;"><div class="text-center text-muted py-3"><div class="spinner-border text-danger spinner-border-sm" role="status"></div><span class="ms-2">Cargando canciones...</span></div></div><div class="d-flex justify-content-between align-items-center mt-4 border-top border-secondary pt-3"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="shuffleMode" style="cursor: pointer;"><label class="form-check-label small" for="shuffleMode">Modo Aleatorio 🔀</label></div><small class="text-white-50 fst-italic">Mantén presionado el disco para volver aquí.</small></div></div></div></div></div>
+    <div class="modal fade" id="musicManagerModal" tabindex="-1" aria-labelledby="musicManagerLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title romantic-font text-danger fs-3">🎧 JX</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="music-upload-zone mb-4" onclick="document.getElementById('songFileInput').click()">
+                    <i class="bi bi-cloud-upload fs-1 mb-2"></i>
+                    <h6 class="mb-1 fw-bold">Subir Nueva Canción</h6>
+                    <p class="mb-0 small">Toca aquí para elegir un archivo</p>
+                    <input type="file" id="songFileInput" accept="audio/*" style="display: none;" onchange="subirCancion(this)">
+                </div>
+
+                <h6 class="text-uppercase text-info small ls-2 mb-3 ps-2">Tu Lista de Reproducción</h6>
+                <div id="songListContainer" style="max-height: 300px; overflow-y: auto; padding-right: 5px;">
+                    <div class="text-center text-muted py-3">
+                        <div class="spinner-border text-danger spinner-border-sm" role="status"></div>
+                        <span class="ms-2">Cargando canciones...</span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-4 border-top border-secondary pt-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="shuffleMode" style="cursor: pointer;">
+                        <label class="form-check-label small" for="shuffleMode">Modo Aleatorio 🔀</label>
+                    </div>
+                    <small class="text-white-50 fst-italic">Mantén presionado el disco para volver aquí.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
     <div class="modal fade" id="birthdayModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content" style="background-color: transparent; border: none; box-shadow: none;"><div class="modal-body text-center p-0"><div class="birthday-card"><div class="display-1 mb-3">🥳🎉🎁</div><h2 class="rainbow-text mb-4">¡Feliz Cumpleaños Ximena!</h2><p class="lead book-font">Que este día esté lleno de alegría, amor y todo lo que deseas.</p><div class="mt-4"><div id="birthdayDiscPlayer" class="vinyl-record-css" onclick="toggleBirthdayAudio()"><div class="vinyl-label"><i class="bi bi-music-note-beamed"></i></div></div></div><p class="mt-4 mb-2 book-font" style="color: #666;">¡Esta canción es para ti mi niña!</p><small>Toca fuera de la tarjeta para cerrar.</small></div></div></div></div></div>
     <div class="modal fade" id="momentModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg">
