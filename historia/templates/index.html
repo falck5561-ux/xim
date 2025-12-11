@@ -680,73 +680,81 @@ body.no-scroll {
     background: #ff4757; /* Se pone un poco más oscuro */
 }
 
-/* --- CORRECCIÓN PARA EL LIBRO EN CELULAR (FINAL) --- */
+/* --- CORRECCIÓN FINAL DEFINITIVA PARA CELULAR --- */
 @media (max-width: 768px) {
+    /* 1. Ajuste del Modal para que no se vea recortado */
     .book-modal-content {
         padding: 0 !important;
-        align-items: center;
+        background: transparent !important;
+        border: none !important;
     }
 
+    /* 2. El Cuaderno (Book Wrapper) */
     .book-wrapper {
-        width: 92% !important;
-        min-height: 450px !important;
-        margin: 0 auto !important;
-        padding: 20px 10px !important;
-        /* IMPORTANTE: relative para que la X se posicione respecto a esto */
-        position: relative !important; 
-        box-shadow: 
-            inset 10px 0 20px rgba(0,0,0,0.1), 
-            0 10px 25px rgba(0,0,0,0.3) !important;
+        width: 95% !important; /* Ocupa casi todo el ancho */
+        min-height: 500px !important;
+        margin: 10px auto !important; /* Centrado */
+        
+        /* Damos MUCHO espacio arriba (padding-top) para que la X quepa ADENTRO */
+        padding: 60px 20px 20px 20px !important; 
+        
+        position: relative !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+        overflow: hidden; /* Para que nada se salga feo */
     }
 
-    .book-page-content {
-        padding: 5px !important;
-    }
-
-    .reason-text-display {
-        font-size: 1.8rem !important;
-        min-height: 180px !important;
-    }
-
-    /* --- CONTROLES EN MÓVIL (TAMAÑO NORMAL) --- */
-    .book-controls {
-        flex-wrap: wrap;
-        gap: 10px;
-        padding-bottom: 15px !important;
-        justify-content: center !important;
-    }
-
-    .book-btn {
-        /* Tamaño normalito para dedo, no gigante */
-        padding: 8px 15px !important;
-        font-size: 0.95rem !important;
-        width: auto !important; /* Evita que se estiren */
-        flex: initial !important;
-        background-color: white !important; /* Fondo blanco limpio */
-    }
-
-    /* --- ARREGLO DEFINITIVO DE LA X EN MÓVIL --- */
+    /* 3. LA X (CERRAR) - UBICACIÓN PERFECTA ADENTRO */
     .book-close-btn {
         position: absolute !important;
-        /* Lo sacamos hacia arriba y a la derecha del cuaderno */
-        top: -15px !important;  
-        right: -10px !important;
+        top: 15px !important;    /* Adentro del papel, arriba */
+        right: 15px !important;  /* Adentro del papel, derecha */
         left: auto !important;
         
-        width: 38px !important; /* Tamaño bueno para dedo */
-        height: 38px !important;
+        width: 40px !important;
+        height: 40px !important;
         
         background-color: white !important;
         border: 2px solid #ff6b81 !important;
+        border-radius: 50%;
         color: #ff6b81 !important;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.15) !important;
-        z-index: 205 !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+        z-index: 200 !important;
+        opacity: 1 !important;
+    }
+
+    /* 4. BOTONES DE NAVEGACIÓN (SEPARADOS COMO EN PC) */
+    .book-controls {
+        display: flex !important;
+        /* AQUÍ ESTÁ LA CLAVE: Space-between los separa a los extremos */
+        justify-content: space-between !important; 
+        align-items: center !important;
+        width: 100% !important;
+        padding-top: 10px !important;
+        gap: 0 !important; /* Quitamos el gap forzado para que usen todo el espacio */
+    }
+
+    .book-btn {
+        /* Tamaño cómodo para el dedo */
+        padding: 10px 15px !important;
+        font-size: 1rem !important;
+        flex: 0 0 auto !important; /* No dejar que se encojan */
+    }
+    
+    /* El botón de en medio (Auto/Pausa) */
+    #btnAutoBook {
+        font-size: 0.9rem !important;
+        padding: 8px 12px !important;
+    }
+
+    /* Ajuste del texto para que no choque con nada */
+    .reason-text-display {
+        font-size: 1.8rem !important;
+        min-height: 200px !important;
+        margin-top: 10px !important;
     }
     
     .bookmark {
-        right: 15px !important;
-        height: 40px !important;
-        top: -5px !important;
+        display: none !important; /* Ocultamos el marcador rojo en cel para limpiar la vista */
     }
 }
 
