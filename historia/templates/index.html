@@ -400,22 +400,41 @@ body {
     margin-top: auto; /* Empuja los controles al final */
 }
 
+/* --- BOTONES DEL LIBRO (NUEVO ESTILO GRANDE) --- */
 .book-btn {
-    background: none;
-    border: 1px solid #fab1a0;
+    background-color: white; /* Fondo blanco */
+    border: 2px solid #fab1a0; /* Borde más visible */
     color: #fab1a0;
-    padding: 5px 15px;
-    border-radius: 20px;
+    
+    /* ESTOS SON LOS TAMAÑOS PARA PC */
+    padding: 10px 30px; 
+    font-size: 1.2rem; /* Íconos grandes */
+    
+    border-radius: 50px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.85rem; /* Texto un poco más pequeño */
-    transition: all 0.3s;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    
+    /* Centrado perfecto */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
-.book-btn:hover { background: #fab1a0; color: white; }
+
+.book-btn:hover {
+    background-color: #fab1a0;
+    color: white;
+    transform: translateY(-3px); /* Efecto de elevación */
+    box-shadow: 0 8px 15px rgba(250, 177, 160, 0.4);
+}
 
 /* Ajuste especial para el botón central */
+/* Ajuste para el botón central en PC */
 #btnAutoBook {
-    font-size: 0.8rem;
-    padding: 5px 15px;
+    font-size: 1rem; /* Texto legible */
+    padding: 10px 25px;
+    border-width: 2px; /* Que combine con los otros */
 }
 /* --- 5. BOTONES FLOTANTES GEMELOS (Música y Agregar) --- */
         
@@ -476,15 +495,15 @@ body {
 /* --- BOTÓN DE CERRAR LIBRO BONITO --- */
 .book-close-btn {
     position: absolute;
-    top: 24px;
-    left: 24px;
+    top: 24px;       /* <--- Fíjate que el viejo dice 24px */
+    left: 24px;      /* <--- Y está a la izquierda */
     right: auto;
     width: 35px;
     height: 35px;
-    background-color: rgba(255, 107, 129, 0.1); /* Fondo suavecito */
+    background-color: rgba(255, 107, 129, 0.1); 
     border: none;
     border-radius: 50%;
-    color: #ff6b81; /* Color de la X */
+    color: #ff6b81; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -495,9 +514,9 @@ body {
 }
 
 .book-close-btn:hover {
-    background-color: #ff6b81; /* Se pone rojo al pasar el mouse */
+    background-color: #ff6b81; 
     color: white;
-    transform: rotate(90deg) scale(1.1); /* Gira un poco */
+    transform: rotate(90deg) scale(1.1); 
     box-shadow: 0 4px 10px rgba(255, 107, 129, 0.3);
 }
 
@@ -2241,8 +2260,17 @@ function updateBook() {
     if(currentPage < baseReasons.length) {
         content = baseReasons[currentPage];
     } else {
-        // Última página especial
-        content = "Una razón para dejarte...<br><br><button class='btn btn-danger mt-2' onclick='verRazonFinalLibro()'>Ver Razón 💔</button>";
+        // --- AQUÍ ESTÁ EL CAMBIO DEL BOTÓN LINDO ---
+        content = `
+            <div style="display:flex; flex-direction:column; align-items:center;">
+                <span>Una razón para dejarte...</span>
+                <br>
+                <button class='btn-final-aesthetic' onclick='verRazonFinalLibro()'>
+                    Ver Razón 💔
+                </button>
+            </div>
+        `;
+        
         // B. SI LLEGA AL FINAL, DESBLOQUEAR EL SALTO PARA SIEMPRE
         localStorage.setItem('jx_book_unlocked', 'true');
     }
@@ -2267,12 +2295,10 @@ function updateBook() {
     const jumper = document.getElementById('pageJumper');
     const isUnlocked = localStorage.getItem('jx_book_unlocked') === 'true';
 
-    // Mostrar SOLO si está desbloqueado Y no estamos en la página 1 (índice 0)
     if (isUnlocked && currentPage > 0) {
         jumper.style.display = 'block';
     } else {
         jumper.style.display = 'none';
-        // Limpiar el input para que no se vea feo al volver a aparecer
         document.getElementById('jumpInput').value = ''; 
     }
 }
