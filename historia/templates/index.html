@@ -1348,7 +1348,7 @@ body.no-scroll {
 
 <script>
   /* =========================================
-     POCHITA 2.0 - CEREBRO INTELIGENTE & ROBUSTO
+     POCHITA ULTIMATE - VERSIÓN FINAL INTELIGENTE
      ========================================= */
 
   const ASSETS = {
@@ -1370,23 +1370,24 @@ body.no-scroll {
       }
   };
 
+  // Estado local y variables de control
   let petState = { hambre: 50, felicidad: 50, energia: 50, higiene: 50 };
-  let isBusy = false;
-  let speechTimeout = null; // Para controlar el tiempo de lectura
+  let isBusy = false;       // Para no interrumpir acciones
+  let speechTimeout = null; // Para borrar la burbuja
+  let typingTimeout = null; // Para detener la escritura (FIX)
 
-  // --- BASE DE DATOS DE FRASES INTELIGENTES ---
+  // --- BASE DE DATOS DE DIÁLOGOS ---
   const DIALOGOS = {
       saludo: {
           dia: ["¡Buenos días mami Xim! ☀️", "¡A brillar hoy preciosa! ✨", "Despierta dormilona ❤️"],
           tarde: ["¿Cómo va tu tarde amor? 🌤️", "Ya te extrañaba mami 🧡", "¡Qué calor hace! 🥵"],
-          noche: ["Ya casi a mimir... 🌙", "Buenas noches mami Ximena 💤", "Sueña con Josue y conmigo ✨"]
+          noche: ["Ya casi a mimir... 🌙", "Buenas noches mami Ximena 💤", "Sueña con papi y conmigo ✨"]
       },
       limpieza: [
           "¡Uff, qué frescura! 🚿", 
           "¡Ahora huelo a rosas para ti! 🌹", 
           "¡Gracias mami, estaba pegajoso! ✨", 
-          "¡Quedé rechinando de limpio! 🫧",
-          "¡Agüita rica! 🛁"
+          "¡Quedé rechinando de limpio! 🫧"
       ],
       comer: [
           "¡Ñam ñam! Estaba delicioso 🥕", 
@@ -1405,7 +1406,7 @@ body.no-scroll {
           "Zzz... soñaré contigo... 💤", 
           "Apaga la luz porfis... 🌙"
       ],
-      amor_random: [ // Frases que dice de la nada
+      amor_random: [ 
           "Josue te ama mucho, me lo dijo hoy ❤️",
           "¡Eres la niña más bonita del mundo! 🌎",
           "Me gusta cuando sonríes 😁",
@@ -1420,90 +1421,95 @@ body.no-scroll {
       }
   };
 
-  // --- CEREBRO INTELIGENTE ---
+  // --- CEREBRO: PIENSA Y DECIDE QUÉ DECIR ---
   function pensar() {
-      if (isBusy) return; 
+      if (isBusy) return; // Si estamos jugando, no interrumpe
 
-      // 1. Prioridad: Quejas vitales (Si algo está muy bajo)
+      // 1. Prioridad: Quejas vitales (Si algo está mal, se queja)
       if (petState.hambre < 30) return hablar(elegir(DIALOGOS.quejas.hambre), ASSETS.sad);
       if (petState.higiene < 30) return hablar(elegir(DIALOGOS.quejas.sucio), ASSETS.sad);
       if (petState.energia < 20) return hablar(elegir(DIALOGOS.quejas.cansado), ASSETS.sleep);
       if (petState.felicidad < 30) return hablar(elegir(DIALOGOS.quejas.triste), ASSETS.sad);
 
-      // 2. Si todo está bien, interactúa según la hora o dice algo de amor
+      // 2. Si todo está bien, decide aleatoriamente
       const hora = new Date().getHours();
-      const probabilidad = Math.random();
+      const dado = Math.random();
 
-      if(probabilidad < 0.4) { // 40% de probabilidad de hablar espontáneamente
+      // 30% de probabilidad de saludar según la hora
+      if(dado < 0.3) { 
           if (hora >= 6 && hora < 12) hablar(elegir(DIALOGOS.saludo.dia));
           else if (hora >= 12 && hora < 20) hablar(elegir(DIALOGOS.saludo.tarde));
           else hablar(elegir(DIALOGOS.saludo.noche));
-      } else if (probabilidad > 0.7) {
+      } 
+      // 30% de probabilidad de decir algo lindo random
+      else if (dado > 0.7) {
           hablar(elegir(DIALOGOS.amor_random));
       }
   }
 
-  // --- SISTEMA DE HABLA CON EFECTO DE ESCRITURA ---
+  // --- SISTEMA DE HABLA ROBUSTO (NO SE MEZCLA TEXTO) ---
   function hablar(texto, animacionUrl = null) {
-      // Si hay animación específica, la cambiamos
+      // 1. LIMPIEZA TOTAL: Detenemos cualquier escritura o borrado pendiente
+      if (typingTimeout) clearTimeout(typingTimeout);
+      if (speechTimeout) clearTimeout(speechTimeout);
+      
+      // 2. Configurar animación si cambia
       if(animacionUrl) triggerAnim(animacionUrl);
       
       const burbuja = UI.bubble;
-      burbuja.innerText = ""; // Limpiamos texto anterior
+      burbuja.innerText = ""; // Borramos texto visualmente
       burbuja.classList.add('show');
       
-      // Efecto "Typewriter" (Escribe letra por letra)
+      // 3. EFECTO MÁQUINA DE ESCRIBIR (Letra por letra)
       let i = 0;
-      const velocidadEscritura = 30; // ms por letra
+      const velocidad = 40; // Milisegundos por letra
 
       function typeWriter() {
           if (i < texto.length) {
-              burbuja.innerHTML += texto.charAt(i);
+              burbuja.innerText += texto.charAt(i);
               i++;
-              setTimeout(typeWriter, velocidadEscritura);
+              typingTimeout = setTimeout(typeWriter, velocidad);
           }
       }
-      typeWriter();
+      typeWriter(); // ¡Acción!
 
-      // CÁLCULO INTELIGENTE DE TIEMPO DE LECTURA
-      // Base de 2 segundos + 60ms por cada letra.
-      // Ejemplo: "Hola" dura poco, un párrafo dura mucho.
-      const tiempoLectura = 2500 + (texto.length * 70);
+      // 4. TIEMPO INTELIGENTE DE LECTURA
+      // (Largo del texto * velocidad) + 2.5 segundos extra para leer con calma
+      const tiempoLectura = (texto.length * velocidad) + 2500;
 
-      // Limpiamos timeout anterior si existía para que no se corte
-      if(speechTimeout) clearTimeout(speechTimeout);
-      
       speechTimeout = setTimeout(() => {
           burbuja.classList.remove('show');
-          // Regresa a animación normal si no está durmiendo
+          // Si no está durmiendo, regresa a la animación normal
           if(animacionUrl !== ASSETS.sleep) triggerAnim(ASSETS.normal);
       }, tiempoLectura);
   }
 
-  // --- INTERACCIÓN DEL USUARIO ---
+  // --- INTERACCIÓN CON BOTONES ---
   async function interactuar(accion) {
+      // Corrección para nombres viejos de botones
       if(accion === 'higiene' || accion === 'banar' || accion === 'bañar') accion = 'limpieza';
 
-      isBusy = true; 
+      isBusy = true; // Bloqueamos el cerebro automático
 
-      // Efectos visuales inmediatos
+      // 1. Efectos visuales inmediatos
       crearParticulas(accion);
       
-      // Feedback inmediato en barras (Ilusión de velocidad)
+      // 2. Feedback instantáneo en las barras (Ilusión de velocidad)
       if(accion === 'limpieza') actualizarBarra('barHigiene', 100); 
       if(accion === 'comer') actualizarBarra('barHambre', Math.min(100, petState.hambre + 25));
       if(accion === 'jugar') actualizarBarra('barFelicidad', Math.min(100, petState.felicidad + 20));
       if(accion === 'dormir') actualizarBarra('barEnergia', 100);
 
-      // Elegir frase y animación
+      // 3. Elegir frase y animación
       const frase = elegir(DIALOGOS[accion] || ["¡Te quiero!"]);
       let anim = ASSETS.normal;
+      
       if(accion === 'dormir') anim = ASSETS.sleep;
-      if(accion === 'limpieza') anim = ASSETS.bath;
+      else if(accion === 'limpieza') anim = ASSETS.bath;
       
       hablar(frase, anim);
 
-      // Enviar al servidor (sin detener la UI)
+      // 4. Enviar datos reales al servidor (en segundo plano)
       try {
           const res = await fetch('/api/mascota/', {
               method: 'POST',
@@ -1511,13 +1517,13 @@ body.no-scroll {
               body: JSON.stringify({ accion: accion })
           });
           if (res.ok) actualizarUI(await res.json());
-      } catch (e) { console.error(e); }
+      } catch (e) { console.error("Error guardando:", e); }
       
-      // Desbloquear estado después de un rato
+      // 5. Desbloquear después de unos segundos
       setTimeout(() => isBusy = false, 4000);
   }
 
-  // --- UTILIDADES ---
+  // --- HERRAMIENTAS VISUALES ---
   function elegir(array) {
       return array[Math.floor(Math.random() * array.length)];
   }
@@ -1529,21 +1535,23 @@ body.no-scroll {
       if(tipo === 'dormir') icono = '💤';
       if(tipo === 'limpieza') icono = '🫧'; 
 
-      for(let i=0; i<8; i++) { // Más partículas
+      for(let i=0; i<8; i++) { 
           let s = document.createElement('span');
           s.innerText = icono;
           s.className = 'floating-emoji';
-          s.style.left = (Math.random() * 80 + 10) + '%';
-          s.style.top = '50%';
-          s.style.fontSize = (Math.random() * 1.5 + 1) + 'rem'; // Tamaños variados
+          // Posición aleatoria cerca del centro
+          s.style.left = (Math.random() * 60 + 20) + '%';
+          s.style.top = (Math.random() * 40 + 30) + '%';
+          s.style.fontSize = (Math.random() * 1.5 + 1) + 'rem'; 
           s.style.animationDelay = (i * 0.1) + 's';
           UI.zone.appendChild(s);
-          setTimeout(() => s.remove(), 2500);
+          setTimeout(() => s.remove(), 2500); // Se borran solas
       }
   }
 
+  // --- ACTUALIZAR INTERFAZ DESDE SERVIDOR ---
   function actualizarUI(data) {
-      petState = data;
+      petState = data; // Guardamos estado real
       if(data.nombre) document.getElementById('petNameDisplay').innerText = data.nombre + " 🧡";
       
       actualizarBarra('barHambre', data.hambre);
@@ -1557,9 +1565,10 @@ body.no-scroll {
       const txt = document.getElementById('val' + id.replace('bar',''));
       if(el) {
           el.style.width = val + "%";
-          if(val < 30) el.style.backgroundColor = '#ff4d4d'; 
-          else if(val < 60) el.style.backgroundColor = '#ffca28'; 
-          else el.style.backgroundColor = '#66bb6a'; 
+          // Semáforo de colores
+          if(val < 30) el.style.backgroundColor = '#ff4d4d'; // Rojo
+          else if(val < 60) el.style.backgroundColor = '#ffca28'; // Amarillo
+          else el.style.backgroundColor = '#66bb6a'; // Verde
       }
       if(txt) txt.innerText = Math.round(val) + "%";
   }
@@ -1567,21 +1576,21 @@ body.no-scroll {
   function triggerAnim(url) { if(UI.player.src !== url) UI.player.src = url; }
   function getCookie(name) { let m = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)')); return m ? m[2] : null; }
 
-  // --- INICIO ---
+  // --- INICIALIZACIÓN ---
   document.addEventListener('DOMContentLoaded', () => {
-      // Saludo inicial inteligente según la hora
-      const hora = new Date().getHours();
-      let saludoInicial = "¡Hola Ximena! ❤️";
-      if(hora < 12) saludoInicial = "¡Buenos días amor! ☀️";
-      else if(hora > 20) saludoInicial = "¡Buenas noches linda! 🌙";
+      // Saludo inicial al cargar página
+      const h = new Date().getHours();
+      let saludo = "¡Hola Ximena! ❤️";
+      if(h < 12) saludo = "¡Buenos días amor! ☀️";
+      else if(h > 20) saludo = "¡Buenas noches linda! 🌙";
       
-      hablar(saludoInicial);
+      hablar(saludo);
 
-      // Loop de sincronización
+      // Sincronizar datos cada 5s
       setInterval(() => fetch('/api/mascota/').then(r=>r.json()).then(actualizarUI), 5000);
       
-      // Loop de pensamiento (Cada 10 segundos decide si dice algo)
-      setInterval(pensar, 10000); 
+      // Cerebro pensando cada 12s
+      setInterval(pensar, 12000); 
   });
 </script>
 
