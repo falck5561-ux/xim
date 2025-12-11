@@ -1031,15 +1031,17 @@ body.no-scroll {
 .polaroid-caption {
     text-align: center;
     font-family: 'Dancing Script', cursive;
-    font-size: 1.1rem; /* Texto ajustado para móvil */
+    
+    /* CAMBIO: Un pelín más pequeño en móvil para que quepa mejor */
+    font-size: 1rem; 
     color: #2d3436;
-    line-height: 1.1;
+    line-height: 1.2;
     padding-bottom: 5px;
     
-    /* Romper palabras largas obligatoriamente */
-    word-wrap: break-word;      
-    overflow-wrap: break-word;  
-    hyphens: auto;
+    /* CAMBIO: Esto obliga a "BESITOSSSSS" a partirse si no cabe */
+    word-break: break-all; 
+    overflow-wrap: anywhere; 
+    
     width: 100%;
 }
 
