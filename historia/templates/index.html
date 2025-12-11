@@ -1358,25 +1358,28 @@ div:where(.swal2-popup) {
     box-shadow: 0 15px 40px rgba(255, 107, 129, 0.25) !important;
 }
 
-/* --- TÍTULO --- */
+/* --- TÍTULO ("Renombrar", "¿Borrar?") --- */
 div:where(.swal2-title) {
-    color: #dc3545 !important; /* letra */
+    /* AQUÍ ESTÁ EL CAMBIO: Color rojo fuerte */
+    color: #c0392b !important; 
     font-family: 'Dancing Script', cursive !important;
     font-size: 2rem !important;
     margin-bottom: 0.5em !important;
-    text-shadow: 2px 2px 0px #fff;
+    /* Reduje un poco la sombra blanca para que la letra roja se lea más nítida */
+    text-shadow: 1px 1px 0px #fff; 
 }
 
-/* --- TEXTO DEL MENSAJE (Cuerpo del modal) --- */
+/* --- TEXTO DEL MENSAJE ("No se podrá recuperar") --- */
 div:where(.swal2-html-container) {
-    color: #dc3545 !important; /* letra */
+    /* AQUÍ ESTÁ EL CAMBIO: Color rojo fuerte */
+    color: #c0392b !important; 
     font-size: 1.1rem !important;
     font-weight: 600 !important;
 }
 
-/* --- EL INPUT (Campo de escritura) --- */
+/* --- EL INPUT (Donde escribes el nombre) --- */
 div:where(.swal2-input) {
-    color: #5d4037 !important; /* letra (lo que escribes) */
+    color: #5d4037 !important; 
     background-color: #ffffff !important;
     border: 2px dashed #ff8fa3 !important;
     border-radius: 20px !important;
@@ -1409,7 +1412,7 @@ div:where(.swal2-actions) {
 /* Botón GUARDAR / SI */
 div:where(.swal2-confirm) {
     background: linear-gradient(45deg, #ff9a9e 0%, #ff6b81 100%) !important;
-    color: #dc3545  !important; /* letra (del botón) */
+    color: white !important; 
     border-radius: 50px !important;
     border: none !important;
     box-shadow: 0 5px 15px rgba(255, 107, 129, 0.4) !important;
@@ -1423,7 +1426,7 @@ div:where(.swal2-confirm) {
 /* Botón CANCELAR */
 div:where(.swal2-cancel) {
     background-color: transparent !important;
-    color: #ff6b81 !important; /* letra (del botón cancelar) */
+    color: #ff6b81 !important; 
     border: 2px solid #ff6b81 !important;
     border-radius: 50px !important;
     padding: 8px 25px !important;
@@ -1432,7 +1435,7 @@ div:where(.swal2-cancel) {
 }
 
 div:where(.swal2-cancel):hover {
-    background-color: #dc3545  !important;
+    background-color: #ffebef !important;
 }
 
 /* --- ICONO DE ALERTA --- */
