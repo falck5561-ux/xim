@@ -1971,19 +1971,28 @@ div:where(.swal2-title) {
                 <form id="addForm" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     
-                    <div class="mb-4">
-                        <label class="form-label text-muted small fw-bold ls-2">TÍTULO DEL MOMENTO</label>
-                        {{ form.titulo }} 
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold ls-2">TÍTULO</label>
+                        <input type="text" name="titulo" class="form-control aesthetic-input" placeholder="Ej: Nuestra primera cita" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold ls-2">FECHA</label>
+                        <input type="date" name="fecha" class="form-control aesthetic-input" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold ls-2">HISTORIA</label>
+                        <textarea name="descripcion" class="form-control aesthetic-input" rows="3" placeholder="Escribe aquí lo bonito que fue..." required></textarea>
+                    </div>
 
                     <div class="mb-4">
                         <label class="form-label text-muted small fw-bold ls-2">FOTO O VIDEO</label>
                         <div class="upload-box-aesthetic">
                             <i class="bi bi-cloud-arrow-up-fill fs-1 text-danger opacity-50"></i>
                             <p class="small text-muted mb-0 fw-bold">Toca aquí para subir archivo</p>
-                            <input type="file" name="foto" class="aesthetic-file-input">
+                            <input type="file" name="foto" class="aesthetic-file-input" accept="image/*,video/*">
                         </div>
-                        <small class="text-center d-block mt-2 text-muted" style="font-size: 0.7rem;">(Sube foto o video)</small>
                     </div>
 
                     <button type="submit" class="btn btn-danger w-100 rounded-pill py-3 fw-bold shadow-sm" style="background: #ff6b81; border: none;">
