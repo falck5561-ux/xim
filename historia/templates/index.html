@@ -662,53 +662,51 @@ body.no-scroll {
     background: #ff4757; /* Se pone un poco más oscuro */
 }
 
-/* --- CORRECCIÓN PARA EL LIBRO EN CELULAR --- */
+/* --- CORRECCIÓN PARA EL LIBRO EN CELULAR (CENTRADO PERFECTO) --- */
 @media (max-width: 768px) {
-    /* 1. Arreglar el contenedor del libro */
-    .book-wrapper {
-        min-height: 450px !important; /* Un poco más corto para que quepa bien */
-        padding: 15px 10px !important; /* Menos relleno en los bordes */
-        
-        /* AQUÍ ESTÁ EL TRUCO: Reducimos la sombra del lomo (izquierda) */
-        /* Antes era 40px, ahora 10px para que se vea más hoja blanca */
-        box-shadow: 
-            inset 10px 0 20px rgba(0,0,0,0.1), /* Lomo finito */
-            inset -2px 0 5px rgba(0,0,0,0.05), /* Borde derecho sutil */
-            5px 5px 15px rgba(0,0,0,0.3) !important; /* Sombra externa */
+    .book-modal-content {
+        padding: 0 !important; /* Quita padding extra del modal */
+        align-items: center;   /* Centra verticalmente */
     }
 
-    /* 2. Centrar mejor el texto */
+    /* 1. Arreglar el contenedor del libro */
+    .book-wrapper {
+        width: 95% !important; /* Que no ocupe todo el ancho */
+        min-height: 480px !important;
+        margin: 0 auto !important; /* ESTO LO CENTRA HORIZONTALMENTE */
+        padding: 15px 10px !important;
+        
+        /* Ajuste de sombras para móvil */
+        box-shadow: 
+            inset 10px 0 20px rgba(0,0,0,0.1), 
+            inset -2px 0 5px rgba(0,0,0,0.05), 
+            0 10px 25px rgba(0,0,0,0.3) !important;
+    }
+
+    /* 2. Centrar texto */
     .book-page-content {
-        padding: 10px !important; /* Quitamos el relleno exagerado */
+        padding: 5px !important;
         width: 100%;
     }
 
     .reason-text-display {
-        font-size: 2.2rem !important; /* Texto un poco más pequeño para que no se corte */
+        font-size: 2rem !important;
+        min-height: 200px !important; /* Evita saltos bruscos */
     }
 
-    /* 3. Arreglar los botones de abajo (para que no se vayan a las esquinas) */
+    /* 3. Botones compactos y INPUT DE PÁGINA */
     .book-controls {
-        padding: 10px 5px !important;
-        justify-content: center !important; /* Centrados al medio */
-        gap: 8px; /* Espacio entre ellos */
+        flex-wrap: wrap; /* Permite que el input baje si es necesario */
+        gap: 10px;
+        padding-bottom: 10px !important;
     }
 
-    /* Botones laterales (Anterior/Siguiente) más compactos */
     .book-btn {
-        font-size: 0.75rem !important; 
+        font-size: 0.8rem !important; 
         padding: 5px 10px !important;
-        width: auto;
     }
 
-    /* Botón del medio (Leer Auto) */
-    #btnAutoBook {
-        font-size: 0.75rem !important;
-        padding: 5px 12px !important;
-        white-space: nowrap; /* Que no se parta el texto */
-    }
-
-    /* Ajustar el botón de cerrar (X) para que no estorbe */
+    /* Ajustar botón cerrar */
     .book-close-btn {
         top: 10px !important;
         left: 10px !important;
@@ -716,11 +714,9 @@ body.no-scroll {
         height: 30px !important;
     }
     
-    /* Mover el separador rojo un poco */
     .bookmark {
-        right: 20px !important;
-        width: 35px !important;
-        height: 70px !important;
+        right: 15px !important;
+        height: 60px !important;
     }
 }
 
@@ -1783,15 +1779,24 @@ body.no-scroll {
                     <p class="reason-text-display" id="displayReasonText">Cargando...</p>
                 </div>
 
-                <div class="book-controls">
-                    <button class="book-btn" onclick="prevPage()"><i class="bi bi-chevron-left"></i> Anterior</button>
-                    
-                    <button class="btn btn-sm btn-outline-danger rounded-pill px-4" onclick="toggleAutoBook()" id="btnAutoBook">
-                        <i class="bi bi-play-fill"></i> Leer Automático
-                    </button>
-                    
-                    <button class="book-btn" onclick="nextPage()">Siguiente <i class="bi bi-chevron-right"></i></button>
-                </div>
+                <div class="book-controls position-relative">
+    <button class="book-btn" onclick="prevPage()"><i class="bi bi-chevron-left"></i></button>
+    
+    <div class="d-flex flex-column align-items-center gap-2">
+        <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="toggleAutoBook()" id="btnAutoBook" style="font-size: 0.8rem;">
+            <i class="bi bi-play-fill"></i> Auto
+        </button>
+
+        <div id="pageJumper" style="display: none;" class="animate__animated animate__fadeInUp">
+            <div class="input-group input-group-sm" style="width: 100px;">
+                <span class="input-group-text bg-transparent border-danger text-danger">#</span>
+                <input type="number" id="jumpInput" class="form-control border-danger text-center" placeholder="Pág" onchange="jumpToPage(this.value)">
+            </div>
+        </div>
+    </div>
+    
+    <button class="book-btn" onclick="nextPage()"><i class="bi bi-chevron-right"></i></button>
+</div>
                 
                 <div class="text-center pb-2 text-muted small" style="font-size: 0.7rem;">
                     Página <span id="pageNum">1</span> de 201
@@ -2211,43 +2216,78 @@ function handleBucketEnter(e) {
     if(e.key === 'Enter') addBucketItem();
 }
 
-        // --- FUNCIONES DEL LIBRO ---
-        function abrirLibro() { 
-    currentPage = 0; 
+// --- FUNCIONES DEL LIBRO MEJORADAS (GUARDADO + DESBLOQUEO) ---
+
+function abrirLibro() { 
+    // 1. Intentar recuperar la página donde se quedó
+    const savedPage = localStorage.getItem('jx_book_page');
+    if (savedPage) {
+        currentPage = parseInt(savedPage);
+        // Protección por si cambiamos el número de razones
+        if(currentPage >= baseReasons.length + 1) currentPage = 0;
+    } else {
+        currentPage = 0; 
+    }
+
     updateBook(); 
     new bootstrap.Modal(document.getElementById('bookModal')).show(); 
 }
-function updateBook() { 
-        // Usamos baseReasons directamente
-        let content = "";
-        if(currentPage < baseReasons.length) {
-            content = baseReasons[currentPage];
-        } else {
-            // La última página especial
-            content = "Una razón para dejarte...<br><br><button class='btn btn-danger mt-2' onclick='verRazonFinalLibro()'>Ver Razón 💔</button>";
-        }
 
-        // Actualizamos número
-        document.getElementById('displayReasonNum').innerText = currentPage + 1;
-        document.getElementById('pageNum').innerText = currentPage + 1;
-        
-        const textElement = document.getElementById('displayReasonText');
-        
-        // 1. Ocultamos el texto
-        textElement.style.opacity = 0;
-        
-        // 2. Esperamos un poquito y aplicamos la nueva animación
-        setTimeout(() => {
-            textElement.innerHTML = content;
-            textElement.style.opacity = 1;
-            
-            // Reiniciamos la animación quitando y poniendo la clase
-            textElement.classList.remove('animate__animated', 'animate__zoomIn');
-            void textElement.offsetWidth; // Truco para reiniciar el renderizado
-            textElement.classList.add('animate__animated', 'animate__zoomIn');
-            
-        }, 150);
+function updateBook() { 
+    // A. Guardar progreso actual siempre
+    localStorage.setItem('jx_book_page', currentPage);
+
+    let content = "";
+    if(currentPage < baseReasons.length) {
+        content = baseReasons[currentPage];
+    } else {
+        // Última página especial
+        content = "Una razón para dejarte...<br><br><button class='btn btn-danger mt-2' onclick='verRazonFinalLibro()'>Ver Razón 💔</button>";
+        // B. SI LLEGA AL FINAL, DESBLOQUEAR EL SALTO PARA SIEMPRE
+        localStorage.setItem('jx_book_unlocked', 'true');
     }
+
+    // Actualizamos números
+    document.getElementById('displayReasonNum').innerText = currentPage + 1;
+    document.getElementById('pageNum').innerText = currentPage + 1;
+    
+    // C. ANIMACIÓN DEL TEXTO
+    const textElement = document.getElementById('displayReasonText');
+    textElement.style.opacity = 0;
+    
+    setTimeout(() => {
+        textElement.innerHTML = content;
+        textElement.style.opacity = 1;
+        textElement.classList.remove('animate__animated', 'animate__zoomIn');
+        void textElement.offsetWidth; 
+        textElement.classList.add('animate__animated', 'animate__zoomIn');
+    }, 150);
+
+    // D. LÓGICA DEL INPUT DE SALTO (SECRETO)
+    const jumper = document.getElementById('pageJumper');
+    const isUnlocked = localStorage.getItem('jx_book_unlocked') === 'true';
+
+    // Mostrar SOLO si está desbloqueado Y no estamos en la página 1 (índice 0)
+    if (isUnlocked && currentPage > 0) {
+        jumper.style.display = 'block';
+    } else {
+        jumper.style.display = 'none';
+        // Limpiar el input para que no se vea feo al volver a aparecer
+        document.getElementById('jumpInput').value = ''; 
+    }
+}
+
+// Función nueva para saltar de página
+function jumpToPage(val) {
+    const page = parseInt(val);
+    if(page >= 1 && page <= 201) {
+        currentPage = page - 1; // Restamos 1 porque el array empieza en 0
+        updateBook();
+    } else {
+        // Si pone un número inválido, borrarlo
+        document.getElementById('jumpInput').value = '';
+    }
+}
 
 /* --- FUNCIONES DEL LIBRO CORREGIDAS --- */
 
