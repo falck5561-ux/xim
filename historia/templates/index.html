@@ -1660,6 +1660,13 @@ body.no-scroll {
 
   // --- INICIALIZACIÓN ---
   document.addEventListener('DOMContentLoaded', () => {
+
+    const scrollGuardado = localStorage.getItem('posicionScrollGuardada');
+      if (scrollGuardado) {
+          window.scrollTo(0, parseInt(scrollGuardado));
+          localStorage.removeItem('posicionScrollGuardada');
+      }
+
       // Saludo inicial limpio
       callar();
       const h = new Date().getHours();
@@ -3744,10 +3751,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     confirmButtonColor: '#ff6b81',
                     confirmButtonText: 'Ver Recuerdo'
                 }).then(() => {
-                    // CERRAR MODAL Y RECARGAR SUAVEMENTE
+                    // CERRAR MODAL
                     const modalEl = document.getElementById(modalId);
                     const modal = bootstrap.Modal.getInstance(modalEl);
                     if(modal) modal.hide();
+
+                    // --- ESTA ES LA LÍNEA NUEVA QUE NECESITAS ---
+                    localStorage.setItem('posicionScrollGuardada', window.scrollY);
+                    // ---------------------------------------------
+
                     window.location.reload(); 
                 });
             } else {
