@@ -1890,286 +1890,380 @@ div.swal-capsule-dark .swal2-cancel:hover {
 
 
 <script>
-  /* =========================================
-     POCHITA 4.0 - VERSIÓN SIN ERRORES DE TEXTO
-     ========================================= */
+/* =========================================
+   POCHITA 5.0 - ULTRA INTELLIGENT CORE
+   ========================================= */
 
-  const ASSETS = {
-      normal: "https://lottie.host/b62e382f-850b-418d-8177-fb83008d9e9c/N8jkBm9r7B.lottie",
-      sad:    "https://lottie.host/98f8b896-1896-4876-8802-18776823528b/r4Xy4F6F4E.json", 
-      sleep:  "https://lottie.host/b62e382f-850b-418d-8177-fb83008d9e9c/N8jkBm9r7B.lottie",
-      bath:   "https://lottie.host/b62e382f-850b-418d-8177-fb83008d9e9c/N8jkBm9r7B.lottie" 
-  };
+const ASSETS = {
+    normal: "https://lottie.host/b62e382f-850b-418d-8177-fb83008d9e9c/N8jkBm9r7B.lottie",
+    sad:    "https://lottie.host/98f8b896-1896-4876-8802-18776823528b/r4Xy4F6F4E.json", 
+    sleep:  "https://lottie.host/b62e382f-850b-418d-8177-fb83008d9e9c/N8jkBm9r7B.lottie",
+    bath:   "https://lottie.host/b62e382f-850b-418d-8177-fb83008d9e9c/N8jkBm9r7B.lottie" 
+};
 
-  const UI = {
-      player: document.getElementById('petLottie'),
-      bubble: document.getElementById('pochitaSpeech'),
-      zone:   document.getElementById('lottieZone'),
-      bars: {
-          hambre:    document.getElementById('barHambre'),
-          felicidad: document.getElementById('barFelicidad'),
-          energia:   document.getElementById('barEnergia'),
-          higiene:   document.getElementById('barHigiene')
-      }
-  };
+const UI = {
+    player: document.getElementById('petLottie'),
+    bubble: document.getElementById('pochitaSpeech'),
+    zone:   document.getElementById('lottieZone'),
+    bars: {
+        hambre:    document.getElementById('barHambre'),
+        felicidad: document.getElementById('barFelicidad'),
+        energia:   document.getElementById('barEnergia'),
+        higiene:   document.getElementById('barHigiene')
+    }
+};
 
-  // --- VARIABLES GLOBALES DE CONTROL ---
-  let petState = { hambre: 50, felicidad: 50, energia: 50, higiene: 50 };
-  let isBusy = false;
-  
-  // ESTAS DOS SON LA CLAVE PARA QUE NO SE PEGUE EL TEXTO
-  let timerEscribir = null; 
-  let timerBorrar = null;
+// --- VARIABLES GLOBALES DE CONTROL ---
+let petState = { hambre: 50, felicidad: 50, energia: 50, higiene: 50 };
+let isBusy = false;
+let timerEscribir = null; 
+let timerBorrar = null;
 
-  // --- BASE DE DATOS EMOCIONAL ---
-  const DIALOGOS = {
-      saludo: {
-          dia: ["¡Buenos días mami! Papi te manda besos ☀️", "¡A brillar hoy mi niña! ✨", "Despierta bonita, Papi te piensa ❤️"],
-          tarde: ["¿Cómo va tu tarde mami? 🌤️", "Papi pregunta si ya comiste 🧡", "Te extrañamos mucho mami 🥺"],
-          noche: ["Ya deja de pensar tanto y a mimir... 🌙", "Descansa mami, Papi cuida tus sueños 🛡️", "Sueña con Papi y conmigo ✨"]
-      },
-      apoyo: [
-          "Mami respira profundo... todo saldrá bien 🌸",
-          "No pienses tanto las cosas, Papi te ama ❤️",
-          "Tu cabecita necesita descanso mami ✨",
-          "Mami no te preocupes, Papi te cuida siempre 🛡️",
-          "Eres muy valiente mami, Papi está orgulloso 💪",
-          "Todo se va a arreglar, confía en Papi 🌟",
-          "Mami eres lo más importante para Papi 🧡",
-          "¡Ánimo mami! Papi y yo estamos contigo 🦁",
-          "Deja de darle vueltas, todo estará bien ✨"
-      ],
-      limpieza: [
-          "¡Uff qué frescura! 🚿", 
-          "¡Ahora huelo rico para Papi! 🌹", 
-          "¡Gracias mami, me siento nuevo! ✨", 
-          "¡Quedé rechinando de limpio! 🫧"
-      ],
-      comer: [
-          "¡Ñam ñam! Provechito mami 🥕", 
-          "¡Barriga llena, corazón contento! ❤️", 
-          "¡Gracias por cuidarme mami! 😋",
-          "¡Tú también come rico mami! 🍔"
-      ],
-      jugar: [
-          "¡Jijiji qué divertido! 🎮", 
-          "¡Me encanta verte sonreír mami! 💖", 
-          "¡Papi dice que te ves hermosa riendo! ✨",
-          "¡Vamos a jugar un ratito! 🏃💨"
-      ],
-      dormir: [
-          "Hasta mañana mami... 😴", 
-          "Zzz... soñaré con Papi... 💤", 
-          "Apaga la luz y descansa tu mente... 🌙"
-      ],
-      amor_random: [ 
-          "Papi te ama muchísimo, me lo dijo hoy ❤️",
-          "¡Eres la niña de los ojos de Papi! 🌎",
-          "Papi siempre te va a cuidar mami 🛡️",
-          "¿Sabías que Papi se muere por ti? ✨",
-          "Oye... Papi y yo te adoramos 🧡"
-      ],
-      quejas: {
-          hambre: ["Mami... mi pancita ruge 🥕", "Tengo mucha hambrita 🥺"],
-          sucio: ["Iugh, huelo feíto... báñame 🧀", "Me siento sucio mami 🤢"],
-          triste: ["Abrázame mami, me siento solito... 💔", "Juega conmigo un ratito 🥺"],
-          cansado: ["Se me cierran los ojitos... 😴", "Necesito una siesta mami 💤"]
-      }
-  };
+// --- MEMORIA A CORTO PLAZO (ANTI-REPETICIÓN) ---
+// Guardaremos aquí las últimas 15 frases dichas para no repetirlas
+let memoriaFrases = [];
+const MAX_MEMORIA = 15;
 
-  // --- FUNCIÓN DE LIMPIEZA ABSOLUTA (EL BOTÓN DE PÁNICO) ---
-  function callar() {
-      // Detiene cualquier escritura en proceso
-      if (timerEscribir) clearTimeout(timerEscribir);
-      // Detiene el temporizador que borra la burbuja
-      if (timerBorrar) clearTimeout(timerBorrar);
-      
-      timerEscribir = null;
-      timerBorrar = null;
-      
-      // Limpia el texto visualmente al instante
-      UI.bubble.innerText = "";
-      UI.bubble.classList.remove('show');
-  }
+// --- BASE DE DATOS MASIVA DE DIÁLOGOS ---
+const CEREBRO = {
+    saludo: {
+        madrugada: [ // 00:00 a 06:00
+            "Mami... ¿qué haces despierta? A mimir 🌙",
+            "Shh... Papi y yo estamos durmiendo, ven con nosotros 💤",
+            "Es muy tarde mami, tu cerebro necesita descansar ✨",
+            "Cierra los ojitos mami, mañana será un gran día 😴",
+            "¿Insomnio? Piensa en Papi y te dará sueño ❤️"
+        ],
+        manana: [ // 06:00 a 12:00
+            "¡Buenos días solcito! Papi te manda un beso enorme ☀️",
+            "¡Arriba mami! Hoy te vas a comer el mundo 🌍",
+            "Despierta bella durmiente, el café y el éxito te esperan ☕",
+            "Hoy te ves radiante, me lo dijo un pajarito (fue Papi) 🐦",
+            "¡A brillar mami! Eres la protagonista de hoy ✨",
+            "Mami, recuerda beber agüita para estar hidratada 💧",
+            "¡Qué bonito amanecer para ver tu sonrisa! 🧡"
+        ],
+        tarde: [ // 12:00 a 19:00
+            "Hola mami, ¿ya comiste rico? 🍔",
+            "La tarde está linda, pero tú más 🌤️",
+            "Papi pregunta si estás tomando descansitos 🧡",
+            "Oye mami... te extrañamos por aquí 🥺",
+            "No te estreses, la tarde pasará volando 🚀",
+            "Mami, eres súper inteligente, ¡tú puedes con todo! 🧠",
+            "Un recordatorio rápido: Papi te adora ❤️"
+        ],
+        noche: [ // 19:00 a 23:59
+            "Ya deja el trabajo y relájate mami 🌙",
+            "¿Lista para descansar? Te mereces un premio 🏆",
+            "La luna está celosa de tu brillo mami ✨",
+            "Ponte pijama y vamos a relajarnos 🧸",
+            "Fue un día largo, pero lo hiciste genial 💪",
+            "Mami, Papi quiere que descanses tus ojitos 👀",
+            "A la camita, que mañana hay más aventuras 🛌"
+        ]
+    },
+    apoyo_emocional: [
+        "Mami, respira profundo... 1, 2, 3... suelta 🌸",
+        "A veces la mente nos miente, pero Papi te dice la verdad: Eres genial ❤️",
+        "No sobrepienses, deja que la vida fluya como el agua 🌊",
+        "Tu cabecita es valiosa, no la llenes de preocupaciones ✨",
+        "Mami, eres más fuerte de lo que crees, Papi lo sabe 💪",
+        "Si te sientes chiquita, recuerda que para Papi eres su mundo 🌍",
+        "Todo es temporal mami, lo bueno y lo malo. Disfruta el ahora ⏳",
+        "Aquí estoy yo y aquí está Papi, nunca estás sola 🛡️",
+        "Ese problema tiene solución, confía en tu talento 🌟",
+        "Mami, está bien no estar bien a veces. Te amamos igual ❤️‍🩹",
+        "Date un abracito de mi parte, lo necesitas 🫂",
+        "¡Eres una guerrera mami! ¡Rawr! 🦁"
+    ],
+    limpieza: [
+        "¡Ahhh! Qué delicia de baño 🚿", 
+        "¡Ahora brillo tanto que necesito gafas de sol! 😎", 
+        "¡Gracias mami! Me sentía pegajoso ✨", 
+        "¡Huelo a florecitas y amor! 🌹",
+        "¡Me siento renovado y guapo para ti! 🧡",
+        "¡Uy, qué agua tan rica! Gracias por cuidarme 🫧",
+        "¡Limpio y fresco como una lechuga! 🥬"
+    ],
+    comer: [
+        "¡Ñam ñam! Estaba delicioso mami 🥕", 
+        "¡Barriga llena, Pochita feliz! ❤️", 
+        "¡Gracias por la comidita! ¿Tú ya comiste? 😋",
+        "¡Qué rico! Me siento con mucha energía ahora ⚡",
+        "¡Eres la mejor chef mami! (Aunque sea comida de mascota) 🍽️",
+        "¡Mi pancita te agradece mucho! 🥰",
+        "¡Uff, quedé llenísimo! Gracias mami 🍔"
+    ],
+    jugar: [
+        "¡Jajaja! ¡Qué divertido eres mami! 🎮", 
+        "¡Me encanta cuando jugamos juntos! 💖", 
+        "¡Papi dice que tu risa es su sonido favorito! ✨",
+        "¡Otra vez, otra vez! ¡No me canso! 🏃💨",
+        "¡Gané yo! Bueno... te dejé ganar jijiji 🏆",
+        "¡Qué bien nos la pasamos mami! Te quiero 🧡",
+        "¡Jugar contigo me hace el perro más feliz del mundo! 🐶"
+    ],
+    dormir: [
+        "Buenas noches mami... apaga la luz 💡", 
+        "Zzz... soñaré que volamos con Papi... 💤", 
+        "Me voy al mundo de los sueños... ven pronto 🌙",
+        "Descansa tus ojitos mami, te cuido desde aquí 🛡️",
+        "Hasta mañana bonita... zzz... 😴"
+    ],
+    amor_random: [ 
+        "Pst... Papi me dijo un secreto: Eres el amor de su vida ❤️",
+        "¿Sabías que eres la persona favorita de este hogar? 🏠",
+        "Papi siempre piensa en ti, incluso cuando está ocupado 🧡",
+        "Eres magia pura mami, nunca dejes que nadie te apague ✨",
+        "Me gusta cuando me miras así, con cariño 🥰",
+        "Oye... gracias por adoptarme y cuidarme tanto 🐾",
+        "Papi y yo somos tu equipo número uno 🥇",
+        "Tu sonrisa ilumina toda la pantalla, mami 🖥️",
+        "Escuche a papi hablar sobre tu colota hermosa 🍑"
 
-  // --- SISTEMA DE HABLA CORREGIDO ---
-  function hablar(texto, animacionUrl = null) {
-      // 1. PRIMERO NOS CALLAMOS (Para evitar letras encimadas)
-      callar();
-      
-      // 2. Preparamos animación y burbuja
-      if(animacionUrl) triggerAnim(animacionUrl);
-      
-      // Pequeño delay para asegurar que el DOM se limpió
-      setTimeout(() => {
-          const burbuja = UI.bubble;
-          burbuja.classList.add('show');
-          
-          let i = 0;
-          // Velocidad más lenta para que se vea elegante y se respeten espacios
-          const velocidad = 45; 
+    ],
+    quejas: {
+        hambre_leve: ["Mami, mi pancita hace ruidos raros... 🥕", "¿Ya es hora de comer? Tengo un huequito 🥯"],
+        hambre_critica: ["¡ME DESMAYO! ¡Necesito comida YA! 🚑", "Mami... veo lucecitas... aliméntame por favor 😵"],
+        sucio_leve: ["Me siento un poquito pegajoso... 🚿", "Creo que necesito un bañito pronto mami 🧼"],
+        sucio_critico: ["¡Iugh! ¡Huelo a queso rancio! ¡BAÑO! 🧀", "Mami, las moscas me persiguen... ayúdame 🪰"],
+        triste_leve: ["Me siento un poco solito... 🥺", "¿Me haces mimos? Estoy bajoneado 💔"],
+        triste_critico: ["Estoy llorando por dentro... abrázame fuerte 😭", "Mami, mi corazoncito duele de soledad 💔"],
+        cansado_leve: ["Bostezando... qué sueño tengo 🥱", "Mis patitas pesan... ¿siesta? 💤"],
+        cansado_critico: ["No... puedo... mantenerme... despierto... 💀", "Apagando sistema... batería baja... zzz 🔋"]
+    },
+    estados_combinados: {
+        hambre_y_triste: ["Tengo hambre y estoy triste, es la peor combinación 😭🍕", "Mami, consuélame con comida por favor... 🥺"],
+        sucio_y_cansado: ["Estoy hecho un asco y no tengo fuerzas ni para bañarme 🧟", "Mami, límpiame y acuéstame, soy un trapo sucio 🍂"],
+        feliz_y_energetico: ["¡ESTOY A TOPE! ¡VAMOS A CORRER! 🚀", "¡Soy un cohete de felicidad! ¡Mírame mami! 🌟"]
+    }
+};
 
-          function escribir() {
-              if (i < texto.length) {
-                  // Agregamos letra por letra, respetando espacios
-                  burbuja.innerText += texto.charAt(i);
-                  i++;
-                  timerEscribir = setTimeout(escribir, velocidad);
-              }
-          }
-          escribir(); // Iniciar escritura
+// --- FUNCIÓN DE LIMPIEZA ABSOLUTA ---
+function callar() {
+    if (timerEscribir) clearTimeout(timerEscribir);
+    if (timerBorrar) clearTimeout(timerBorrar);
+    timerEscribir = null;
+    timerBorrar = null;
+    UI.bubble.innerText = "";
+    UI.bubble.classList.remove('show');
+}
 
-          // 3. CALCULAR TIEMPO DE LECTURA
-          // (Letras * velocidad) + 3 segundos extra para leer bien
-          const tiempoLectura = (texto.length * velocidad) + 3000;
+// --- SISTEMA DE HABLA CON MEMORIA ---
+function hablar(texto, animacionUrl = null) {
+    // 1. Verificación de seguridad de texto
+    if (!texto) return;
 
-          timerBorrar = setTimeout(() => {
-              burbuja.classList.remove('show');
-              if(animacionUrl !== ASSETS.sleep) triggerAnim(ASSETS.normal);
-          }, tiempoLectura);
-          
-      }, 50); // Fin del pequeño delay inicial
-  }
+    // 2. Comprobamos si la frase ya se dijo recientemente
+    // Si la frase está en memoria, intentamos buscar otra (recursividad limitada o forzar salida)
+    // Para simplificar: mostramos el texto pero lo registramos. 
+    // La selección inteligente ocurre ANTES de llamar a hablar, en la función "seleccionarFrase".
 
-  // --- CEREBRO INTELIGENTE ---
-  function pensar() {
-      if (isBusy) return; 
+    callar();
+    if(animacionUrl) triggerAnim(animacionUrl);
+    
+    setTimeout(() => {
+        const burbuja = UI.bubble;
+        burbuja.classList.add('show');
+        
+        let i = 0;
+        const velocidad = 40; 
 
-      // Prioridad a necesidades
-      if (petState.hambre < 30) return hablar(elegir(DIALOGOS.quejas.hambre), ASSETS.sad);
-      if (petState.higiene < 30) return hablar(elegir(DIALOGOS.quejas.sucio), ASSETS.sad);
-      if (petState.energia < 20) return hablar(elegir(DIALOGOS.quejas.cansado), ASSETS.sleep);
-      if (petState.felicidad < 30) return hablar(elegir(DIALOGOS.quejas.triste), ASSETS.sad);
+        function escribir() {
+            if (i < texto.length) {
+                burbuja.innerText += texto.charAt(i);
+                i++;
+                timerEscribir = setTimeout(escribir, velocidad);
+            }
+        }
+        escribir(); 
 
-      // Decisión aleatoria
-      const hora = new Date().getHours();
-      const dado = Math.random();
+        const tiempoLectura = (texto.length * velocidad) + 3500; // Un poco más de tiempo para leer
 
-      if(dado < 0.3) { 
-          if (hora >= 6 && hora < 12) hablar(elegir(DIALOGOS.saludo.dia));
-          else if (hora >= 12 && hora < 20) hablar(elegir(DIALOGOS.saludo.tarde));
-          else hablar(elegir(DIALOGOS.saludo.noche));
-      } 
-      else if (dado >= 0.3 && dado < 0.7) {
-           hablar(elegir(DIALOGOS.apoyo));
-      }
-      else {
-          hablar(elegir(DIALOGOS.amor_random));
-      }
-  }
+        timerBorrar = setTimeout(() => {
+            burbuja.classList.remove('show');
+            if(animacionUrl !== ASSETS.sleep) triggerAnim(ASSETS.normal);
+        }, tiempoLectura);
+        
+    }, 50);
+}
 
-  // --- INTERACCIÓN ---
-  async function interactuar(accion) {
-      if(accion === 'higiene' || accion === 'banar' || accion === 'bañar') accion = 'limpieza';
+// --- SELECTOR INTELIGENTE DE FRASES (EL CEREBRO REAL) ---
+function obtenerFrase(arrayDeOpciones) {
+    // Filtramos las opciones que YA están en la memoria reciente
+    const opcionesDisponibles = arrayDeOpciones.filter(frase => !memoriaFrases.includes(frase));
 
-      // DETENER PENSAMIENTO AUTOMÁTICO AL TOCAR UN BOTÓN
-      isBusy = true; 
-      callar(); // Limpiamos cualquier cosa que estuviera diciendo
+    let fraseElegida = "";
 
-      crearParticulas(accion);
-      
-      // Feedback visual rápido
-      if(accion === 'limpieza') actualizarBarra('barHigiene', 100); 
-      if(accion === 'comer') actualizarBarra('barHambre', Math.min(100, petState.hambre + 25));
-      if(accion === 'jugar') actualizarBarra('barFelicidad', Math.min(100, petState.felicidad + 20));
-      if(accion === 'dormir') actualizarBarra('barEnergia', 100);
+    // Si nos quedamos sin opciones (ya dijimos todas), reseteamos memoria o elegimos una al azar del total
+    if (opcionesDisponibles.length === 0) {
+        fraseElegida = arrayDeOpciones[Math.floor(Math.random() * arrayDeOpciones.length)];
+    } else {
+        fraseElegida = opcionesDisponibles[Math.floor(Math.random() * opcionesDisponibles.length)];
+    }
 
-      // Elegir frase
-      const frase = elegir(DIALOGOS[accion] || ["¡Te quiero mami!"]);
-      let anim = ASSETS.normal;
-      
-      if(accion === 'dormir') anim = ASSETS.sleep;
-      else if(accion === 'limpieza') anim = ASSETS.bath;
-      
-      hablar(frase, anim);
+    // Guardar en memoria
+    memoriaFrases.push(fraseElegida);
+    if (memoriaFrases.length > MAX_MEMORIA) {
+        memoriaFrases.shift(); // Eliminar la más antigua
+    }
 
-      // Guardar en servidor
-      try {
-          const res = await fetch('/api/mascota/', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
-              body: JSON.stringify({ accion: accion })
-          });
-          if (res.ok) actualizarUI(await res.json());
-      } catch (e) { console.error(e); }
-      
-      // Desbloquear después de 4 segundos
-      setTimeout(() => isBusy = false, 4000);
-  }
+    return fraseElegida;
+}
 
-  // --- UTILIDADES ---
-  function elegir(array) {
-      return array[Math.floor(Math.random() * array.length)];
-  }
+// --- LÓGICA DE PENSAMIENTO AVANZADA ---
+function pensar() {
+    if (isBusy) return; 
 
-  function crearParticulas(tipo) {
-      let icono = '✨'; 
-      if(tipo === 'comer') icono = '🥕';
-      if(tipo === 'jugar') icono = '💖';
-      if(tipo === 'dormir') icono = '💤';
-      if(tipo === 'limpieza') icono = '🫧'; 
+    // 1. Análisis de Estado Crítico (Prioridad Máxima)
+    if (petState.hambre < 20 && petState.felicidad < 20) return hablar(obtenerFrase(CEREBRO.estados_combinados.hambre_y_triste), ASSETS.sad);
+    if (petState.higiene < 20 && petState.energia < 20) return hablar(obtenerFrase(CEREBRO.estados_combinados.sucio_y_cansado), ASSETS.sad);
+    
+    // 2. Quejas Individuales Críticas
+    if (petState.hambre < 25) return hablar(obtenerFrase(CEREBRO.quejas.hambre_critica), ASSETS.sad);
+    if (petState.energia < 15) return hablar(obtenerFrase(CEREBRO.quejas.cansado_critico), ASSETS.sleep);
+    if (petState.higiene < 20) return hablar(obtenerFrase(CEREBRO.quejas.sucio_critico), ASSETS.sad);
 
-      for(let i=0; i<8; i++) { 
-          let s = document.createElement('span');
-          s.innerText = icono;
-          s.className = 'floating-emoji';
-          s.style.left = (Math.random() * 60 + 20) + '%';
-          s.style.top = (Math.random() * 40 + 30) + '%';
-          s.style.fontSize = (Math.random() * 1.5 + 1) + 'rem'; 
-          s.style.animationDelay = (i * 0.1) + 's';
-          UI.zone.appendChild(s);
-          setTimeout(() => s.remove(), 2500);
-      }
-  }
+    // 3. Quejas Leves
+    if (petState.hambre < 50) return hablar(obtenerFrase(CEREBRO.quejas.hambre_leve));
+    if (petState.felicidad < 40) return hablar(obtenerFrase(CEREBRO.quejas.triste_leve), ASSETS.sad);
+    if (petState.energia < 40) return hablar(obtenerFrase(CEREBRO.quejas.cansado_leve));
+    if (petState.higiene < 50) return hablar(obtenerFrase(CEREBRO.quejas.sucio_leve));
 
-  function actualizarUI(data) {
-      petState = data;
-      if(data.nombre) document.getElementById('petNameDisplay').innerText = data.nombre + " 🧡";
-      
-      actualizarBarra('barHambre', data.hambre);
-      actualizarBarra('barFelicidad', data.felicidad);
-      actualizarBarra('barEnergia', data.energia);
-      actualizarBarra('barHigiene', data.higiene);
-  }
+    // 4. Estados Positivos (Alta energía y felicidad)
+    if (petState.felicidad > 80 && petState.energia > 80) {
+        // Solo ocurre el 40% de las veces para no saturar
+        if(Math.random() > 0.6) return hablar(obtenerFrase(CEREBRO.estados_combinados.feliz_y_energetico));
+    }
 
-  function actualizarBarra(id, val) {
-      const el = document.getElementById(id);
-      const txt = document.getElementById('val' + id.replace('bar',''));
-      if(el) {
-          el.style.width = val + "%";
-          if(val < 30) el.style.backgroundColor = '#ff4d4d'; 
-          else if(val < 60) el.style.backgroundColor = '#ffca28'; 
-          else el.style.backgroundColor = '#66bb6a'; 
-      }
-      if(txt) txt.innerText = Math.round(val) + "%";
-  }
+    // 5. Conversación Casual (Basada en la hora y azar)
+    const hora = new Date().getHours();
+    const dado = Math.random();
 
-  function triggerAnim(url) { if(UI.player.src !== url) UI.player.src = url; }
-  function getCookie(name) { let m = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)')); return m ? m[2] : null; }
+    if(dado < 0.4) { // 40% probabilidad de saludo/comentario horario
+        if (hora >= 0 && hora < 6) hablar(obtenerFrase(CEREBRO.saludo.madrugada));
+        else if (hora >= 6 && hora < 12) hablar(obtenerFrase(CEREBRO.saludo.manana));
+        else if (hora >= 12 && hora < 20) hablar(obtenerFrase(CEREBRO.saludo.tarde));
+        else hablar(obtenerFrase(CEREBRO.saludo.noche));
+    } 
+    else if (dado >= 0.4 && dado < 0.7) { // 30% Apoyo emocional
+         hablar(obtenerFrase(CEREBRO.apoyo_emocional));
+    }
+    else { // 30% Amor random sobre Papi
+         hablar(obtenerFrase(CEREBRO.amor_random));
+    }
+}
 
-  // --- INICIALIZACIÓN ---
-  document.addEventListener('DOMContentLoaded', () => {
+// --- INTERACCIÓN ---
+async function interactuar(accion) {
+    if(accion === 'higiene' || accion === 'banar' || accion === 'bañar') accion = 'limpieza';
 
+    isBusy = true; 
+    callar(); 
+
+    crearParticulas(accion);
+    
+    // Actualización visual inmediata
+    if(accion === 'limpieza') actualizarBarra('barHigiene', 100); 
+    if(accion === 'comer') actualizarBarra('barHambre', Math.min(100, petState.hambre + 30));
+    if(accion === 'jugar') actualizarBarra('barFelicidad', Math.min(100, petState.felicidad + 25));
+    if(accion === 'dormir') actualizarBarra('barEnergia', 100);
+
+    // Selección de frase usando el cerebro inteligente
+    const frase = obtenerFrase(CEREBRO[accion] || ["¡Te quiero mami!"]);
+    
+    let anim = ASSETS.normal;
+    if(accion === 'dormir') anim = ASSETS.sleep;
+    else if(accion === 'limpieza') anim = ASSETS.bath;
+    
+    hablar(frase, anim);
+
+    // Backend
+    try {
+        const res = await fetch('/api/mascota/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+            body: JSON.stringify({ accion: accion })
+        });
+        if (res.ok) actualizarUI(await res.json());
+    } catch (e) { console.error(e); }
+    
+    setTimeout(() => isBusy = false, 4000);
+}
+
+// --- UTILIDADES ---
+function crearParticulas(tipo) {
+    let icono = '✨'; 
+    if(tipo === 'comer') icono = '🥕';
+    if(tipo === 'jugar') icono = '💖';
+    if(tipo === 'dormir') icono = '💤';
+    if(tipo === 'limpieza') icono = '🫧'; 
+
+    for(let i=0; i<10; i++) { // Más partículas
+        let s = document.createElement('span');
+        s.innerText = icono;
+        s.className = 'floating-emoji';
+        s.style.left = (Math.random() * 80 + 10) + '%'; // Mejor distribución
+        s.style.top = (Math.random() * 50 + 20) + '%';
+        s.style.fontSize = (Math.random() * 1.5 + 1) + 'rem'; 
+        s.style.animationDelay = (i * 0.1) + 's';
+        UI.zone.appendChild(s);
+        setTimeout(() => s.remove(), 2500);
+    }
+}
+
+function actualizarUI(data) {
+    petState = data;
+    if(data.nombre) document.getElementById('petNameDisplay').innerText = data.nombre + " 🧡";
+    
+    actualizarBarra('barHambre', data.hambre);
+    actualizarBarra('barFelicidad', data.felicidad);
+    actualizarBarra('barEnergia', data.energia);
+    actualizarBarra('barHigiene', data.higiene);
+}
+
+function actualizarBarra(id, val) {
+    const el = document.getElementById(id);
+    const txt = document.getElementById('val' + id.replace('bar',''));
+    if(el) {
+        el.style.width = val + "%";
+        // Colores más suaves y modernos
+        if(val < 30) el.style.backgroundColor = '#dc3545'; // Rojo alerta
+        else if(val < 60) el.style.backgroundColor = '#ffc107'; // Amarillo warning
+        else el.style.backgroundColor = '#28a745'; // Verde ok
+    }
+    if(txt) txt.innerText = Math.round(val) + "%";
+}
+
+function triggerAnim(url) { if(UI.player.src !== url) UI.player.src = url; }
+function getCookie(name) { let m = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)')); return m ? m[2] : null; }
+
+// --- INICIALIZACIÓN ---
+document.addEventListener('DOMContentLoaded', () => {
     const scrollGuardado = localStorage.getItem('posicionScrollGuardada');
-      if (scrollGuardado) {
-          window.scrollTo(0, parseInt(scrollGuardado));
-          localStorage.removeItem('posicionScrollGuardada');
-      }
+    if (scrollGuardado) {
+        window.scrollTo(0, parseInt(scrollGuardado));
+        localStorage.removeItem('posicionScrollGuardada');
+    }
 
-      // Saludo inicial limpio
-      callar();
-      const h = new Date().getHours();
-      let saludo = "¡Hola mami Xim! ❤️";
-      if(h < 12) saludo = "¡Buenos días mami! Papi te ama ☀️";
-      else if(h > 20) saludo = "¡Buenas noches mami! Descansa tu mente 🌙";
-      
-      hablar(saludo);
+    callar();
+    
+    // Saludo Inicial Inteligente
+    const h = new Date().getHours();
+    let saludo = "";
+    
+    if(h >= 0 && h < 6) saludo = "Mami... ¿otra vez por aquí tan tarde? ❤️";
+    else if(h < 12) saludo = "¡Buenos días mami Xim! ¡A empezar con todo! ☀️";
+    else if(h < 19) saludo = "¡Hola mami! Te extrañaba 🧡";
+    else saludo = "¡Buenas noches mami! Qué bueno verte 🌙";
+    
+    hablar(saludo);
 
-      setInterval(() => fetch('/api/mascota/').then(r=>r.json()).then(actualizarUI), 5000);
-      
-      // Pensar cada 12 segundos
-      setInterval(pensar, 12000); 
-  });
+    setInterval(() => fetch('/api/mascota/').then(r=>r.json()).then(actualizarUI), 5000);
+    
+    // Intervalo de pensamiento (14 segundos para no ser molesto)
+    setInterval(pensar, 14000); 
+});
 </script>
 
 
