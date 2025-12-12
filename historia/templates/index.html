@@ -52,38 +52,59 @@ body {
         /* --- ESTILOS GENERALES Y ESPECÍFICOS --- */
         body { overflow-x: hidden; }
 
-        /* 1. Bucket List Dinámica (MEJORADA) */
-        .bucket-container { 
-            background: rgba(255, 255, 255, 0.9); 
-            border-radius: 20px; 
-            padding: 2rem; 
-            box-shadow: 0 10px 30px rgba(255, 107, 129, 0.2); 
-            backdrop-filter: blur(10px); 
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .bucket-input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-            background: #fff;
-            padding: 5px;
-            border-radius: 50px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            border: 1px solid #ffeaa7;
-        }
-        
-        .bucket-input {
-            border: none;
-            flex-grow: 1;
-            padding: 10px 20px;
-            border-radius: 50px;
-            outline: none;
-            font-family: 'Montserrat', sans-serif;
-            color: #2d3436;
-        }
+        /* NUEVO BLOQUE CORREGIDO (Bucket List Responsive) */
+.bucket-container { 
+    background: rgba(255, 255, 255, 0.9); 
+    border-radius: 20px; 
+    /* En PC usa 2rem, pero abajo lo ajustamos para móvil */
+    padding: 2rem; 
+    box-shadow: 0 10px 30px rgba(255, 107, 129, 0.2); 
+    backdrop-filter: blur(10px); 
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%; /* Asegura que use el espacio disponible */
+}
+
+.bucket-input-group {
+    display: flex;
+    align-items: center; /* Alinea botón y texto al centro verticalmente */
+    gap: 8px; /* Espacio más prudente */
+    margin-bottom: 25px;
+    background: #fff;
+    padding: 5px;
+    border-radius: 50px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    border: 1px solid #ffeaa7;
+    width: 100%;
+}
+
+.bucket-input {
+    border: none;
+    flex-grow: 1; /* Ocupa todo el espacio sobrante */
+    padding: 10px 15px;
+    border-radius: 50px;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+    color: #2d3436;
+    /* EL TRUCO DE ORO: */
+    min-width: 0; /* Evita que el texto largo rompa el diseño en celular */
+}
+
+/* AJUSTES AUTOMÁTICOS PARA MÓVIL */
+@media (max-width: 768px) {
+    .bucket-container {
+        padding: 1.5rem 1rem; /* Menos relleno para ganar espacio */
+    }
+    .bucket-input {
+        font-size: 0.9rem; /* Letra un poco más chica para que quepa más */
+    }
+    .bucket-btn-add {
+        width: 40px; /* Botón un poquito más compacto */
+        height: 40px;
+        flex-shrink: 0; /* Prohíbe que el botón se aplaste */
+    }
+}
         
         .bucket-btn-add {
             background: #ff6b81;
@@ -2049,25 +2070,26 @@ body.no-scroll {
 </div>
     <div class="modal fade" id="birthdayModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content" style="background-color: transparent; border: none; box-shadow: none;"><div class="modal-body text-center p-0"><div class="birthday-card"><div class="display-1 mb-3">🥳🎉🎁</div><h2 class="rainbow-text mb-4">¡Feliz Cumpleaños Ximena!</h2><p class="lead book-font">Que este día esté lleno de alegría, amor y todo lo que deseas.</p><div class="mt-4"><div id="birthdayDiscPlayer" class="vinyl-record-css" onclick="toggleBirthdayAudio()"><div class="vinyl-label"><i class="bi bi-music-note-beamed"></i></div></div></div><p class="mt-4 mb-2 book-font" style="color: #666;">¡Esta canción es para ti mi niña!</p><small>Toca fuera de la tarjeta para cerrar.</small></div></div></div></div></div>
     <div class="modal fade" id="momentModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content aesthetic-modal"> <div class="modal-header border-0 pb-0 position-relative">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" style="z-index: 10;"></button>
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px; margin: 1rem auto;">
+        <div class="modal-content border-0 shadow-lg" style="background: #fff0f3; border-radius: 25px; border: 4px solid #ffb7b2;">
+            
+            <div class="position-absolute top-0 end-0 p-3" style="z-index: 10;">
+                <button type="button" class="btn-close bg-white shadow-sm" data-bs-dismiss="modal" style="border-radius: 50%; padding: 0.8rem; opacity: 1;"></button>
             </div>
 
-            <div class="modal-body pt-0 px-4 pb-5">
-                <div class="text-center mb-4 mt-2">
-                    <h2 id="detTitle" class="romantic-font text-danger display-5 mb-0" style="text-shadow: 2px 2px 0px #fff;"></h2>
-                    <span id="detDate" class="badge bg-warning text-dark rounded-pill mt-2"></span>
-                </div>
+            <div class="modal-body p-4 pt-5 text-center">
+                
+                <h3 id="detTitle" class="romantic-font text-danger mb-2" style="font-size: 2rem; line-height: 1;"></h3>
+                <span id="detDate" class="badge bg-white text-danger border border-danger rounded-pill mb-4 px-3 shadow-sm"></span>
 
                 <div class="d-flex justify-content-center mb-4">
-                    <div id="detMedia" class="w-100 text-center shadow-lg p-2 bg-white" style="border-radius: 15px; transform: rotate(-1deg);">
+                    <div id="detMedia" class="bg-white p-2 shadow-sm" style="border-radius: 15px; transform: rotate(-2deg); width: 100%;">
                         </div>
                 </div>
 
-                <div class="story-paper p-4" style="background: #fffbf0; border-radius: 15px; border: 1px dashed #fab1a0;">
-                    <i class="bi bi-quote fs-1 text-danger opacity-25"></i>
-                    <p id="detDesc" class="story-text text-center mb-0 fst-italic fs-5 text-muted"></p>
+                <div class="p-3 position-relative" style="background: rgba(255, 255, 255, 0.7); border-radius: 15px; border: 2px dashed #fab1a0;">
+                    <i class="bi bi-heart-fill position-absolute top-0 start-50 translate-middle text-danger" style="font-size: 1.2rem;"></i>
+                    <p id="detDesc" class="mb-0 text-muted fst-italic mt-2" style="font-family: 'Montserrat', sans-serif; font-size: 0.9rem; line-height: 1.5;"></p>
                 </div>
             </div>
         </div>
@@ -3067,14 +3089,49 @@ document.getElementById('bookModal').addEventListener('hide.bs.modal', stopAutoB
             });
         }
 
-        function renombrarCancion(id, nombreActual) {
-            Swal.fire({ title: 'Renombrar', input: 'text', inputValue: nombreActual, showCancelButton: true, confirmButtonText: 'Guardar', background: '#333', color: '#fff' }).then((result) => {
-                if (result.isConfirmed && result.value) {
-                    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-                    fetch(`/api/renombrar-cancion/${id}/`, { method: 'POST', body: JSON.stringify({titulo: result.value}), headers: { 'X-CSRFToken': csrftoken, 'Content-Type': 'application/json' } }).then(r => r.json()).then(data => { if(data.status === 'ok') cargarCanciones(); });
+        /* BUSCA TU FUNCIÓN ACTUAL "renombrarCancion" Y CÁMBIALA POR ESTA: */
+
+function renombrarCancion(id, nombreActual) {
+    // 1. TRUCO DE MAGIA: Quitamos el "candado" de enfoque del modal de música
+    const musicModal = document.getElementById('musicManagerModal');
+    if (musicModal) {
+        musicModal.removeAttribute('tabindex'); // Esto permite escribir en la alerta
+    }
+
+    Swal.fire({
+        title: 'Renombrar',
+        input: 'text',
+        inputValue: nombreActual,
+        showCancelButton: true,
+        confirmButtonText: 'Guardar',
+        confirmButtonColor: '#ff4757',
+        cancelButtonText: 'Cancelar',
+        cancelButtonColor: '#fab1a0',
+        background: '#fff0f3', // Fondo rosita
+        color: '#d63031',      // Letra roja
+        customClass: {
+            input: 'text-center fw-bold' // Centrar texto para que se vea bonito
+        }
+    }).then((result) => {
+        if (result.isConfirmed && result.value) {
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            fetch(`/api/renombrar-cancion/${id}/`, { 
+                method: 'POST', 
+                body: JSON.stringify({titulo: result.value}), 
+                headers: { 'X-CSRFToken': csrftoken, 'Content-Type': 'application/json' } 
+            })
+            .then(r => r.json())
+            .then(data => { 
+                if(data.status === 'ok') {
+                    cargarCanciones();
+                    // Pequeña alerta de éxito
+                    const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+                    Toast.fire({ icon: 'success', title: '¡Renombrado!' });
                 }
             });
         }
+    });
+}
 
         function subirCancion(input) {
     const file = input.files[0];
