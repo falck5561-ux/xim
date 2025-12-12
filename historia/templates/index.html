@@ -1516,47 +1516,289 @@ body.no-scroll {
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
 
-/* --- CORRECCIÓN FINAL: BOTONES TIPO APP Y ÚLTIMO CENTRADO --- */
+/* --- CORRECCIÓN FINAL: BOTONES TIPO APP (COMPACTOS Y ESTÉTICOS) --- */
 @media (max-width: 768px) {
     
     /* 1. Definimos la cuadrícula (Grid) */
     .d-flex.justify-content-center.flex-wrap.px-2.mb-5 {
         display: grid !important;
         grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
-        gap: 15px !important;           /* Espacio entre botones */
-        padding: 0 25px !important;     /* Margen lateral para que no toquen el borde */
+        gap: 12px !important;           /* Espacio más fino entre botones */
+        padding: 0 15px !important;     /* Menos margen lateral para aprovechar pantalla */
     }
 
-    /* 2. Estilo de los botones para que se vean verticales (Icono arriba) */
+    /* 2. Estilo de los botones (Más compactos) */
     .btn-romantico {
         width: 100% !important;
         min-width: 0 !important;
         margin: 0 !important;
-        padding: 15px 5px !important;
+        
+        /* AJUSTE DE TAMAÑO: Menos relleno */
+        padding: 10px 5px !important; 
+        
         flex-direction: column !important; /* Icono arriba, texto abajo */
-        gap: 8px !important;
+        gap: 5px !important;               /* Menos separación interna */
         height: auto !important;
-        font-size: 0.9rem !important; 
+        
+        /* AJUSTE DE TEXTO: Más pequeño y elegante */
+        font-size: 0.85rem !important; 
         white-space: normal !important;
-        line-height: 1.2 !important;
-        aspect-ratio: 1.5 / 1; /* Esto ayuda a que todos tengan altura similar */
+        line-height: 1.1 !important;
+        
+        /* CLAVE: Quitamos el aspect-ratio fijo que los hacía gigantes */
+        /* Usamos altura mínima controlada */
+        min-height: 85px !important; 
     }
 
+    /* 3. Icono más pequeño */
     .btn-romantico span {
-        font-size: 2rem !important;
+        font-size: 1.6rem !important; /* Bajamos de 2rem a 1.6rem */
         margin-right: 0 !important;
         display: block !important;
+        margin-bottom: 2px !important;
     }
 
-    /* 3. EL TRUCO PARA EL ÚLTIMO BOTÓN (GALLETA) */
-    /* Esto le dice al último hijo de la lista que ocupe las 2 columnas */
+    /* 4. EL TRUCO PARA EL ÚLTIMO BOTÓN (GALLETA) */
+    /* Lo hacemos ocupar 2 columnas para centrarlo, pero controlamos su ancho */
     .d-flex.justify-content-center.flex-wrap.px-2.mb-5 > :last-child {
-        grid-column: span 2;  /* Se estira a lo ancho de las 2 columnas */
-        
-        /* Opcional: Si no lo quieres tan ancho, descomenta estas 2 líneas: */
-        /* width: 60% !important; */
-        /* margin: 0 auto !important; */
+        grid-column: span 2;  /* Ocupa todo el ancho disponible */
+        width: 60% !important; /* <--- LO HACEMOS MÁS CORTO PARA QUE NO SE VEA GIGANTE */
+        margin: 0 auto !important; /* Lo centramos automáticamente */
     }
+}
+
+/* --- CORRECCIÓN MODAL DESTINO (TIPO TARJETA FLOTANTE) --- */
+@media (max-width: 768px) {
+    #timelineEndModal .modal-dialog {
+        margin: 20px !important; /* Margen para que no toque los bordes */
+        max-width: calc(100% - 40px) !important; /* Ancho controlado */
+    }
+
+    #timelineEndModal .modal-content {
+        border-radius: 25px !important; /* Bordes bien redondeados */
+        box-shadow: 0 10px 40px rgba(0,0,0,0.8) !important; /* Sombra elegante */
+        max-height: 85vh !important; /* Que no sea más alto que el 85% de la pantalla */
+        overflow-y: auto !important; /* Si el texto es largo, que se pueda bajar */
+    }
+
+    /* Ajuste para que la foto/video no sea gigante */
+    #timelineEndModal .video-cine-box {
+        max-height: 250px !important; 
+        margin-bottom: 15px !important;
+    }
+}
+
+/* =======================================================
+   CORRECCIÓN DEFINITIVA DE MODALES (PC Y CELULAR)
+   ======================================================= */
+
+/* 1. Asegurar que el cuerpo NO haga scroll cuando hay un modal abierto */
+body.modal-open {
+    overflow: hidden !important;
+    height: 100vh !important;
+}
+
+/* 2. Forzar el centrado perfecto en cualquier pantalla */
+.modal-dialog-centered {
+    display: flex !important;
+    align-items: center !important;
+    min-height: calc(100% - 3.5rem); /* Ajuste para que el centrado funcione */
+}
+
+/* 3. ESTILO TARJETA FLOTANTE PARA CELULAR (Para los modales negros) */
+@media (max-width: 768px) {
+    /* Aplica a los modales oscuros principales */
+    #finalBookModal .modal-dialog,
+    #finalSurpriseModal .modal-dialog,
+    #timelineEndModal .modal-dialog {
+        /* Márgenes para que parezca una tarjeta flotante */
+        margin: 20px auto !important; 
+        /* Ancho máximo para que no toque los bordes laterales */
+        max-width: 90% !important; 
+        /* Altura máxima para que no se salga de la pantalla */
+        max-height: 90vh !important;
+    }
+
+    /* Asegurar que el contenido tenga scroll interno si es muy largo */
+    #finalBookModal .modal-content,
+    #finalSurpriseModal .modal-content,
+    #timelineEndModal .modal-content {
+        max-height: 90vh !important; /* La tarjeta no puede ser más alta que el 90% de la pantalla */
+        overflow-y: auto !important; /* Si el contenido es mayor, aparece scroll DENTRO de la tarjeta */
+        border-radius: 25px !important;
+    }
+    
+    /* Ajustar la altura del video para que no ocupe tanto espacio */
+    .video-cine-box {
+        max-height: 250px !important;
+    }
+}
+
+/* ESTILO PARA LA "X" ELEGANTE ANIMADA */
+.btn-close-elegant {
+    position: absolute;
+    top: 15px;      /* Un poco separado del borde */
+    right: 15px;
+    width: 45px;    /* TAMAÑO GRANDE para que el dedo no falle */
+    height: 45px;
+    border-radius: 50%;
+    background: rgba(255, 107, 107, 0.1); /* Fondo rojizo transparente */
+    border: 1px solid #ff6b6b;
+    color: #ff6b6b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1050;  /* Asegura que esté ENCIMA de todo */
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efecto rebote suave */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* El icono dentro del botón */
+.btn-close-elegant i {
+    font-size: 1.5rem; /* Icono grande */
+    pointer-events: none;
+}
+
+/* Animación al tocar o pasar mouse */
+.btn-close-elegant:hover, .btn-close-elegant:active {
+    background: #ff6b6b;       /* Se rellena de rojo coral */
+    color: #111;               /* La X se vuelve negra */
+    transform: rotate(180deg) scale(1.1); /* GIRA y crece */
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.6); /* Brillo */
+}
+/* =============================================================
+   --- MODAL CÁPSULA DEFINITIVO (CUERPO DORADO + BOTONES ROJOS) ---
+   ============================================================= */
+
+/* 1. CONTENEDOR PRINCIPAL (Fondo Oscuro + Borde Dorado) */
+div.swal2-popup.swal-capsule-dark {
+    background: linear-gradient(145deg, #1a1a1a, #000000) !important;
+    border: 2px solid #fdcb6e !important; /* EL Borde Dorado Elegante */
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8) !important;
+    border-radius: 20px !important;
+    padding: 2rem 1.5rem !important;
+    width: 90% !important;
+    max-width: 450px !important; /* Tamaño normal en celular */
+}
+
+/* 2. FIX PARA PC (Hacerlo más ancho si la pantalla es grande) */
+@media (min-width: 768px) {
+    div.swal2-popup.swal-capsule-dark {
+        max-width: 600px !important; /* Más ancho en PC para elegancia */
+        padding: 2.5rem !important;
+    }
+}
+
+/* 3. TÍTULO (Dorado) */
+div.swal-capsule-dark .swal2-title {
+    color: #fdcb6e !important;
+    font-family: 'Dancing Script', cursive !important;
+    font-weight: normal !important;
+    font-size: 2.4rem !important;
+    margin-bottom: 20px !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* 4. TEXTOS E ICONOS (Dorado) */
+div.swal-capsule-dark .capsule-scheduled-text {
+    color: #fdcb6e !important;
+    font-size: 0.9rem !important;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    display: block;
+    opacity: 0.9;
+    text-transform: uppercase;
+}
+
+div.swal-capsule-dark i.bi-hourglass-split {
+    color: #fdcb6e !important;
+}
+
+/* 5. CRONÓMETRO (Cajas Negras, Bordes/Números Dorados) */
+div.swal-capsule-dark .capsule-timer-box {
+    background: #111 !important;
+    border: 1px solid #fdcb6e !important; /* Borde dorado */
+    border-radius: 10px !important;
+    padding: 8px 5px !important;
+    min-width: 65px !important;
+    box-shadow: inset 0 0 15px rgba(253, 203, 110, 0.05);
+}
+
+div.swal-capsule-dark .capsule-timer-number {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fdcb6e !important; /* Números dorados */
+}
+
+div.swal-capsule-dark .capsule-timer-label {
+    font-size: 0.65rem;
+    color: #ffeaa7 !important;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 3px;
+}
+
+/* 6. INPUT DE CONTRASEÑA (Estilo Dorado) */
+div.swal-capsule-dark .swal2-input {
+    background-color: #2d3436 !important;
+    color: #fdcb6e !important;
+    border: 1px solid #fdcb6e !important;
+    margin: 1.5em auto !important;
+}
+div.swal-capsule-dark .swal2-input::placeholder {
+    color: rgba(253, 203, 110, 0.5) !important;
+}
+
+/* =============================================================
+   7. BOTONES PERSONALIZADOS: ROJO (#ff6b6b)
+   ============================================================= */
+
+/* Contenedor */
+div.swal-capsule-dark .swal2-actions {
+    margin-top: 30px !important;
+    gap: 15px !important;
+    width: 100%;
+    justify-content: center;
+}
+
+/* Estilo Base Botones (Redondos y bonitos) */
+div.swal-capsule-dark .swal2-confirm,
+div.swal-capsule-dark .swal2-cancel {
+    border-radius: 50px !important;
+    font-weight: bold !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 0.95rem !important;
+    padding: 12px 30px !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+/* PRINCIPAL (Rojo Relleno) */
+div.swal-capsule-dark .swal2-confirm {
+    background-color: #ff6b6b !important; /* TU ROJO */
+    color: white !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3) !important;
+}
+div.swal-capsule-dark .swal2-confirm:hover {
+    background-color: #ff4757 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5) !important;
+}
+
+/* SECUNDARIO (Transparente con Borde Rojo) */
+div.swal-capsule-dark .swal2-cancel {
+    background-color: transparent !important;
+    color: #ff6b6b !important; /* Texto Rojo */
+    border: 2px solid #ff6b6b !important; /* Borde Rojo */
+}
+div.swal-capsule-dark .swal2-cancel:hover {
+    background-color: rgba(255, 107, 107, 0.1) !important;
 }
 
 </style>
@@ -2019,7 +2261,7 @@ body.no-scroll {
             <div class="capsule-icon">⏳</div>
             <h2 class="romantic-font text-warning mb-3">Cápsula del Tiempo</h2>
             <p class="mb-0">Hemos guardado un mensaje para el futuro.</p>
-            <small class="text-muted fst-italic">Programado para: 31 Dic 2030</small>
+            <small class="fst-italic" style="color: #fdcb6e !important;">Programado para: 31 Dic 2030</small>
         </div>
     </div>
 
@@ -2236,32 +2478,79 @@ body.no-scroll {
         </div>
     </div>
     </div>
-    <div class="modal fade" id="finalBookModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down"><div class="modal-content bg-dark text-white border-0 text-center p-4 position-relative overflow-hidden" style="border-radius: 20px;"><button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button><div class="modal-body position-relative" style="z-index: 2;"><h1 class="romantic-font text-info display-4 mb-2">Nunca podría dejarte...</h1><p class="text-muted fst-italic mb-4">La razón #201 es imposible, pero mira esto:</p><div class="video-cine-box"><video id="bookFinalVideo" controls loop playsinline><source src="/media/xim.mp4" type="video/mp4"></video></div><div class="text-frame-neon"><div class="neon-text-enhanced"><p>Sé que no siempre lo digo, pero admiro cómo enfrentas la vida con una sonrisa incluso en los momentos difíciles. Tu fuerza, tu bondad y tu manera única de ver el mundo me inspiran cada día. Gracias por estar, por quedarte, por dar lo mejor de ti sin rendirte. Eres alguien especial, con un corazón enorme que deja huellas llenas de cariño.</p><p class="text-center mb-0 mt-3 text-white"><strong>TE QUIERO Y QUIERO QUE NUNCA LO OLVIDES... 🌹</strong></p></div></div></div></div></div></div>
-    <div class="modal fade" id="finalSurpriseModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down"><div class="modal-content bg-dark text-white border-0 text-center p-4 position-relative overflow-hidden" style="border-radius: 20px;"><button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button><div class="modal-body position-relative" style="z-index: 2;"><h1 class="romantic-font text-danger display-4 mb-2">Simplemente Contigo</h1><p class="text-muted fst-italic mb-4">Un recordatorio de lo mucho que te amo:</p><div class="video-cine-box"><video id="finalVideo" controls loop playsinline><source src="/media/lindo.mp4" type="video/mp4"></video></div><div class="text-frame-neon"><div class="neon-text-enhanced"><p>No te puedo bajar la luna, pero puedo acompañarte cada vez que quieras disfrutar de su belleza. No puedo evitar tus malos momentos o tristezas, pero puedo estar contigo siempre para ayudarte a afrontarlas. Tal vez no pueda darte lo mejor del mundo, pero sí lo mejor de mí.</p><p class="text-center mb-0 mt-3 text-white" style="text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);"><strong>QUIERO QUE SEPAS QUE ERES MI VIDA Y MI MAYOR ALEGRÍA. TE AMO. ❤️</strong></p></div></div></div></div></div></div>
-    <div class="modal fade bg-dark" id="musicModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg bg-dark text-white text-center p-4" style="border-radius: 20px;"><div class="modal-header border-0 pb-0 position-relative"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><i class="bi bi-disc-fill display-1 text-danger mb-3 d-block" style="animation: spin 4s linear infinite;"></i><h3 class="romantic-font mb-3">Nuestra Canción Especial</h3><p class="text-white-50 mb-4">Para escuchar cuando me extrañes...</p><div style="position: relative; z-index: 9999;"><audio id="modalAudio" controls class="w-100" style="cursor: pointer;"><source src="/media/letra.mp3" type="audio/mpeg"></audio></div></div></div></div></div>
-    <div class="modal fade" id="timelineEndModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down">
-        <div class="modal-content bg-dark text-white border-0 text-center p-4 position-relative overflow-hidden" style="border-radius: 20px;">
-            <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
-            <div class="modal-body position-relative" style="z-index: 2;">
-                <h1 class="romantic-font text-danger display-4 mb-2">Nuestro Destino...</h1>
-                <div class="video-cine-box shadow-lg border border-danger mt-3 mb-4">
-                    <video id="timelineVideoFinal" controls loop playsinline>
-                        <source src="/media/beso.mp4" type="video/mp4">
-                    </video>
+    <div class="modal fade" id="finalBookModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content p-4 position-relative overflow-hidden" 
+             style="background-color: #111111 !important; border: 1px solid #ff6b6b; border-radius: 20px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);">
+            
+            <button type="button" class="btn-close-elegant" data-bs-dismiss="modal">
+                <i class="bi bi-x-lg"></i>
+            </button>
+            
+            <div class="modal-body position-relative text-center" style="z-index: 2;">
+                <h1 class="romantic-font display-4 mb-2" style="color: #ff6b6b !important; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-weight: normal;">Nunca podría dejarte...</h1>
+                <p class="fst-italic mb-4" style="color: #ffeaa7 !important; opacity: 0.9; font-weight: 300;">La razón #201 es imposible, pero mira esto:</p>
+                <div class="video-cine-box mx-auto shadow-lg" style="border: 1px solid #ff6b6b; max-height: 300px; background: #000;">
+                    <video id="bookFinalVideo" controls loop playsinline style="width: 100%; height: 100%; object-fit: contain;"><source src="/media/xim.mp4" type="video/mp4"></video>
                 </div>
-                <div class="text-frame-neon">
-                    <div class="neon-text-enhanced">
-                        <p class="text-center mb-0" style="font-size: 1.2rem; line-height: 1.6;">
-                            Mirar atrás y ver todo lo que hemos construido solo me da más certeza de hacia dónde voy. 
-                            No importa el tiempo ni el lugar, mi futuro siempre tendrá tu nombre. 
-                            <br><br>
-                            <strong style="text-shadow: 0 0 10px rgba(255, 71, 87, 0.8);">TE AMO HOY Y SIEMPRE ❤️</strong>
-                        </p>
-                    </div>
+                <div class="mt-4 px-3">
+                    <p style="color: #ffeaa7 !important; font-family: 'Montserrat', sans-serif; font-size: 1.05rem; line-height: 1.8; font-weight: 400; text-align: justify; text-align-last: center;">
+                        Sé que no siempre lo digo, pero admiro cómo enfrentas la vida con una sonrisa incluso en los momentos difíciles. Tu fuerza, tu bondad y tu manera única de ver el mundo me inspiran cada día. Gracias por estar, por quedarte, por dar lo mejor de ti sin rendirte. Eres alguien especial, con un corazón enorme que deja huellas llenas de cariño.
+                    </p>
+                    <p class="text-center mb-0 mt-4" style="color: #ff6b6b !important; font-size: 1.1rem; letter-spacing: 1px; font-weight: 600; text-transform: uppercase;">Te quiero y quiero que nunca lo olvides... 🌹</p>
                 </div>
             </div>
         </div>
+    </div>
+</div>
+    <div class="modal fade" id="finalSurpriseModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content p-4 position-relative overflow-hidden" 
+             style="background-color: #111111 !important; border: 1px solid #ff6b6b; border-radius: 20px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);">
+            
+            <button type="button" class="btn-close-elegant" data-bs-dismiss="modal">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <div class="modal-body position-relative text-center" style="z-index: 2;">
+                <h1 class="romantic-font display-4 mb-2" style="color: #ff6b6b !important; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-weight: normal;">Simplemente Contigo</h1>
+                <p class="fst-italic mb-4" style="color: #ffeaa7 !important; opacity: 0.9; font-weight: 300;">Un recordatorio de lo mucho que te amo:</p>
+                <div class="video-cine-box mx-auto shadow-lg" style="border: 1px solid #ff6b6b; max-height: 300px; background: #000;">
+                    <video id="finalVideo" controls loop playsinline style="width: 100%; height: 100%; object-fit: contain;"><source src="/media/lindo.mp4" type="video/mp4"></video>
+                </div>
+                <div class="mt-4 px-3">
+                    <p style="color: #ffeaa7 !important; font-family: 'Montserrat', sans-serif; font-size: 1.05rem; line-height: 1.8; font-weight: 400; text-align: justify; text-align-last: center;">
+                        No te puedo bajar la luna, pero puedo acompañarte cada vez que quieras disfrutar de su belleza. No puedo evitar tus malos momentos o tristezas, pero puedo estar contigo siempre para ayudarte a afrontarlas. Tal vez no pueda darte lo mejor del mundo, pero sí lo mejor de mí.
+                    </p>
+                    <p class="text-center mb-0 mt-4" style="color: #ff6b6b !important; font-size: 1.1rem; letter-spacing: 1px; font-weight: 600; text-transform: uppercase;">Quiero que sepas que eres mi vida y mi mayor alegría. Te amo. ❤️</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <div class="modal fade bg-dark" id="musicModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg bg-dark text-white text-center p-4" style="border-radius: 20px;"><div class="modal-header border-0 pb-0 position-relative"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><i class="bi bi-disc-fill display-1 text-danger mb-3 d-block" style="animation: spin 4s linear infinite;"></i><h3 class="romantic-font mb-3">Nuestra Canción Especial</h3><p class="text-white-50 mb-4">Para escuchar cuando me extrañes...</p><div style="position: relative; z-index: 9999;"><audio id="modalAudio" controls class="w-100" style="cursor: pointer;"><source src="/media/letra.mp3" type="audio/mpeg"></audio></div></div></div></div></div>
+    <div class="modal fade" id="timelineEndModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content p-4 position-relative overflow-hidden" 
+             style="background-color: #111111 !important; border: 1px solid #ff6b6b; border-radius: 20px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);">
+            
+            <button type="button" class="btn-close-elegant" data-bs-dismiss="modal">
+                <i class="bi bi-x-lg"></i>
+            </button>
+            
+            <div class="modal-body position-relative text-center" style="z-index: 2;">
+                <h1 class="romantic-font display-4 mb-2" style="color: #ff6b6b !important; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-weight: normal;">Nuestro Destino...</h1>
+                <div class="video-cine-box mx-auto shadow-lg mt-3 mb-4" style="border: 1px solid #ff6b6b; max-height: 300px; background: #000;">
+                    <video id="timelineVideoFinal" controls loop playsinline style="width: 100%; height: 100%; object-fit: contain;"><source src="/media/beso.mp4" type="video/mp4"></video>
+                </div>
+                <div class="px-3">
+                    <p style="color: #ffeaa7 !important; font-family: 'Montserrat', sans-serif; font-size: 1.05rem; line-height: 1.8; font-weight: 400; text-align: justify; text-align-last: center;">
+                        Mirar atrás y ver todo lo que hemos construido solo me da más certeza de hacia dónde voy. No importa el tiempo ni el lugar, mi futuro siempre tendrá tu nombre.
+                    </p>
+                    <p class="text-center mb-0 mt-4" style="color: #ff6b6b !important; font-size: 1.2rem; letter-spacing: 1px; font-weight: 600; text-transform: uppercase;">Te amo hoy y siempre ❤️</p>
+                </div>
+            </div>
+        </div> 
     </div>
 </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -2342,139 +2631,167 @@ body.no-scroll {
 
         // --- LÓGICA DE CÁPSULA DEL TIEMPO MEJORADA (SECURE VERSION) ---
 
-        // 1. Función auxiliar para mostrar el contenido cuando se abre
-        function mostrarContenidoCapsulaExito() {
-            // Pausar música de fondo si suena
-            if(!bgMusic.paused){ bgMusic.pause(); musicPlayerBtn.classList.remove('playing'); isMusicPausedByVideo = true; }
+        // --- FUNCIÓN DE ÉXITO (DISEÑO OSCURO IGUAL AL DE LA CONTRASEÑA) ---
+function mostrarContenidoCapsulaExito() {
+    // 1. Pausar música de fondo si suena (para escuchar el video)
+    if(!bgMusic.paused){ 
+        bgMusic.pause(); 
+        musicPlayerBtn.classList.remove('playing'); 
+        isMusicPausedByVideo = true; 
+    }
+    
+    // 2. Lanzar confeti dorado
+    confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, colors: ['#fdcb6e', '#ffeaa7', '#ffffff'] });
+
+    Swal.fire({
+        // --- CLAVE: Usamos la MISMA clase CSS que el modal de contraseña ---
+        customClass: {
+            popup: 'swal-capsule-dark' 
+        },
+        
+        // Icono: Candado abierto dorado brillante
+        iconHtml: '<i class="bi bi-unlock-fill" style="font-size: 5rem; color: #fdcb6e; filter: drop-shadow(0 0 15px #fdcb6e);"></i>',
+        
+        // Título dorado estilo "Dancing Script" (heredado del CSS)
+        title: '¡Cápsula Abierta! ✨',
+        
+        // HTML interno ajustado al tema oscuro
+        html: `
+            <p style="color: #dfe6e9; font-size: 1.1rem; margin-bottom: 20px; font-weight: 300; font-family: 'Montserrat', sans-serif;">
+                Hola mi amor del futuro. Si estás viendo esto, lo logramos. <br>Aquí está nuestro mensaje guardado...
+            </p>
             
-            // Lanzar confeti dorado
-             confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, colors: ['#fdcb6e', '#ffeaa7', '#ffffff'] });
-
-            Swal.fire({
-                title: '<span class="romantic-font text-warning">¡Cápsula Abierta! ✨</span>',
-                html: `<p class="text-white lead">Hola mi amor del futuro. Si estás viendo esto, lo logramos. Aquí está nuestro mensaje guardado...</p>
-                       <div class="video-cine-box mt-3 shadow-lg" style="border-color: #fdcb6e;">
-                        <video controls autoplay class="w-100 rounded"><source src="/media/video_capsula.mp4" type="video/mp4"></video>
-                       </div>`,
-                width: 700,
-                background: 'linear-gradient(135deg, #2d3436 0%, #000000 100%)',
-                color: '#fdcb6e',
-                confirmButtonColor: '#fdcb6e',
-                confirmButtonText: '¡Qué hermoso! ❤️',
-                padding: '2em',
-                showClass: { popup: 'animate__animated animate__zoomInDown faster' },
-                hideClass: { popup: 'animate__animated animate__zoomOutUp faster' },
-                willClose: () => { if(isMusicPausedByVideo){ bgMusic.play(); musicPlayerBtn.classList.add('playing'); isMusicPausedByVideo = false; } }
-            });
+            <div class="video-cine-box mt-3 shadow-lg" style="border: 2px solid #fdcb6e; border-radius: 15px; overflow: hidden; background: #000; position: relative;">
+                <video controls autoplay class="w-100" style="display: block; max-height: 50vh;">
+                    <source src="/media/video_capsula.mp4" type="video/mp4">
+                    Tu navegador no soporta videos.
+                </video>
+            </div>
+            
+            <p style="color: #fdcb6e; font-size: 0.9rem; margin-top: 15px; font-style: italic;">
+                Te amo a través del tiempo ❤️
+            </p>
+        `,
+        
+        width: 700,
+        
+        // Botón único (Dorado por el CSS swal-capsule-dark)
+        confirmButtonText: '¡Qué hermoso! ❤️',
+        
+        // Al cerrar, reanudar música si estaba sonando
+        willClose: () => {
+            if(isMusicPausedByVideo){ 
+                bgMusic.play(); 
+                musicPlayerBtn.classList.add('playing'); 
+                isMusicPausedByVideo = false; 
+            }
         }
+    });
+}
 
-        // 2. Función principal segura
-        // 2. Función principal segura con CRONÓMETRO
-        async function verificarCapsula() {
-            const today = new Date();
-            const targetDate = new Date('2030-12-31T00:00:00'); // <--- FECHA OBJETIVO
-            const HASH_SECRETO = "WElNMDRQRVJFWg=="; 
+// --- LÓGICA CÁPSULA (VERSIÓN RED #ff6b6b & PC FIX) ---
+async function verificarCapsula() {
+    const today = new Date();
+    const targetDate = new Date('2030-12-31T00:00:00'); 
+    const HASH_SECRETO = "WElNMDRQRVJFWg=="; 
+    
+    // COLOR EXACTO QUE PEDISTE
+    const C_ROJO = '#ff6b6b'; 
 
-            if (today >= targetDate) {
-                mostrarContenidoCapsulaExito();
-            } else {
-                // Variable para guardar el intervalo del reloj
-                let timerInterval;
+    if (today >= targetDate) {
+        mostrarContenidoCapsulaExito();
+    } else {
+        let timerInterval;
 
-                const result = await Swal.fire({
-                    iconHtml: '<i class="bi bi-shield-lock-fill" style="font-size: 4rem; color: #fdcb6e;"></i>',
-                    title: '<span class="romantic-font text-warning">Cápsula Sellada</span>',
-                    // Aquí ponemos la estructura vacía del reloj que llenaremos con JS
-                    html: `
-                        <p class="text-white">Esta cápsula se abrirá automáticamente en:</p>
-                        
-                        <div class="capsule-timer-wrapper">
-                            <div class="c-time-box"><span class="c-number" id="c-days">00</span><span class="c-label">Días</span></div>
-                            <div class="c-time-box"><span class="c-number" id="c-hours">00</span><span class="c-label">Hrs</span></div>
-                            <div class="c-time-box"><span class="c-number" id="c-mins">00</span><span class="c-label">Min</span></div>
-                            <div class="c-time-box"><span class="c-number" id="c-secs">00</span><span class="c-label">Seg</span></div>
-                        </div>
+        const result = await Swal.fire({
+            customClass: {
+                popup: 'swal-capsule-dark' // Usa el nuevo CSS
+            },
+            
+            // Icono rojo
+            iconHtml: `<i class="bi bi-hourglass-split" style="font-size: 3.5rem; color: ${C_ROJO}; filter: drop-shadow(0 0 10px ${C_ROJO});"></i>`,
+            
+            title: 'Cápsula Sellada',
+            
+            html: `
+                <span class="capsule-scheduled-text">SE ABRIRÁ EN:</span>
+                
+                <div class="capsule-timer-wrapper" style="display: flex; justify-content: center; gap: 10px; margin: 15px 0;">
+                    <div class="capsule-timer-box">
+                        <span id="c-days" class="capsule-timer-number">00</span>
+                        <span class="capsule-timer-label">DÍAS</span>
+                    </div>
+                    <div class="capsule-timer-box">
+                        <span id="c-hours" class="capsule-timer-number">00</span>
+                        <span class="capsule-timer-label">HRS</span>
+                    </div>
+                    <div class="capsule-timer-box">
+                        <span id="c-mins" class="capsule-timer-number">00</span>
+                        <span class="capsule-timer-label">MIN</span>
+                    </div>
+                    <div class="capsule-timer-box">
+                        <span id="c-secs" class="capsule-timer-number">00</span>
+                        <span class="capsule-timer-label">SEG</span>
+                    </div>
+                </div>
 
-                        <p class="text-warning fst-italic small border-top border-warning pt-3 mt-3">¿Tienes la llave secreta para abrirla ahora? 🔑</p>
-                    `,
-                    background: '#2d3436',
-                    showCancelButton: true,
-                    confirmButtonText: 'Usar Llave Secreta 🔐',
-                    cancelButtonText: 'Seguiré Esperando ⏳',
-                    confirmButtonColor: '#fdcb6e',
-                    cancelButtonColor: '#636e72',
-                    reverseButtons: true,
-                    showClass: { popup: 'animate__animated animate__tada' },
-                    // ESTO OCURRE CUANDO SE ABRE LA ALERTA
-                    didOpen: () => {
-                        const content = Swal.getHtmlContainer();
-                        const $ = (selector) => content.querySelector(selector);
-                        
-                        // Función que actualiza los números
-                        const updateTimer = () => {
-                            const now = new Date().getTime();
-                            const distance = targetDate - now;
+                <div style="margin-top: 20px;">
+                   <p style="color: #dfe6e9; font-size: 0.9rem; margin: 0; font-style: italic; opacity: 0.8;">
+                       ¿Tienes la llave secreta? 🔑
+                   </p>
+                </div>
+            `,
+            
+            showCancelButton: true,
+            confirmButtonText: 'Usar Llave',
+            cancelButtonText: 'Esperar',
+            reverseButtons: true,
+            
+            didOpen: () => {
+                const $ = (s) => Swal.getHtmlContainer().querySelector(s);
+                const updateTimer = () => {
+                    const now = new Date().getTime();
+                    const dist = targetDate - now;
+                    if (dist < 0) { clearInterval(timerInterval); Swal.close(); return; }
+                    $('#c-days').textContent = Math.floor(dist / (1000 * 60 * 60 * 24));
+                    $('#c-hours').textContent = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2,'0');
+                    $('#c-mins').textContent = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2,'0');
+                    $('#c-secs').textContent = Math.floor((dist % (1000 * 60)) / 1000).toString().padStart(2,'0');
+                };
+                updateTimer();
+                timerInterval = setInterval(updateTimer, 1000);
+            },
+            willClose: () => clearInterval(timerInterval)
+        });
 
-                            if (distance < 0) {
-                                clearInterval(timerInterval);
-                                Swal.close(); // Si llega a 0, cerramos para que recargue
-                                return;
-                            }
+        if (result.isConfirmed) {
+            const { value: pass } = await Swal.fire({
+                customClass: { popup: 'swal-capsule-dark' },
+                title: 'Contraseña',
+                input: 'password',
+                inputPlaceholder: '••••••',
+                confirmButtonText: 'Abrir',
+                showCancelButton: true,
+                cancelButtonText: 'Cancelar'
+            });
 
-                            // Cálculos matemáticos de tiempo
-                            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                            // Poner los números en el HTML
-                            $('#c-days').textContent = days;
-                            $('#c-hours').textContent = hours;
-                            $('#c-mins').textContent = minutes;
-                            $('#c-secs').textContent = seconds;
-                        };
-
-                        updateTimer(); // Ejecutar una vez al inicio
-                        timerInterval = setInterval(updateTimer, 1000); // Repetir cada segundo
-                    },
-                    // ESTO OCURRE AL CERRAR (IMPORTANTE: DETENER EL RELOJ)
-                    willClose: () => {
-                        clearInterval(timerInterval);
-                    }
-                });
-
-                // Lógica de la contraseña (igual que antes)
-                if (result.isConfirmed) {
-                    const { value: passwordInput } = await Swal.fire({
-                        title: '<span class="text-warning">Introduce la Llave 🔑</span>',
-                        input: 'password',
-                        inputLabel: 'Solo la dueña de mi corazón conoce la clave...',
-                        inputPlaceholder: 'Escribe aquí...',
-                        inputAttributes: { autocapitalize: 'off', autocorrect: 'off' },
-                        background: '#2d3436', color: '#fff',
-                        confirmButtonText: 'Intentar Abrir ✨',
-                        confirmButtonColor: '#fdcb6e',
-                        showClass: { popup: 'animate__animated animate__fadeInUp' }
+            if (pass) {
+                if (btoa(pass) === HASH_SECRETO) {
+                    mostrarContenidoCapsulaExito();
+                } else {
+                    Swal.fire({
+                        customClass: { popup: 'swal-capsule-dark' },
+                        icon: 'error',
+                        iconHtml: `<i class="bi bi-x" style="font-size: 3rem; color: ${C_ROJO}"></i>`,
+                        title: `<span style="color: ${C_ROJO}; font-size: 1.5rem;">Incorrecto</span>`,
+                        showConfirmButton: false,
+                        timer: 1500
                     });
-
-                    if (passwordInput) {
-                        if (btoa(passwordInput) === HASH_SECRETO) {
-                            mostrarContenidoCapsulaExito();
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: '<span class="text-danger">Clave Incorrecta ❌</span>',
-                                text: 'La cápsula permanece sellada.',
-                                background: '#2d3436', color: '#fff',
-                                confirmButtonColor: '#e74c3c',
-                                showClass: { popup: 'animate__animated animate__shakeX' }
-                            });
-                        }
-                    }
                 }
             }
         }
-
+    }
+}
 // --- LÓGICA DE BUCKET LIST (MODO DATABASE) ---
 // ==========================================
 
