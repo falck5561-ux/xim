@@ -3285,7 +3285,7 @@ const tMessages = [
 // 3. POEMA FINAL (Para el video sorpresa)
 const poemaFinal = `
     <p class="mb-3">
-        Han pasado 6 años y aún me pregunto qué hice para merecerte.<br>
+        Han pasado 5 años y aún me pregunto qué hice para merecerte.<br>
         No puedo prometerte que todo será fácil,<br>
         pero te prometo que en cada tormenta seré tu refugio<br>
         y en cada alegría seré quien más celebre tu sonrisa.
@@ -3334,51 +3334,7 @@ tSlider.addEventListener('input', (e) => {
             }
         });
 
-        // 5. FINAL SORPRESA (Al llegar al 100%)
-        if (val === 100) {
-           setTimeout(() => {
-               lanzarConfetiSuave();
-               
-               // Pausar música fondo
-               if(typeof bgMusic !== 'undefined' && !bgMusic.paused){ 
-                   bgMusic.pause(); 
-                   if(document.getElementById('mainMusicBtn')) {
-                       document.getElementById('mainMusicBtn').classList.remove('playing'); 
-                   }
-                   isMusicPausedByVideo = true; 
-               }
-
-               // MOSTRAR MODAL CON POEMA
-               Swal.fire({ 
-                title: '<span class="romantic-font text-danger display-4">¡Por Siempre Nosotros!</span>', 
-                html: `
-                    <div class="text-frame-neon mb-4">
-                        <div class="neon-text-enhanced text-center fst-italic" style="color:white; font-size: 1.1rem; line-height: 1.6;">
-                            ${poemaFinal}
-                        </div>
-                    </div>
-                    <div class="video-cine-box shadow-lg border border-danger">
-                        <video id="timelineVideo" autoplay playsinline loop style="width: 100%; height: 100%; object-fit: contain;">
-                            <source src="/media/beso.mp4" type="video/mp4">
-                        </video>
-                    </div>
-                `, 
-                showConfirmButton: true,
-                confirmButtonText: 'Te Amo Ximena 🌹',
-                confirmButtonColor: '#ff4757',
-                background: '#1a1a1a', 
-                width: '850px',
-                padding: '2rem',
-                willClose: () => {
-                    if(typeof isMusicPausedByVideo !== 'undefined' && isMusicPausedByVideo) { 
-                        bgMusic.play(); 
-                        document.getElementById('mainMusicBtn').classList.add('playing'); 
-                        isMusicPausedByVideo = false; 
-                    }
-                }
-            });
-           }, 400); 
-        }
+        
     }
 });
         document.getElementById('birthdayModal').addEventListener('hide.bs.modal', () => { birthdayAudio.pause(); birthdayDiscPlayer.classList.remove('playing'); });
@@ -3388,11 +3344,28 @@ tSlider.addEventListener('input', (e) => {
             if(isMusicPausedByVideo){ bgMusic.play(); musicPlayerBtn.classList.add('playing'); isMusicPausedByVideo = false; }
         });
 
-        ['finalSurpriseModal', 'finalBookModal'].forEach(id => {
-            const el = document.getElementById(id);
-            el.addEventListener('show.bs.modal', () => { if(!bgMusic.paused){ bgMusic.pause(); musicPlayerBtn.classList.remove('playing'); isMusicPausedByVideo = true; } });
-            el.addEventListener('hide.bs.modal', () => { const vid = el.querySelector('video'); if(vid) { vid.pause(); vid.currentTime = 0; } if(isMusicPausedByVideo){ bgMusic.play(); musicPlayerBtn.classList.add('playing'); isMusicPausedByVideo = false; } });
-        });
+        // AGREGAMOS 'timelineEndModal' A LA LISTA
+['finalSurpriseModal', 'finalBookModal', 'timelineEndModal'].forEach(id => {
+    const el = document.getElementById(id);
+    // Pausar música al abrir
+    el.addEventListener('show.bs.modal', () => { 
+        if(!bgMusic.paused){ 
+            bgMusic.pause(); 
+            musicPlayerBtn.classList.remove('playing'); 
+            isMusicPausedByVideo = true; 
+        } 
+    });
+    // Reanudar música al cerrar
+    el.addEventListener('hide.bs.modal', () => { 
+        const vid = el.querySelector('video'); 
+        if(vid) { vid.pause(); vid.currentTime = 0; } 
+        if(isMusicPausedByVideo){ 
+            bgMusic.play(); 
+            musicPlayerBtn.classList.add('playing'); 
+            isMusicPausedByVideo = false; 
+        } 
+    });
+});
 
     // --- LÓGICA DE BIENVENIDA MEJORADA ---
     
@@ -4102,6 +4075,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
+
+
     </script>
+
+    <div class="modal fade" id="timelineEndModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down">
+        <div class="modal-content bg-dark text-white border-0 text-center p-4 position-relative overflow-hidden" style="border-radius: 20px;">
+            
+            <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
+
+            <div class="modal-body position-relative" style="z-index: 2;">
+                <h1 class="romantic-font text-danger display-4 mb-2">Nuestro Destino...</h1>
+                
+                <div class="video-cine-box shadow-lg border border-danger mt-3 mb-4">
+                    <video id="timelineVideoFinal" controls loop playsinline>
+                        <source src="/media/beso.mp4" type="video/mp4">
+                    </video>
+                </div>
+
+                <div class="text-frame-neon">
+                    <div class="neon-text-enhanced">
+                        <p class="text-center mb-0" style="font-size: 1.2rem; line-height: 1.6;">
+                            Mirar atrás y ver todo lo que hemos construido solo me da más certeza de hacia dónde voy. 
+                            No importa el tiempo ni el lugar, mi futuro siempre tendrá tu nombre. 
+                            <br><br>
+                            <strong style="text-shadow: 0 0 10px rgba(255, 71, 87, 0.8);">TE AMO HOY Y SIEMPRE ❤️</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
