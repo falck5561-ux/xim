@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import google.generativeai as genai
 import os
+import random 
 
 # TUS MODELOS
 from .models import Momento, Cancion, Deseo, Mascota
@@ -14,12 +15,11 @@ from .forms import MomentoForm, CancionForm
 #  CONFIGURACIÓN DE IA (GEMINI)
 # ==========================================
 
-# ⚠️ TU CLAVE QUE SÍ FUNCIONA
 API_KEY = "AIzaSyAFKkY4AUfkbpT1QAdKNrxfTeTGhsjmdR4" 
 genai.configure(api_key=API_KEY)
 
 # ==========================================
-#  VISTA CEREBRO DE POCHITA (INTELIGENCIA)
+#  VISTA CEREBRO DE POCHITA (MODO HÁMSTER 🐹)
 # ==========================================
 
 @csrf_exempt
@@ -33,9 +33,10 @@ def cerebro_pochita(request):
             accion = data.get('accion', '')
             stats = data.get('stats', {})
 
-            # 2. DEFINIR LA PERSONALIDAD (PROMPT)
+            # 2. DEFINIR LA PERSONALIDAD (PROMPT CORREGIDO)
+            # AQUI LE DECIMOS QUE ES UN HÁMSTER Y CAMBIAMOS LOS EMOJIS
             prompt = f"""
-            Actúa como Pochita, la mascota adorable de Chainsaw Man.
+            Actúa como Pochita, un HÁMSTER adorable, pequeño y esponjoso.
             Tu dueña es "Mami Ximena" y tu creador es "Papi Josue".
             
             ESTADO ACTUAL:
@@ -43,36 +44,42 @@ def cerebro_pochita(request):
             - Felicidad: {stats.get('felicidad')}%
             
             REGLAS ESTRICTAS:
-            1. Si te preguntan matemáticas (ej: "2+2"), responde SOLO el resultado y un emoji (ej: "Son 4 mami 🤓").
-            2. Si Ximena está triste, dale mucho amor y dile que Josue la ama.
+            1. Si te preguntan matemáticas, responde SOLO el resultado y un emoji (ej: "Son 4 mami 🤓").
+            2. Si Ximena está triste, dile que Josue la ama mucho.
             3. Responde MUY CORTO (máximo 1 o 2 frases).
-            4. Usa emojis tiernos (🧡, 🐶, 🦴, ✨).
-            5. Si no hay texto y solo acción (ej: comió), reacciona feliz.
+            4. USA SOLO EMOJIS DE HÁMSTER Y COSAS LINDAS (🐹, 🌻, 🥜, 🧀, 🧡, ✨). ¡NO USES EMOJIS DE PERRO!
+            5. Menciona cosas de hámster: tus cachetes, tu rueda, semillas de girasol o dormir hecho bolita.
             
             Lo que dijo Ximena: "{mensaje_usuario}"
             Acción que hizo: "{accion}"
             """
 
-            # 3. CONFIGURAR EL MODELO CORRECTO (EL QUE ENCONTRAMOS)
-            # Usamos 'gemini-2.5-flash' que es el que tu llave permite
+            # 3. INTENTAR CONECTAR CON GOOGLE GEMINI
             model = genai.GenerativeModel('gemini-2.5-flash')
-
-            # 4. GENERAR RESPUESTA
             response = model.generate_content(prompt)
-            frase_ia = response.text.strip().replace('"', '').replace('*', '')
-
-            return JsonResponse({'frase': frase_ia})
+            frase_final = response.text.strip().replace('"', '').replace('*', '')
 
         except Exception as e:
-            print(f"❌ Error: {e}")
-            # Si falla, damos una respuesta genérica bonita para que no se rompa
-            return JsonResponse({'frase': "Woof! Estoy procesando mucho amor... (Intenta de nuevo) 🧡"})
+            # 🚨 RESPALDO SI FALLA GOOGLE
+            print(f"⚠️ Usando frase de respaldo: {e}")
+            
+            frases_respaldo = [
+                "Mami, mis cachetes están llenos de amor... dame un momento 🐹❤️",
+                "Estoy corriendo en mi rueda mental... espera tantito 🎡",
+                "Mami, se me cayó mi semilla de girasol... ¿qué decías? 🌻",
+                "Mi cerebro de hámster necesita una siesta 😴 (Intenta en 30 seg)",
+                "¡Squeak squeak! (Significa que te amo, pero espérame tantito) 🧀",
+                "Mami, estoy escondiendo comida en mi casita, ya vuelvo 🥜"
+            ]
+            frase_final = random.choice(frases_respaldo)
+
+        return JsonResponse({'frase': frase_final})
 
     return JsonResponse({'error': 'Solo POST permitido'}, status=405)
 
 
 # ==========================================
-#  RESTO DE TUS VISTAS (NO CAMBIAR)
+#  RESTO DE TUS VISTAS (IGUAL QUE SIEMPRE)
 # ==========================================
 
 def index(request):
