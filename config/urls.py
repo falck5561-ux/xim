@@ -23,8 +23,9 @@ urlpatterns = [
     path('api/deseos/alternar/<int:id>/', views.api_alternar_deseo, name='api_alternar_deseo'),
     path('api/deseos/eliminar/<int:id>/', views.api_eliminar_deseo, name='api_eliminar_deseo'),
 
-    # --- NUEVA RUTA PARA LA MASCOTA (POU) ---
-    path('api/mascota/', views.api_mascota, name='api_mascota'),
+    # --- RUTAS PARA LA MASCOTA (POCHITA 5.0) ---
+    path('api/mascota/', views.api_mascota, name='api_mascota'), # Lógica del juego (hambre, energía...)
+    path('api/cerebro/', views.cerebro_pochita, name='cerebro_pochita'), # <--- ESTA ES LA NUEVA (Inteligencia Artificial)
 ]
 
 if settings.DEBUG:
