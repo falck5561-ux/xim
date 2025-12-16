@@ -15,7 +15,7 @@ from .forms import MomentoForm, CancionForm
 #  CONFIGURACIÓN DE IA (GEMINI)
 # ==========================================
 
-API_KEY = "AIzaSyAFKkY4AUfkbpT1QAdKNrxfTeTGhsjmdR4" 
+API_KEY = "AIzaSyCKGZAtPZ3_xdggtLU75vLAEVPBy_R5ado" 
 genai.configure(api_key=API_KEY)
 
 # ==========================================
